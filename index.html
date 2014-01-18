@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+  <head>
+    <title> Sandglass | time tracking</title>
+
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,getActivity400'
+          rel='stylesheet'
+          type='text/css'>
+
+    <link href='sandglass/css/jquery-ui/custom-theme/jquery-ui-1.10.4.custom.css'
+          rel='stylesheet'
+          type='text/css'>
+
+    <link rel="stylesheet"
+          type="text/css"
+          href="bower_components/font-awesome/css/font-awesome.css"
+          media="screen" />
+
+    <link rel="stylesheet"
+          type="text/css"
+          href="bower_components/normalize-css/normalize.css"
+          media="screen" />
+
+    <link rel="stylesheet"
+          type="text/css"
+          href="sandglass/css/main.css"
+          media="screen" />
+  </head>
+  <body>
+    <div class='sandglass'>
+      <header class="sandglass__header">
+        <h1 class='sandglass__headline'>
+          <i class="sandglass__headline-icon fa fa-clock-o"></i>
+          Sandglass
+        </h1>
+
+        <input type='text'
+               class='sandglass__header-search'
+               name='search'
+               placeholder='Search' />
+      </header>
+
+
+      <ul class="timeline"></ul>
+    </div>
+
+    <script data-main="sandglass/js/main"
+            src="bower_components/requirejs/require.js"></script>
+  </body>
+</html>
