@@ -41,9 +41,7 @@ define(['lodash',
 
       this.render();
 
-      this.timer = setInterval(function() {
-        _this.render( 'duration' );
-      }, 1000);
+      this.setUpdateInterval();
 
       return this;
     },
@@ -58,9 +56,7 @@ define(['lodash',
 
       storage.push( 'grains', this.data, 'start' );
 
-      this.timer = setInterval(function() {
-        _this.render( 'duration' );
-      }, 1000);
+      this.setUpdateInterval();
 
       this.render( 'duration' );
 
@@ -77,7 +73,7 @@ define(['lodash',
 
       this.render();
 
-      clearInterval( this.timer );
+      this.setUpdateInterval( 'clear' );
 
       return this;
     },
@@ -87,8 +83,43 @@ define(['lodash',
       this.render();
     },
 
-    updateTime: function( intervalType ) {
-      /* monkey patch for this.timer */
+    setUpdateInterval: function( intervalType ) {
+      if( !intervalType ) {
+        intervalType = 'second';
+      }
+
+      var _this = this,
+          _time;
+
+      switch( intervalType ) {
+        case 'second':
+          _time = 1000;
+        break;
+        case 'minute':
+          _time = ( 1000 / 3 ) * 60;
+        break;
+        case 'hour':
+          _time = ( 1000 / 3 ) * 3600;
+        break;
+      }
+
+      if( _time === this._updateInterval ) {
+        return this;
+      }
+
+      this._updateInterval = _time;
+
+      clearInterval( this.timer );
+
+      if( intervalType === 'clear' ) {
+        return this;
+      }
+
+      this.timer = setInterval(function() {
+        _this.render( 'duration' );
+      }, _time);
+
+      return this;
     },
 
     getDifference: function() {
@@ -97,6 +128,8 @@ define(['lodash',
 
     formatDifference: function( seconds ) {
       if( seconds < 60 ) {
+        this.setUpdateInterval();
+
         if( seconds === 1 ) {
           return '1sec';
         }
@@ -105,6 +138,8 @@ define(['lodash',
       }
 
       if( seconds < 3600 ) {
+        this.setUpdateInterval( 'minute' );
+
         if( seconds < 120 ) {
           return '1min';
         }
@@ -113,6 +148,8 @@ define(['lodash',
       }
 
       if( seconds < 3600 * 60 * 24 ) {
+        this.setUpdateInterval( 'minute' );
+
         if( seconds === 3600 * 60 ) {
           return '1h'
         }
