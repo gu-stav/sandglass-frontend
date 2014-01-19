@@ -98,18 +98,28 @@ define(['lodash',
     formatDifference: function( seconds ) {
       if( seconds < 60 ) {
         if( seconds === 1 ) {
-          return '1 Sekunde';
+          return '1sec';
         }
 
-        return seconds + ' Sekunden';
+        return seconds + 'sec';
       }
 
       if( seconds < 3600 ) {
         if( seconds < 120 ) {
-          return '1 Minute';
+          return '1min';
         }
 
-        return ( parseInt( seconds / 60 ) ) + ' Minuten';
+        return ( parseInt( seconds / 60 ) ) + 'min';
+      }
+
+      if( seconds < 3600 * 60 * 24 ) {
+        if( seconds === 3600 * 60 ) {
+          return '1h'
+        }
+
+        var _minutes = parseInt( ( seconds - ( parseInt( seconds / 3600 ) * 3600 ) ) / 60 );
+
+        return ( parseInt( seconds / 3600 ) ) + 'h, ' + _minutes + 'min';
       }
     },
 
