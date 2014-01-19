@@ -214,6 +214,18 @@ define(['lodash',
               }
 
               _element[0]
+                /* prevent linebreaks */
+                .addEventListener('keypress', function( e ){
+                  var _forbidden = [13],
+                      _code = e.charCode;
+
+                  if( _forbidden.indexOf( _code ) !== -1 ) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }
+                });
+
+              _element[0]
                 .addEventListener( 'blur', function( e ) {
                   var _innerText = e.target.innerText;
 

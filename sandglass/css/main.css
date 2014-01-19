@@ -199,6 +199,20 @@ input:-ms-input-placeholder {
   font-weight: 400;
 }
 
+.timeline__activity,
+.timeline__project,
+.timeline__description {
+  outline: none;
+  padding: .2em;
+  display: inline-block;
+}
+
+.timeline__activity:focus,
+.timeline__project:focus,
+.timeline__description:focus {
+  background-color: #fff;
+}
+
 .timeline__description {
   margin: .5em 0 0 1.6em;
   font-size: .9em;
