@@ -68,6 +68,18 @@ input:-ms-input-placeholder {
   color: #53B482;
 }
 
+.button--white {
+  background-color: #fff;
+  color: #333;
+  border-color: #ccc;
+}
+
+.button--white:hover,
+.button--white:focus {
+  border-color: #ccc;
+  background-color: #fff;
+}
+
 /* app */
 .sandglass {
   width: 41em;
@@ -80,9 +92,17 @@ input:-ms-input-placeholder {
   margin: 0 0 1.5em 0;
 }
 
-.sandglass__header-search {
+.sandglass__search {
   float: right;
   margin: .2em 0 0 0;
+  position: relative;
+  width: 30em;
+  font-size: .9em;
+}
+
+.sandglass__search-start,
+.sandglass__search-end {
+  width: 7em;
 }
 
 .sandglass__headline {
@@ -98,6 +118,14 @@ input:-ms-input-placeholder {
   margin: 0 .2em 0 0;
   color: #53B482;
 }
+
+.sandglass__timeline-filter {
+  margin-left: -4px;
+  border-left: none;
+  padding-top: .55em;
+  padding-bottom: .55em;
+}
+
 
 /* tracking */
 
@@ -127,10 +155,6 @@ input:-ms-input-placeholder {
   margin: 0;
 }
 
-.timeline .timeline__item:first-child {
-  padding-top: 1.5em;
-}
-
 .timeline .timeline__item:nth-child(2n+2) {
   background-color: #FCFCFC;
 }
@@ -139,6 +163,10 @@ input:-ms-input-placeholder {
   position: relative;
   padding: 1em 1em 1em 0;
   border-left: 1px solid #ccc;
+}
+
+.timeline__item--hidden {
+  display: none;
 }
 
 .timeline__circle {
@@ -154,6 +182,13 @@ input:-ms-input-placeholder {
   -webkit-animation-iteration-count: infinite;
   -webkit-animation-direction: alternate;
   */
+}
+
+.timeline__group {
+  position: absolute;
+  left: -7em;
+  font-size: .9em;
+  top: 1.45em;
 }
 
 .timeline__button {
@@ -197,6 +232,7 @@ input:-ms-input-placeholder {
   color: #53B482;
   font-family: 'Open Sans', sans-serif;
   font-weight: 400;
+  width: 13em;
 }
 
 .timeline__activity,
@@ -215,8 +251,10 @@ input:-ms-input-placeholder {
 
 .timeline__description {
   margin: .5em 0 0 1.6em;
-  font-size: .9em;
+  font-size: .8em;
   line-height: 1.3;
+  max-width: 20em;
+  vertical-align: top;
 }
 
 /* animation */
@@ -233,5 +271,18 @@ input:-ms-input-placeholder {
 
 .ui-autocomplete .ui-state-focus {
   border-color: #fff;
+  color: #53B482;
+}
+
+.ui-datepicker {
+  font-size: .9em;
+}
+
+.ui-datepicker .ui-state-highlight {
+  border-color: #53B482;
+}
+
+.ui-widget-header {
+  border: none;
   color: #53B482;
 }

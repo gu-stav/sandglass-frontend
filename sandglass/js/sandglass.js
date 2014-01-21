@@ -1,159 +1,266 @@
-define(
-  ['lodash',
-   'hogan',
-   'storage',
-   'grain',
-   'template.track'],
+define( ['lodash',
+         'moment',
+         'collection',
+         'grain',
+         'storage',
+         'template.track'],
+        function( _, moment, Collection, Grain, storage, templateTrack ) {
+  var controls,
 
-  function( _, hogan, storage, Grain, TRACK_TEMPLATE ) {
-    var Sandglass = function() {
-      this.options = {
-        render: {
-          targetSelector: 'header',
-          method: 'insertAfter'
-        }
-      };
+  Sandglass = function() {
+    var _this = this;
 
-      this.status = {
-        tracking: false
+    this.id = _.uniqueId( 'sandglass-' );
+    this.element = undefined;
+    this.running = false;
+
+    this.projectCollection =
+      new Collection()
+        .setStorage( storage, 'index-project' );
+
+    this.activityCollection =
+      new Collection()
+        .setStorage( storage, 'index-activity' );
+
+    this.projectCollection.set( storage.get('index-project') );
+    this.activityCollection.set( storage.get('index-activity') );
+
+    this.grainCollection =
+      new Collection()
+        .setStorage( storage, 'grains' )
+        .extend({
+          toJSONValues: ['started',
+                         'ended',
+                         'description',
+                         'activity',
+                         'project'],
+
+          pushAndRender: function( data ) {
+            var _this = this;
+
+            if( _.isArray( data ) ) {
+              _.forOwn( data, function( item ) {
+                _this.push( item );
+              });
+            } else {
+              this.push( data );
+            }
+
+            this.render();
+          },
+
+          group: function() {
+            var data = this.get();
+
+            /* generate year-day format */
+            _.forOwn( data, function( item ) {
+              item.startGrouped = item.started.format( 'MMMM DD' );
+            });
+
+            return _.groupBy( data, 'startGrouped' );
+          },
+
+          /* filter grains by term, start and end */
+          filter: function( term, start, end ) {
+            var filtered = [],
+                excluded = [],
+                uiDateFormat = 'MM/DD/YYYY';
+
+            /* use a date long in the past */
+            if( !start ) {
+              start = moment().subtract('years', 100);
+            } else {
+              start = moment( start ).startOf('day');
+            }
+
+            /* use a date long in the future */
+            if( !end ) {
+              end = moment().add('years', 100);
+            } else {
+              end = moment( end ).endOf('day')
+            }
+
+            /* reset search */
+            if( !term && !start && !end ) {
+              this.render();
+              return;
+            }
+
+            _.forOwn( this.get(), function( grain ) {
+              var grainStart = grain.started.clone(),
+                  grainEnd = grain.ended ? grain.ended.clone() : end,
+                  description = grain.description,
+                  activity = grain.activity,
+                  project = grain.project,
+
+                  show = false;
+
+              /* use day, month and year only */
+              grainStart = grainStart.startOf('day');
+              grainEnd = grainStart.endOf('day');
+
+              if( grainStart.isAfter( start ) || grainStart.isSame( start ) ) {
+                if( grainEnd.isBefore( end ) || grainEnd.isSame( end ) ) {
+                  if( term ) {
+                    /* normalize the search-string for projects */
+                    var projectTerm = term.indexOf( '@' ) === -1 ?
+                                        term :
+                                        term.substr( 1, term.length );
+
+                    /* grain is within the given timerange */
+                    if( description.indexOf( term ) !== -1 ||
+                        activity.indexOf( term ) !== -1 ||
+                        project.indexOf( projectTerm ) !== -1 ) {
+                      show = true;
+                    }
+                  } else {
+                    show = true;
+                  }
+                }
+              }
+
+              if( show ) {
+                filtered.push( grain );
+              } else {
+                excluded.push( grain );
+              }
+            });
+
+            this.filtered = filtered;
+            this.excluded = excluded;
+            this.render();
+
+            return this;
+          },
+
+          render: function() {
+            _.forOwn( this.group(), function( group, groupIndex ) {
+              var grainCount = 0;
+
+              _.forOwn( group, function( grain, grainIndex ) {
+                if( grainCount + 1 < group.length ) {
+                  grain.startGrouped = undefined;
+                }
+
+                grain
+                  .render();
+
+                grain
+                  .show();
+
+                ++grainCount;
+              });
+            });
+
+            _.forOwn( this.excluded, function( grain ) {
+              grain.hide();
+            });
+
+            this.filtered = undefined;
+            this.excluded = undefined;
+            return this;
+          }
+        });
+
+    /* load recent grains */
+    var loadedGrains =
+    _.map( storage.get('grains'), function( grainData ) {
+      var grain = new Grain( grainData );
+
+      grain.setCollection( 'grain', _this.grainCollection );
+      grain.setCollection( 'project', _this.projectCollection );
+      grain.setCollection( 'activity', _this.activityCollection );
+
+      if( !grain.ended ) {
+        grain.start();
       }
 
-      this.data = {};
+      return grain;
+    });
+
+    _this.grainCollection.pushAndRender( loadedGrains );
+
+    this._render();
+  };
+
+  controls = {
+    start: function() {
+      if( this.running ) {
+        return this.end();
+      }
+
+      var activity = this.element.find('input[name="activity"]').val(),
+          project = this.element.find('input[name="project"]').val(),
+          description = this.element.find('input[name="description"]').val(),
+          grain;
+
+      grain = new Grain({
+        activity:     activity,
+        project:      project,
+        description:  description
+      })
+        .setCollection( 'grain', this.grainCollection )
+        .start();
+
+      this.running = true;
+
+      this.grainCollection
+        .pushAndRender( grain );
+
+      this.projectCollection
+        .push( project )
+        .sync( {save: true} );
+
+      this.activityCollection
+        .push( activity )
+        .sync( {save: true} );
+
+      this.grain = grain;
+
+      this.element.find('button[type="submit"]')
+        .text('Stop');
+
+      this.element.find('input')
+        .prop( 'disabled', true );
+
+      return this;
     },
 
-    controls = {};
+    end: function() {
+      if( !this.running || !this.grain ) {
+        return this.start();
+      }
 
-    controls = {
-      init: function() {
-        this._render();
-        this._loadGrains();
-      },
+      this.grain.end();
 
-      /* track with given start/ end */
-      track: function() {
-        if( this.status.tracking ) {
-          this.end();
-        } else {
-          this.start();
-        }
-      },
+      this.element.find('button[type="submit"]')
+        .text('Start');
 
-      /* start new tracking */
-      start: function() {
-        if( this.grain ) {
-          this.grain.end();
-        }
+      this.element.find('input')
+        .prop('disabled', false)
+        .val('')
+        .filter(':first')
+          .focus();
 
-        var _this = this,
-            _grain = new Grain( {
-              activity: this._getElement( 'activity' ).val(),
-              project: this._getElement( 'project' ).val(),
-              description: this._getElement( 'description' ).val()
-            } );
+      this.running = false;
 
-        _grain
-          .start();
+      return this;
+    },
 
-        this.grain = _grain;
-        this.status.tracking = true;
+    _render: function() {
+      var _this = this,
+          $template = $( _.template( templateTrack )() );
 
-        /* disable all input forms & save values */
-        _.forEach( ['activity', 'project', 'description'], function( item ) {
-          var _element = _this._getElement( item );
-
-          _element
-            .prop( 'disabled', true );
-
-          /* add elements to localstorage */
-          if( item !== 'description' ) {
-            storage.push( 'indexed-' + item, _element.val() );
-          }
-        });
-
-        /* update button text */
-        this._getElement( 'submit' ).text( 'Stop' );
-      },
-
-      /* end an tracking time instance */
-      end: function( grain ) {
-        var _this = this;
-
-        this.grain
-          .end();
-
-        this.grain = undefined;
-        this.status.tracking = false;
-
-        _.forEach( ['activity', 'project', 'description'], function( item, index ) {
-          var _element = _this._getElement( item );
-
-          _element
-            .val( '' )
-            .prop( 'disabled', false );
-
-          if( index === 0 ) {
-            _element.focus();
-          }
-        });
-
-        /* update button text */
-        this._getElement( 'submit' ).text( 'Start' );
-      },
-
-      _getElement: function( index ) {
-        var _elements = {
-          activity: 'input[name="activity"]',
-          project: 'input[name="project"]',
-          description: 'input[name="description"]',
-          submit: '.js-track__submit'
-        };
-
-        return this.$element.find( _elements[ index ] );
-      },
-
-      _loadGrains: function() {
-        var _grains = storage.get('grains');
-
-        if( !_grains ) {
-          return;
-        }
-
-        _.forOwn( _grains, function( grainData, index ) {
-          new Grain( grainData )._construct();
-        });
-      },
-
-      _render: function() {
-        var _compiledTemplate,
-            $element;
-
-        _compiledTemplate = hogan.compile( TRACK_TEMPLATE );
-        $element = $( _compiledTemplate.render() )[ this.options.render.method ]( this.options.render.targetSelector );
-
-        this.$element = $element;
-        var _this = this,
-            elements = {
-              form: {
-                elementSelector: '.track',
-                eventType: 'submit'
-              }
-            };
-
-        _.forOwn( elements, function( element, key ) {
-          var _element = document.querySelectorAll( element.elementSelector );
-
-          _element[0].addEventListener( element.eventType, function( e ) {
-            _this.track();
-            e.preventDefault();
-          });
-        });
-
-        _.forEach( ['activity', 'project', 'description'], function( item, index ) {
-          var _element = _this._getElement( item )
-
-          _element.autocomplete({
+      /* apply autocomplete */
+      _.forEach(
+        ['activity',
+         'project'],
+        function( item, index ) {
+          $template
+          .find('input[name="' + item + '"]')
+          .autocomplete({
             source: function( req, res ) {
-              var _result = storage.get( 'indexed-' + item ),
+              var _result = _this[ item + 'Collection' ].get(),
                   _filtered;
 
               _filtered = _.filter( _result, function( item ) {
@@ -163,13 +270,86 @@ define(
               res( _filtered );
             }
           });
+      });
+
+      /* Search bindings */
+      $('.sandglass__search')
+        .on('submit', function( e ) {
+          var term = $(e.target).find('.sandglass__search-term').val(),
+              start = $(e.target).find('input[name="filter_start"]').val(),
+              end = $(e.target).find('input[name="filter_end"]').val();
+
+          _this.grainCollection
+            .filter( term, start, end );
+
+          e.preventDefault();
+          e.stopPropagation();
         });
-      }
-    };
 
-    _.forOwn( controls, function( control, key ) {
-      Sandglass.prototype[ key ] = control;
-    });
+      $('.sandglass__search-term')
+        .autocomplete({
+          source: function( req, res ) {
+            var term = req.term,
+                projectRegexp = /@([a-zA-Z]+)$/gi,
+                projectResults = projectRegexp.exec( term ),
+                newTerms = [];
 
-    return Sandglass;
+            /* autocomplete for projects */
+            if( projectResults ) {
+              _.forOwn( _this.projectCollection.get(), function( project ) {
+
+                if( project.indexOf( projectResults[1] ) !== -1 ) {
+                  newTerms.push( { label: project,
+                                   value: '@' + project } );
+                }
+              });
+
+              res( newTerms );
+            }
+
+            return false;
+          }
+        })
+
+      $('.sandglass__search-start')
+        .val( moment().subtract('month', 1).format('MM/DD/YYYY') )
+        .datepicker({
+          showAnim: '',
+          maxDate: moment().format('MM/DD/YYYY'),
+          onSelect: function( date ) {
+            $('.sandglass__search-end').datepicker( 'option', 'minDate', date );
+          }
+        });
+
+      $('.sandglass__search-end')
+        .val( moment().format('MM/DD/YYYY') )
+        .datepicker({
+          showAnim: '',
+          maxDate: moment().format('MM/DD/YYYY'),
+          onSelect: function( date ) {
+            $('.sandglass__search-start').datepicker( 'option', 'maxDate', date );
+          }
+        });
+
+      /* submit handler */
+      $template
+        .on('submit', function( e ) {
+          _this.start();
+          e.preventDefault();
+          e.stopPropagation();
+        });
+
+      this.element =
+        $template
+          .insertAfter('header');
+
+      return this;
+    }
+  };
+
+  _.forOwn( controls, function( control, key ) {
+    Sandglass.prototype[ key ] = control;
+  });
+
+  return Sandglass;
 });

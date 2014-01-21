@@ -9,6 +9,7 @@
       'hogan':                  BOWER_PATH + 'hogan/web/builds/2.0.0/hogan-2.0.0.amd',
       'jquery':                 BOWER_PATH + 'jquery/jquery',
       'jquery.ui.autocomplete': BOWER_PATH + 'jquery-ui/ui/jquery.ui.autocomplete',
+      'jquery.ui.datepicker'  : BOWER_PATH + 'jquery-ui/ui/jquery.ui.datepicker',
       'jquery.ui.core':         BOWER_PATH + 'jquery-ui/ui/jquery.ui.core',
       'jquery.ui.widget':       BOWER_PATH + 'jquery-ui/ui/jquery.ui.widget',
       'jquery.ui.position':     BOWER_PATH + 'jquery-ui/ui/jquery.ui.position',
@@ -19,7 +20,8 @@
 
     shim: {
         'sandglass': [ 'jquery',
-                       'jquery.ui.autocomplete' ],
+                       'jquery.ui.autocomplete',
+                       'jquery.ui.datepicker' ],
 
         'jquery': {
           exports: 'jQuery'
@@ -29,7 +31,11 @@
                                     'jquery.ui.core',
                                     'jquery.ui.widget',
                                     'jquery.ui.position',
-                                    'jquery.ui.menu' ]
+                                    'jquery.ui.menu' ],
+
+        'jquery.ui.datepicker': [ 'jquery',
+                                  'jquery.ui.position',
+                                  'jquery.ui.core' ]
     }
   });
 
@@ -38,7 +44,7 @@
       'sandglass' ],
     function( $, Sandglass ) {
       $( document ).ready(function() {
-        new Sandglass().init();
+        new Sandglass();
       });
   });
 })();

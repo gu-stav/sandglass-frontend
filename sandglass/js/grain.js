@@ -1,89 +1,148 @@
-define(['lodash',
-        'moment',
-        'hogan',
-        'storage',
-        'template.grain'],
-  function( _, moment, hogan, storage, GRAIN_TEMPLATE ) {
-  var Grain = function( data ) {
+define( ['lodash',
+         'moment',
+         'template.grain'],
+        function( _, moment, templateGrain ) {
 
-    this.options = {
-      l10n: '',
-      timelineSelector: '.timeline'
-    }
+  var controls,
 
-    this.data = {};
-
-    this.states = {
-      track: false
+  Grain = function( data ) {
+    var parseDescription = function( text ) {
+      return text.replace( /(#[a-zA-Z\-_]+)/gi, '<a href="$1">$1</a>' );
     };
 
-    if( data ) {
-      _.assign( this.data, data );
+    if( !data ) {
+      data = {};
     }
-  },
-      controls = {};
+
+    this.clientId = _.uniqueId( 'grain-' );
+    this.serverId = data.id || undefined;
+    this.description = parseDescription( data.description ) || '';
+    this.activity = data.activity || '';
+    this.project = data.project || '';
+    this.changed = false;
+    this.element = undefined;
+    this.running = false;
+    this.visible = true;
+    this.collections = {};
+
+    this.started = data.started ? moment( data.started ) : undefined;
+    this.ended = data.ended ? moment( data.ended ) : undefined;
+
+    this._timer = undefined;
+  };
 
   controls = {
     start: function() {
-      var _this = this;
-
-      if( !this.__start ) {
-        this.__start = moment();
+      if( this.running ) {
+        return this;
       }
 
-      if( !this.data.start ) {
-        this.data.start = this.__start.format();
+      if( !this.started ) {
+        this.started = moment();
       }
 
-      this.states.track = true;
-
-      storage.push( 'grains', this.data, 'start' );
-
-      this.render();
-
-      this.setUpdateInterval();
-
-      return this;
-    },
-
-    restart: function() {
-      var _this = this;
-
-      this.__end = undefined;
-      this.data.end = undefined;
-
-      this.states.track = true;
-
-      storage.push( 'grains', this.data, 'start' );
-
-      this.setUpdateInterval();
-
-      this.render( 'duration' );
+      this.running = true;
+      this.getCollection('grain').sync( {save: true,
+                                         reRender: true} );
 
       return this;
     },
 
     end: function() {
-      this.__end = moment();
-      this.data.end = this.__end.format();
+      if( !this.running ) {
+        return this;
+      }
 
-      storage.push( 'grains', this.data, 'start' );
-
-      this.states.track = false;
-
-      this.render();
-
-      this.setUpdateInterval( 'clear' );
+      this.ended = moment();
+      this.running = false;
+      this._setUpdateInterval( 'clear' );
+      this.getCollection('grain').sync( {save: true,
+                                         reRender: true} );
 
       return this;
     },
 
-    update: function() {
-      storage.push( 'grains', this.data, 'start' );
-      this.render();
+    restart: function() {
+      if( this.running ) {
+        return this;
+      }
+
+      this.ended = undefined;
+      this.running = true;
+      this.getCollection('grain').sync( {save: true,
+                                         reRender: true} );
+
+      return this;
     },
 
-    setUpdateInterval: function( intervalType ) {
+    delete: function() {
+      this.element.remove();
+      this.getCollection('grain')
+        .deleteByIndex({ clientId: this.clientId})
+        .sync( {save: true, reRender: true} );
+    },
+
+    show: function() {
+      if( this.visible ) {
+        return this;
+      }
+
+      this.visible = true;
+      this.element.removeClass('timeline__item--hidden');
+    },
+
+    hide: function() {
+      if( !this.visible ) {
+        return;
+      }
+
+      /* never hide running grains */
+      if( this.running ) {
+        return this;
+      }
+
+      this.visible = false;
+
+      this.element.addClass('timeline__item--hidden');
+    },
+
+    setCollection: function( index, collection ) {
+      this.collections[ index ] = collection;
+      return this;
+    },
+
+    getCollection: function( index ) {
+      return this.collections[ index ] || undefined;
+    },
+
+    /* update the values of the template */
+    update: function( part ) {
+      var _this = this,
+          $updatedTemplate = this._getRenderedTemplate(),
+          toUpdate = part || ['activity',
+                              'project',
+                              'duration',
+                              'description',
+                              'startGrouped'];
+
+      if( this.running ) {
+        this.element.addClass('timeline__item--track');
+      } else {
+        this.element.removeClass('timeline__item--track');
+      }
+
+      _.forOwn( toUpdate,
+                function( element ) {
+                  var newText = $updatedTemplate.find(".timeline__" + element).text();
+                  _this.element
+                    .find(".timeline__" + element)
+                    .text( newText );
+                })
+
+      return this;
+    },
+
+    _setUpdateInterval: function( intervalType ) {
       if( !intervalType ) {
         intervalType = 'second';
       }
@@ -111,172 +170,143 @@ define(['lodash',
 
       clearInterval( this.timer );
 
-      if( intervalType === 'clear' ) {
-        return this;
-      }
-
       this.timer = setInterval(function() {
-        _this.render( 'duration' );
+        _this.render( ['duration', 'group'] );
       }, _time);
 
       return this;
     },
 
-    getDifference: function() {
-      return parseInt( moment( this.__end || moment() ).diff( this.__start, 'seconds' ) );
-    },
+    _getRenderedTemplate: function() {
+      var formatDifference = function( seconds ) {
+            if( seconds < 60 ) {
+              if( seconds === 1 ) {
+                return '1sec';
+              }
 
-    formatDifference: function( seconds ) {
-      if( seconds < 60 ) {
-        this.setUpdateInterval();
+              return seconds + 'sec';
+            }
 
-        if( seconds === 1 ) {
-          return '1sec';
-        }
+            if( seconds < 3600 ) {
+              if( seconds < 120 ) {
+                return '1min';
+              }
 
-        return seconds + 'sec';
-      }
+              return ( parseInt( seconds / 60 ) ) + 'min';
+            }
 
-      if( seconds < 3600 ) {
-        this.setUpdateInterval( 'minute' );
+            if( seconds < 3600 * 60 * 24 ) {
+              if( seconds === 3600 * 60 ) {
+                return '1h'
+              }
 
-        if( seconds < 120 ) {
-          return '1min';
-        }
+              var _minutes = parseInt( ( seconds - ( parseInt( seconds / 3600 ) * 3600 ) ) / 60 );
 
-        return ( parseInt( seconds / 60 ) ) + 'min';
-      }
+              return ( parseInt( seconds / 3600 ) ) + 'h, ' + _minutes + 'min';
+            }
+          },
 
-      if( seconds < 3600 * 60 * 24 ) {
-        this.setUpdateInterval( 'minute' );
+          extraData = {
+            duration: formatDifference( this.duration ),
+            group: this.startGrouped || ''
+          },
 
-        if( seconds === 3600 * 60 ) {
-          return '1h'
-        }
+          templateData = _.pick( _.assign( _.clone(this), extraData ),
+                                 ['activity',
+                                  'project',
+                                  'duration',
+                                  'description',
+                                  'startGrouped'] ),
+          $template = $( _.template( templateGrain, templateData ) );
 
-        var _minutes = parseInt( ( seconds - ( parseInt( seconds / 3600 ) * 3600 ) ) / 60 );
-
-        return ( parseInt( seconds / 3600 ) ) + 'h, ' + _minutes + 'min';
-      }
-    },
-
-    delete: function() {
-      storage.remove( 'grains', this.data, 'start' );
-      this.$element.remove();
-
-      return this;
-    },
-
-    _construct: function() {
-      this.__start = moment( this.data.start );
-
-      if( this.data.end ) {
-        this.__end = moment( this.data.end );
-        this.render();
-      } else {
-        this.start();
-      }
-    },
-
-    _getElement: function( index ) {
-      if( !this.$element ) {
-        return
-      }
-
-      return this.$element.find( '.timeline__' + index );
+      return $template;
     },
 
     render: function( part ) {
-      var _this = this,
-          _compiledTemplate,
-          _data = {},
-          $element,
-          inlineEditing = function() {
-            /* apply inline editing functions */
-            _.forOwn( ['description', 'project', 'activity'], function( item ) {
-              var _element = _this._getElement( item );
+      var _this = this;
 
-              /* autocomplete for description makes no sense */
-              if( item !== 'description' ) {
-                _element
-                  .autocomplete({
-                    source: function( req, res ) {
-                        var _result = storage.get( 'indexed-' + item ),
-                            _filtered;
+      this.duration = parseInt( moment( this.ended || moment() )
+                                .diff( this.started, 'seconds' ) );
 
-                        _filtered = _.filter( _result, function( _item ) {
-                          return _item.indexOf( req.term ) !== -1;
-                        });
+      /* element is already rendered - only update the element */
+      if( this.element ) {
+        return this.update( part );
+      }
 
-                        res( _filtered );
-                      }
+      var $template = this._getRenderedTemplate();
+
+      /* apply inline editing functions */
+      _.forOwn( ['description', 'project', 'activity'], function( item ) {
+        var _element = $template.find( '.timeline__' + item );
+
+        /* autocomplete for description makes no sense */
+        if( item !== 'description' ) {
+          _element
+
+            .autocomplete({
+              source: function( req, res ) {
+                var _term = req.term,
+                    _results = [],
+                    _collection = _this.getCollection( item );
+
+                if( _collection ) {
+                  _.forOwn( _collection.get(), function( item ) {
+                    if( item.indexOf( _term ) !== -1 ) {
+                      _results.push( item );
+                    }
                   });
+
+                  res( _results );
+                }
+
+                return false;
               }
-
-              _element[0]
-                /* prevent linebreaks */
-                .addEventListener('keypress', function( e ){
-                  var _forbidden = [13],
-                      _code = e.charCode;
-
-                  if( _forbidden.indexOf( _code ) !== -1 ) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                  }
-                });
-
-              _element[0]
-                .addEventListener( 'blur', function( e ) {
-                  var _innerText = e.target.innerText;
-
-                  _this.data[ item ] = _innerText;
-
-                  if( item !== 'description' ) {
-                    storage.push( 'indexed-' + item, _innerText );
-                  }
-
-                  _this.update();
-                });
             });
+        }
 
-            _.forOwn( ['end', 'restart', 'delete'], function( item ) {
-              _this._getElement( 'item-' + item )[0]
-                .addEventListener( 'click', function( e ) {
-                  _this[ item ]();
-                  e.preventDefault();
-                });
-            });
-      },
+        _element[0]
+          /* prevent linebreaks */
+          .addEventListener('keypress', function( e ){
+            var _forbidden = [13],
+                _code = e.charCode;
 
-      _data = this.data,
-      _$renderedTemplate,
-      create;
+            if( _forbidden.indexOf( _code ) !== -1 ) {
+              e.preventDefault();
+              e.stopPropagation();
+            }
+          });
 
-      _data.duration = this.formatDifference( this.getDifference() );
-      _$renderedTemplate = $( hogan.compile( GRAIN_TEMPLATE ).render( _data ) );
+        _element[0]
+          .addEventListener( 'blur', function( e ) {
+            _this[ item ] = e.target.innerText;
+            _this.getCollection( 'grain' ).sync( {save: true});
+          });
+      });
 
+      _.forOwn( ['end', 'restart', 'delete'], function( item ) {
+        $template.find( '.timeline__item-' + item )[0]
+          .addEventListener( 'click', function( e ) {
+            _this[ item ]();
+            e.preventDefault();
+          });
+      });
 
-      if( !this.$element ) {
-        create = true;
+      if( !this.running ) {
+        $template.removeClass('timeline__item--track');
       }
 
-      if( create ) {
-        this.$element = _$renderedTemplate;
+      this.element =
+        $template.prependTo( '.timeline' );
+
+      if( !this.running ) {
+        this._setUpdateInterval('clear');
+        return;
       }
 
-      if( this.states.track ) {
-        this.$element.addClass('timeline__item--track');
+      if( this.duration < 60 ) {
+        this._setUpdateInterval( 'second' );
       } else {
-        this.$element.removeClass('timeline__item--track');
-      }
-
-      if( create ) {
-        /* create new element  */
-        this.$element.prependTo( this.options.timelineSelector );
-        inlineEditing();
-      } else {
-        this._getElement( part )
-          .text( _$renderedTemplate.find('.timeline__' + part ).text() );
+        this._setUpdateInterval( 'minute' );
       }
     }
   };
