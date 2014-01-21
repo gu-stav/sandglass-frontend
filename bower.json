@@ -2,7 +2,6 @@
   "name": "sandglass",
   "version": "0.0.1",
   "dependencies": {
-    "hogan": "~3.0.0",
     "jquery": "~2.0.3",
     "jquery-ui": "~1.10.3",
     "lodash": "~2.4.1",
