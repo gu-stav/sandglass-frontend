@@ -123,7 +123,9 @@ define( ['lodash',
                               'project',
                               'duration',
                               'description',
-                              'startGrouped'];
+                              'startGrouped',
+                              'parsedStarted',
+                              'parsedEnded'];
 
       if( this.running ) {
         this.element.addClass('timeline__item--track');
@@ -208,7 +210,9 @@ define( ['lodash',
 
           extraData = {
             duration: formatDifference( this.duration ),
-            group: this.startGrouped || ''
+            group: this.startGrouped || '',
+            parsedStarted: this.started.format('HH:mm:ss'),
+            parsedEnded: this.ended ? this.ended.format('HH:mm:ss') : ''
           },
 
           templateData = _.pick( _.assign( _.clone(this), extraData ),
@@ -216,7 +220,9 @@ define( ['lodash',
                                   'project',
                                   'duration',
                                   'description',
-                                  'startGrouped'] ),
+                                  'startGrouped',
+                                  'parsedStarted',
+                                  'parsedEnded'] ),
           $template = $( _.template( templateGrain, templateData ) );
 
       return $template;
@@ -283,6 +289,22 @@ define( ['lodash',
           });
       });
 
+      _.forOwn( ['parsedStarted', 'parsedEnded'], function( item ) {
+        $template.find('.timeline__' + item)
+          .on('blur', function( e ) {
+            var _value = $(e.target).text(),
+                _index = item === 'parsedStarted' ? 'started' : 'ended';
+
+            _this[ _index ]
+              .hours( _value.substr(0,2) )
+              .minutes( _value.substr(3,2) )
+              .seconds( _value.substr(6,2) );
+
+            _this.getCollection( 'grain' ).sync( {reRender: true,
+                                                  save: true});
+          });
+      })
+
       _.forOwn( ['end', 'restart', 'delete'], function( item ) {
         $template.find( '.timeline__item-' + item )[0]
           .addEventListener( 'click', function( e ) {
@@ -296,7 +318,7 @@ define( ['lodash',
       }
 
       this.element =
-        $template.prependTo( '.timeline' );
+        $template.appendTo( '.timeline' );
 
       if( !this.running ) {
         this._setUpdateInterval('clear');

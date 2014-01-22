@@ -58,7 +58,6 @@ define( ['lodash'],
         }
 
         if( data.save && this.storage && this.storageIndex ) {
-          console.log('save')
           this.storage.set( this.storageIndex, this.toJSON() )
         }
 

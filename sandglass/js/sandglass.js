@@ -51,14 +51,24 @@ define( ['lodash',
           },
 
           group: function() {
-            var data = this.get();
+            var data = this.get(),
+                _newData = {},
+                _grouped;
 
             /* generate year-day format */
             _.forOwn( data, function( item ) {
               item.startGrouped = item.started.format( 'MMMM DD' );
             });
 
-            return _.groupBy( data, 'startGrouped' );
+            /* group all by day */
+            _grouped = _.groupBy( data, 'startGrouped' );
+
+            /* sort items per day */
+            _.forOwn( _grouped, function( group, index ) {
+              _newData[ index ] = _.sortBy( group, 'started' );
+            });
+
+            return _newData;
           },
 
           /* filter grains by term, start and end */
@@ -139,7 +149,7 @@ define( ['lodash',
               var grainCount = 0;
 
               _.forOwn( group, function( grain, grainIndex ) {
-                if( grainCount + 1 < group.length ) {
+                if( grainCount !== 0 ) {
                   grain.startGrouped = undefined;
                 }
 
@@ -231,8 +241,6 @@ define( ['lodash',
 
       this.element.find('input')
         .prop( 'disabled', true );
-
-      this.getCollection('grain').sync( {reRender: true});
 
       return this;
     },

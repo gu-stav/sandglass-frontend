@@ -7,5 +7,5 @@ define(function(){
          '<div><i class="timeline__circle fa fa-dot-circle-o"></i>' +
          '<strong class="timeline__duration">${ duration }</strong>' +
          '<h2 class="timeline__headline"><span class="timeline__activity" contenteditable>${ activity }</span> @ <span contenteditable class="timeline__project">${ project }</span></h2><p class="timeline__description" contenteditable>${ description }</p>' +
-         '</div></li>'
+         '</div><small><span class="timeline__parsedStarted" contenteditable>${ parsedStarted }</span> - <span class="timeline__parsedEnded" contenteditable>${ parsedEnded }</span></small></li>'
 });
