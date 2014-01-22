@@ -274,6 +274,24 @@ input:-ms-input-placeholder {
   color: #53B482;
 }
 
+.ui-autocomplete .ui-menu-item > a.ui-corner-all {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.ui-autocomplete .autocomplete__delete {
+  display: inline-block;
+  float: right;
+  vertical-align: middle;
+  color: #D15151;
+}
+
+.ui-autocomplete .autocomplete__delete.ui-state-focus {
+  background: #D15151;
+  color: #fff;
+}
+
+
 .ui-datepicker {
   font-size: .9em;
 }

@@ -286,6 +286,11 @@ define( ['lodash',
         function( item, index ) {
           $template
           .find('input[name="' + item + '"]')
+          .on('close', function( e, origEvent ) {
+            if( $(origEvent.currentTarget).is('ul') ) {
+              $(origEvent.currentTarget).hide();
+            }
+          })
           .autocomplete({
             source: function( req, res ) {
               var _result = _this.getCollection( item ).get(),
@@ -296,8 +301,47 @@ define( ['lodash',
               });
 
               res( _filtered );
+            },
+            minLength: 0,
+            select: function( e, ui ) {
+              var $toElement = $(e.toElement);
+
+              if( $toElement.hasClass('autocomplete__delete') ||
+                  $toElement.parent().hasClass('autocomplete__delete') ) {
+                _this.getCollection( item ).pop( ui.item.label );
+                $toElement.closest('li').remove();
+                return false;
+              } else {
+                $(e.target).trigger('close', e);
+              }
             }
           });
+
+          var uiData = $template.find('input[name="' + item + '"]').data('ui-autocomplete');
+
+          /* overwrite original close method */
+          uiData.close = function( e ) {};
+
+          uiData
+            ._renderItem = function( ul, item ) {
+              var $li = $('<li/>').addClass('ui-menu-item')
+                                  .data('item.autocomplete', item),
+                  $a = $('<a/>').attr({
+                                  tabindex: -1,
+                                  id: 'ui-id'
+                                })
+                                .addClass('ui-corner-all')
+                                .text( item.label ),
+                  $delete = $('<a/>')
+                              .addClass('autocomplete__delete')
+                              .html('<i class="fa fa-trash-o"></i>');
+
+              $a.appendTo( $li );
+              $delete.appendTo( $li );
+              $li.appendTo( ul );
+
+              return $li;
+            };
       });
 
       /* Search bindings */

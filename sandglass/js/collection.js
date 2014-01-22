@@ -49,6 +49,12 @@ define( ['lodash'],
         return this;
       },
 
+      pop: function( data ) {
+        this
+          .set( _.without( this.get(), data ) )
+          .sync( { save: true });
+      },
+
       sync: function( data ) {
         if( !data ) {
           data = {
