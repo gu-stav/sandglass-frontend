@@ -8,24 +8,25 @@ define( ['lodash',
   var controls,
 
   Sandglass = function() {
-    var _this = this;
+    var _this = this,
+        _grainCollection,
+        _projectCollection,
+        _activityCollection;
 
     this.id = _.uniqueId( 'sandglass-' );
     this.element = undefined;
     this.running = false;
+    this.collections = {};
 
-    this.projectCollection =
+    _projectCollection =
       new Collection()
         .setStorage( storage, 'index-project' );
 
-    this.activityCollection =
+    _activityCollection =
       new Collection()
         .setStorage( storage, 'index-activity' );
 
-    this.projectCollection.set( storage.get('index-project') );
-    this.activityCollection.set( storage.get('index-activity') );
-
-    this.grainCollection =
+    _grainCollection =
       new Collection()
         .setStorage( storage, 'grains' )
         .extend({
@@ -167,9 +168,9 @@ define( ['lodash',
     _.map( storage.get('grains'), function( grainData ) {
       var grain = new Grain( grainData );
 
-      grain.setCollection( 'grain', _this.grainCollection );
-      grain.setCollection( 'project', _this.projectCollection );
-      grain.setCollection( 'activity', _this.activityCollection );
+      grain.setCollection( 'grain', _grainCollection );
+      grain.setCollection( 'project', _projectCollection );
+      grain.setCollection( 'activity', _activityCollection );
 
       if( !grain.ended ) {
         grain.start();
@@ -178,7 +179,15 @@ define( ['lodash',
       return grain;
     });
 
-    _this.grainCollection.pushAndRender( loadedGrains );
+    this.setCollection( 'project', _projectCollection );
+    this.setCollection( 'activity', _activityCollection );
+    this.setCollection( 'grain', _grainCollection );
+
+    this.getCollection('project').set( storage.get('index-project') );
+    this.getCollection('activity').set( storage.get('index-activity') );
+
+    _this.getCollection( 'grain' )
+      .pushAndRender( loadedGrains );
 
     this._render();
   };
@@ -199,19 +208,19 @@ define( ['lodash',
         project:      project,
         description:  description
       })
-        .setCollection( 'grain', this.grainCollection )
+        .setCollection( 'grain', this.getCollection('grain') )
         .start();
 
       this.running = true;
 
-      this.grainCollection
+      this.getCollection('grain')
         .pushAndRender( grain );
 
-      this.projectCollection
+      this.getCollection('project')
         .push( project )
         .sync( {save: true} );
 
-      this.activityCollection
+      this.getCollection('activity')
         .push( activity )
         .sync( {save: true} );
 
@@ -222,6 +231,8 @@ define( ['lodash',
 
       this.element.find('input')
         .prop( 'disabled', true );
+
+      this.getCollection('grain').sync( {reRender: true});
 
       return this;
     },
@@ -247,6 +258,15 @@ define( ['lodash',
       return this;
     },
 
+    setCollection: function( index, collection ) {
+      this.collections[ index ] = collection;
+      return this;
+    },
+
+    getCollection: function( index ) {
+      return this.collections[ index ] || undefined;
+    },
+
     _render: function() {
       var _this = this,
           $template = $( _.template( templateTrack )() );
@@ -260,7 +280,7 @@ define( ['lodash',
           .find('input[name="' + item + '"]')
           .autocomplete({
             source: function( req, res ) {
-              var _result = _this[ item + 'Collection' ].get(),
+              var _result = _this.getCollection( item ).get(),
                   _filtered;
 
               _filtered = _.filter( _result, function( item ) {
@@ -279,7 +299,7 @@ define( ['lodash',
               start = $(e.target).find('input[name="filter_start"]').val(),
               end = $(e.target).find('input[name="filter_end"]').val();
 
-          _this.grainCollection
+          _this.getCollection('grain')
             .filter( term, start, end );
 
           e.preventDefault();
@@ -296,7 +316,7 @@ define( ['lodash',
 
             /* autocomplete for projects */
             if( projectResults ) {
-              _.forOwn( _this.projectCollection.get(), function( project ) {
+              _.forOwn( _this.getCollection('project').get(), function( project ) {
 
                 if( project.indexOf( projectResults[1] ) !== -1 ) {
                   newTerms.push( { label: project,
