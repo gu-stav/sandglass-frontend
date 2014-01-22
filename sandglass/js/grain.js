@@ -248,7 +248,6 @@ define( ['lodash',
         /* autocomplete for description makes no sense */
         if( item !== 'description' ) {
           _element
-
             .autocomplete({
               source: function( req, res ) {
                 var _term = req.term,
@@ -285,7 +284,8 @@ define( ['lodash',
         _element[0]
           .addEventListener( 'blur', function( e ) {
             _this[ item ] = e.target.innerText;
-            _this.getCollection( 'grain' ).sync( {save: true});
+            _this.getCollection( item ).push( e.target.innerText );
+            _this.getCollection( 'grain' ).sync( {save: true} );
           });
       });
 
