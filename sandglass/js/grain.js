@@ -44,7 +44,7 @@ define( ['lodash',
       this.running = true;
       this.getCollection('grain')
         .sync( { save: true,
-                 reRender: true} );
+                 reRender: true } );
 
       return this;
     },
@@ -57,8 +57,9 @@ define( ['lodash',
       this.ended = moment();
       this.running = false;
       this._setUpdateInterval( 'clear' );
-      this.getCollection('grain').sync( {save: true,
-                                         reRender: true} );
+      this.getCollection('grain')
+        .sync( { save: true,
+                 reRender: true } );
 
       return this;
     },

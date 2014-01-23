@@ -184,15 +184,12 @@ define( ['lodash',
     /* load recent grains */
     var loadedGrains =
     _.map( storage.get('grains'), function( grainData ) {
+
       var grain = new Grain( grainData );
 
       grain.setCollection( 'grain', _grainCollection );
       grain.setCollection( 'project', _projectCollection );
       grain.setCollection( 'activity', _activityCollection );
-
-      if( !grain.ended ) {
-        grain.start();
-      }
 
       return grain;
     });
@@ -204,8 +201,14 @@ define( ['lodash',
     this.getCollection('project').set( storage.get('index-project') );
     this.getCollection('activity').set( storage.get('index-activity') );
 
-    _this.getCollection( 'grain' )
+    this.getCollection( 'grain' )
       .pushAndRender( loadedGrains );
+
+    _.forOwn( this.getCollection( 'grain' ).get(), function( grain ) {
+      if( !grain.ended ) {
+        grain.start();
+      }
+    });
 
     this._render();
   };
