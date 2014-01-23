@@ -236,6 +236,10 @@ define( ['lodash',
           $wrapper = $('.timeline'),
           $target = $wrapper.children('ul[data-group="' + search + '"]');
 
+      if( this.element.parent('ul[data-group="' + search + '"]').length !== 0 ) {
+        return this;
+      }
+
       if( !$target.length ) {
         $target =
           $('<ul/>')
@@ -303,8 +307,18 @@ define( ['lodash',
 
         _element[0]
           .addEventListener( 'blur', function( e ) {
-            _this[ item ] = e.target.innerText;
-            _this.getCollection( item ).push( e.target.innerText );
+            var newText = e.target.innerText;
+
+            /* Nothing has changed */
+            if( _this[ item ] === newText ) {
+              return this;
+            }
+            _this[ item ] = newText;
+
+            if( item !== 'description' ) {
+              _this.getCollection( item ).push( newText );
+            }
+
             _this.getCollection( 'grain' ).sync( {save: true} );
           });
       });
