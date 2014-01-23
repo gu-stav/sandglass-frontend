@@ -165,7 +165,7 @@ input:-ms-input-placeholder {
   border-left: 1px solid #ccc;
 }
 
-.timeline__item--track {
+.timeline .timeline__item.timeline__item--track {
   background-color: #F8E8C0;
 }
 
