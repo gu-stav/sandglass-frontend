@@ -149,16 +149,13 @@ define( ['lodash',
 
     _setUpdateInterval: function( intervalType ) {
       if( !intervalType ) {
-        intervalType = 'second';
+        intervalType = 'minute';
       }
 
       var _this = this,
           _time;
 
       switch( intervalType ) {
-        case 'second':
-          _time = 1000;
-        break;
         case 'minute':
           _time = ( 1000 / 3 ) * 60;
         break;
@@ -184,14 +181,6 @@ define( ['lodash',
 
     _getRenderedTemplate: function() {
       var formatDifference = function( seconds ) {
-            if( seconds < 60 ) {
-              if( seconds === 1 ) {
-                return '1sec';
-              }
-
-              return seconds + 'sec';
-            }
-
             if( seconds < 3600 ) {
               if( seconds < 120 ) {
                 return '1min';
@@ -214,8 +203,8 @@ define( ['lodash',
           extraData = {
             duration: formatDifference( this.duration ),
             group: this.startGrouped || '',
-            parsedStarted: this.started.format('HH:mm:ss'),
-            parsedEnded: this.ended ? this.ended.format('HH:mm:ss') : ''
+            parsedStarted: this.started.format('HH:mm'),
+            parsedEnded: this.ended ? this.ended.format('HH:mm') : ''
           },
 
           templateData = _.pick( _.assign( _.clone(this), extraData ),
@@ -331,8 +320,7 @@ define( ['lodash',
 
             _this[ _index ]
               .hours( _value.substr(0,2) )
-              .minutes( _value.substr(3,2) )
-              .seconds( _value.substr(6,2) );
+              .minutes( _value.substr(3,2) );
 
             _this.getCollection( 'grain' ).sync( {reRender: true,
                                                   save: true});
@@ -359,11 +347,7 @@ define( ['lodash',
         return this;
       }
 
-      if( this.duration < 60 ) {
-        this._setUpdateInterval( 'second' );
-      } else {
-        this._setUpdateInterval( 'minute' );
-      }
+      this._setUpdateInterval( 'minute' );
 
       return this;
     }
