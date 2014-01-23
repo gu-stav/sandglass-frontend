@@ -48,16 +48,21 @@ define( ['lodash',
             }
 
             this.render();
+            return this;
           },
 
           group: function() {
+            /* TODO: reduce number of loops here and enhance performance */
+
             var data = this.get(),
                 _newData = {},
-                _grouped;
+                _grouped,
+                _sorted = {};
 
             /* generate year-day format */
             _.forOwn( data, function( item ) {
-              item.startGrouped = item.started.format( 'MMMM DD' );
+              item.startGrouped = item.started.format( 'YYYY MM DD' );
+              item.startGroupedParsed = item.started.format('MMMM DD');
             });
 
             /* group all by day */
@@ -68,7 +73,12 @@ define( ['lodash',
               _newData[ index ] = _.sortBy( group, 'started' );
             });
 
-            return _newData;
+            /* sort days */
+            _.forOwn( _.keys( _newData ).sort().reverse(), function( item ) {
+              _sorted[ item ] = _newData[ item ];
+            });
+
+            return _sorted;
           },
 
           /* filter grains by term, start and end */
@@ -150,13 +160,11 @@ define( ['lodash',
 
               _.forOwn( group, function( grain, grainIndex ) {
                 if( grainCount !== 0 ) {
-                  grain.startGrouped = undefined;
+                  grain.startGroupedParsed = undefined;
                 }
 
                 grain
-                  .render();
-
-                grain
+                  .render()
                   .show();
 
                 ++grainCount;
@@ -224,7 +232,8 @@ define( ['lodash',
       this.running = true;
 
       this.getCollection('grain')
-        .pushAndRender( grain );
+        .pushAndRender( grain )
+        .render();
 
       this.getCollection('project')
         .push( project )

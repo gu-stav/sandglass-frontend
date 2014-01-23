@@ -149,7 +149,7 @@ input:-ms-input-placeholder {
 }
 
 /* timeline */
-.timeline {
+.timeline__group-ul {
   list-style: none;
   padding: 0;
   margin: 0;

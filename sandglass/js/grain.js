@@ -42,8 +42,9 @@ define( ['lodash',
       }
 
       this.running = true;
-      this.getCollection('grain').sync( {save: true,
-                                         reRender: true} );
+      this.getCollection('grain')
+        .sync( { save: true,
+                 reRender: true} );
 
       return this;
     },
@@ -133,6 +134,8 @@ define( ['lodash',
         this.element.removeClass('timeline__item--track');
       }
 
+      this._updatePosition();
+
       _.forOwn( toUpdate,
                 function( element ) {
                   var newText = $updatedTemplate.find(".timeline__" + element).text();
@@ -220,12 +223,29 @@ define( ['lodash',
                                   'project',
                                   'duration',
                                   'description',
-                                  'startGrouped',
+                                  'startGroupedParsed',
                                   'parsedStarted',
                                   'parsedEnded'] ),
           $template = $( _.template( templateGrain, templateData ) );
 
       return $template;
+    },
+
+    _updatePosition: function() {
+      var search = this.startGrouped.replace(' ', '-'),
+          $wrapper = $('.timeline'),
+          $target = $wrapper.children('ul[data-group="' + search + '"]');
+
+      if( !$target.length ) {
+        $target =
+          $('<ul/>')
+            .addClass('timeline__group-ul')
+            .attr('data-group', search )
+            .appendTo( $wrapper );
+      }
+
+      this.element
+        .appendTo( $target );
     },
 
     render: function( part ) {
@@ -317,12 +337,12 @@ define( ['lodash',
         $template.removeClass('timeline__item--track');
       }
 
-      this.element =
-        $template.appendTo( '.timeline' );
+      this.element = $template;
+      this._updatePosition();
 
       if( !this.running ) {
         this._setUpdateInterval('clear');
-        return;
+        return this;
       }
 
       if( this.duration < 60 ) {
@@ -330,6 +350,8 @@ define( ['lodash',
       } else {
         this._setUpdateInterval( 'minute' );
       }
+
+      return this;
     }
   };
 
