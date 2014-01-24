@@ -163,7 +163,15 @@ define( ['lodash',
               var grainCount = 0;
 
               _.forOwn( group, function( grain, grainIndex ) {
-                data = _.assign( data, { index: grainIndex } );
+                data = _.assign( data, { index: grainIndex,
+                                         conflictWithBefore: false } );
+
+                /* indicator, if there is a potential conflict */
+                if( grainIndex > 0 ) {
+                  if( grain.started.isBefore( group[ grainIndex - 1 ].ended ) ) {
+                    data.conflictWithBefore = true;
+                  }
+                }
 
                 grain
                   .render( undefined, data )

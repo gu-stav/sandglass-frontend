@@ -119,7 +119,7 @@ define( ['lodash',
     /* update the values of the template */
     update: function( part, data ) {
       var _this = this,
-          $updatedTemplate = this._getRenderedTemplate(),
+          $updatedTemplate = this._getRenderedTemplate( data ),
           toUpdate = part || ['activity',
                               'project',
                               'duration',
@@ -132,6 +132,12 @@ define( ['lodash',
         this.element.addClass('timeline__item--track');
       } else {
         this.element.removeClass('timeline__item--track');
+      }
+
+     if( !data.conflictWithBefore ) {
+        this.element.removeClass('timeline__item--conflictWithPrevious');
+      } else {
+        this.element.addClass('timeline__item--conflictWithPrevious');
       }
 
       this._updatePosition( data );
@@ -179,7 +185,11 @@ define( ['lodash',
       return this;
     },
 
-    _getRenderedTemplate: function() {
+    _getRenderedTemplate: function( data ) {
+      if( !data ) {
+        data = {};
+      }
+
       var formatDifference = function( seconds ) {
             if( seconds < 3600 ) {
               if( seconds < 120 ) {
@@ -204,7 +214,8 @@ define( ['lodash',
             duration: formatDifference( this.duration ),
             group: this.startGrouped || '',
             parsedStarted: this.started ? this.started.format('HH:mm') : '',
-            parsedEnded: this.ended ? this.ended.format('HH:mm') : ''
+            parsedEnded: this.ended ? this.ended.format('HH:mm') : '',
+            conflictWithBefore: data.conflictWithBefore
           },
 
           templateData = _.pick( _.assign( _.clone(this), extraData ),
@@ -214,7 +225,8 @@ define( ['lodash',
                                   'description',
                                   'startGroupedParsed',
                                   'parsedStarted',
-                                  'parsedEnded'] ),
+                                  'parsedEnded',
+                                  'conflictWithBefore'] ),
           $template = $( _.template( templateGrain, templateData ) );
 
       return $template;
@@ -270,7 +282,7 @@ define( ['lodash',
         return this.update( part, data );
       }
 
-      var $template = this._getRenderedTemplate();
+      var $template = this._getRenderedTemplate( data );
 
       /* apply inline editing functions */
       _.forOwn( ['description', 'project', 'activity'], function( item ) {

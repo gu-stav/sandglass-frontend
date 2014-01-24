@@ -195,7 +195,7 @@ input:-ms-input-placeholder {
 }
 
 .timeline .timeline__item.timeline__item--track {
-  background-color: #F8E8C0;
+  background-color: #FFF3D5;
 }
 
 .timeline__item--hidden {
@@ -250,6 +250,10 @@ input:-ms-input-placeholder {
 
 .timeline__item--track .timeline__item-restart {
   display: none;
+}
+
+.timeline .timeline__item.timeline__item--conflictWithPrevious {
+  background-color: #FFA6A6;
 }
 
 .timeline__duration {
