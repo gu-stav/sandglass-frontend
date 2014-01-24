@@ -74,10 +74,22 @@ input:-ms-input-placeholder {
   border-color: #ccc;
 }
 
+.button--transparent {
+  background-color: transparent;
+  border: none;
+  color: #333;
+}
+
 .button--white:hover,
 .button--white:focus {
   border-color: #ccc;
   background-color: #fff;
+}
+
+.button--transparent:hover,
+.button--transparent:focus {
+  color: #53B482;
+  background-color: transparent;
 }
 
 /* app */
@@ -96,13 +108,25 @@ input:-ms-input-placeholder {
   float: right;
   margin: .2em 0 0 0;
   position: relative;
-  width: 30em;
-  font-size: .9em;
+  width: 25em;
+  font-size: .9em;}
+
+
+.sandglass__search-startend {
+  display: inline-block;
+  vertical-align: middle;
+  border: 1px solid #ccc;
+  padding: .07em .5em;
+  background-color: #fff;
 }
 
 .sandglass__search-start,
 .sandglass__search-end {
-  width: 7em;
+  width: 5.4em;
+  border: none;
+  background-color: transparent;
+  padding-left: 0;
+  padding-right: 0;
 }
 
 .sandglass__headline {

@@ -326,6 +326,9 @@ define( ['lodash',
               } else {
                 $(e.target).trigger('close', e);
               }
+
+              $(e.target).parent().next().children('input')
+                .focus();
             }
           });
 
@@ -358,7 +361,7 @@ define( ['lodash',
 
       /* Search bindings */
       $('.sandglass__search')
-        .on('submit', function( e ) {
+        .on('search submit', function( e ) {
           var term = $(e.target).find('.sandglass__search-term').val(),
               start = $(e.target).find('input[name="filter_start"]').val(),
               end = $(e.target).find('input[name="filter_end"]').val();
@@ -393,7 +396,7 @@ define( ['lodash',
 
             return false;
           }
-        })
+        });
 
       $('.sandglass__search-start')
         .val( moment().subtract('month', 1).format('MM/DD/YYYY') )
@@ -402,6 +405,7 @@ define( ['lodash',
           maxDate: moment().format('MM/DD/YYYY'),
           onSelect: function( date ) {
             $('.sandglass__search-end').datepicker( 'option', 'minDate', date );
+            $('.sandglass__search').trigger('search');
           }
         });
 
@@ -412,13 +416,19 @@ define( ['lodash',
           maxDate: moment().format('MM/DD/YYYY'),
           onSelect: function( date ) {
             $('.sandglass__search-start').datepicker( 'option', 'maxDate', date );
+            $('.sandglass__search').trigger('search');
           }
         });
 
       /* submit handler */
       $template
         .on('submit', function( e ) {
+          if( !_this.started ) {
+            $('.js-track__submit').focus();
+          }
+
           _this.start();
+
           e.preventDefault();
           e.stopPropagation();
         });
