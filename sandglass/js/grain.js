@@ -1,7 +1,10 @@
 define( ['lodash',
          'moment',
-         'template.grain'],
-        function( _, moment, templateGrain ) {
+         'template.grain',
+         'defaults'],
+        function( _, moment, templateGrain, defaults ) {
+
+  moment.lang( defaults.language );
 
   var controls,
 
@@ -213,8 +216,8 @@ define( ['lodash',
           extraData = {
             duration: formatDifference( this.duration ),
             group: this.startGrouped || '',
-            parsedStarted: this.started ? this.started.format('HH:mm') : '',
-            parsedEnded: this.ended ? this.ended.format('HH:mm') : '',
+            parsedStarted: this.started ? this.started.format( defaults.timeFormat ) : '',
+            parsedEnded: this.ended ? this.ended.format( defaults.timeFormat ) : '',
             conflictWithBefore: data.conflictWithBefore
           },
 

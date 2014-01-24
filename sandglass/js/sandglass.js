@@ -3,8 +3,12 @@ define( ['lodash',
          'collection',
          'grain',
          'storage',
-         'template.track'],
-        function( _, moment, Collection, Grain, storage, templateTrack ) {
+         'template.track',
+         'defaults'],
+        function( _, moment, Collection, Grain, storage, templateTrack, defaults ) {
+
+  moment.lang( defaults.language );
+
   var controls,
 
   Sandglass = function() {
@@ -85,7 +89,7 @@ define( ['lodash',
           filter: function( term, start, end ) {
             var filtered = [],
                 excluded = [],
-                uiDateFormat = 'MM/DD/YYYY';
+                uiDateFormat = defaults.dateFormat;
 
             /* use a date long in the past */
             if( !start ) {
@@ -412,11 +416,17 @@ define( ['lodash',
           }
         });
 
+      /* jqueryUI Dateformat mapping */
+      var dateFormatJqueryUiMapping = {
+        'MM/DD/YYYY': 'mm/dd/yy'
+      };
+
       $('.sandglass__search-start')
-        .val( moment().subtract('month', 1).format('MM/DD/YYYY') )
+        .val( moment().subtract('month', 1).format( defaults.dateFormat ) )
         .datepicker({
           showAnim: '',
-          maxDate: moment().format('MM/DD/YYYY'),
+          dateFormat: dateFormatJqueryUiMapping[ defaults.dateFormat ],
+          maxDate: moment().format( defaults.dateFormat ),
           onSelect: function( date ) {
             $('.sandglass__search-end').datepicker( 'option', 'minDate', date );
             $('.sandglass__search').trigger('search');
@@ -424,10 +434,11 @@ define( ['lodash',
         });
 
       $('.sandglass__search-end')
-        .val( moment().format('MM/DD/YYYY') )
+        .val( moment().format( defaults.dateFormat ) )
         .datepicker({
           showAnim: '',
-          maxDate: moment().format('MM/DD/YYYY'),
+          dateFormat: dateFormatJqueryUiMapping[ defaults.dateFormat ],
+          maxDate: moment().format( defaults.dateFormat ),
           onSelect: function( date ) {
             $('.sandglass__search-start').datepicker( 'option', 'maxDate', date );
             $('.sandglass__search').trigger('search');
