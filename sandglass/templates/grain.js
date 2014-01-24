@@ -1,5 +1,6 @@
 define(function(){
   return '<li class="timeline__item timeline__item--track <% if( conflictWithBefore ) { %> timeline__item--conflictWithPrevious <% } %>">' +
+         '<i class="fa fa-bolt timeline__item--conflictWithPrevious-icon"></i>' +
          '<strong class="timeline__group">${ startGroupedParsed }</strong>' +
          '<button class="timeline__item-delete timeline__button button button--link"><i class="fa fa-trash-o"></i></button>' +
          '<button class="timeline__item-end timeline__button button button--link"><i class="fa fa-times-circle"></i></button>' +

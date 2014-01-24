@@ -253,7 +253,20 @@ input:-ms-input-placeholder {
 }
 
 .timeline .timeline__item.timeline__item--conflictWithPrevious {
-  background-color: #FFA6A6;
+  border-top: 1px solid #E47A3E;
+}
+
+.timeline .timeline__item.timeline__item--conflictWithPrevious .timeline__item--conflictWithPrevious-icon {
+  display: inherit;
+}
+
+.timeline__item--conflictWithPrevious-icon {
+  display: none;
+  position: absolute;
+  top: -.4em;
+  left: 1em;
+  font-size: 1.4em;
+  color: #E47A3E;
 }
 
 .timeline__duration {
