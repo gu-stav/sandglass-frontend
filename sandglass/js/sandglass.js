@@ -61,8 +61,8 @@ define( ['lodash',
 
             /* generate year-day format */
             _.forOwn( data, function( item ) {
-              item.startGrouped = item.started.format( 'YYYY MM DD' );
-              item.startGroupedParsed = item.started.format('MMMM DD');
+              item.startGrouped = item.started ? item.started.format( 'YYYY MM DD' ) : '';
+              item.startGroupedParsed = item.started ? item.started.format('MMMM DD') : '';
             });
 
             /* group all by day */
@@ -154,17 +154,19 @@ define( ['lodash',
             return this;
           },
 
-          render: function() {
+          render: function( data ) {
+            if( !data ) {
+              data = {};
+            }
+
             _.forOwn( this.group(), function( group, groupIndex ) {
               var grainCount = 0;
 
               _.forOwn( group, function( grain, grainIndex ) {
-                if( grainCount !== 0 ) {
-                  grain.startGroupedParsed = undefined;
-                }
+                data = _.assign( data, { index: grainIndex } );
 
                 grain
-                  .render()
+                  .render( undefined, data )
                   .show();
 
                 ++grainCount;
@@ -228,15 +230,19 @@ define( ['lodash',
         activity:     activity,
         project:      project,
         description:  description
-      })
+      });
+
+      this.getCollection('grain')
+        .push( grain );
+
+      grain
         .setCollection( 'grain', this.getCollection('grain') )
         .start();
 
       this.running = true;
 
       this.getCollection('grain')
-        .pushAndRender( grain )
-        .render();
+        .render( {start: true} );
 
       this.getCollection('project')
         .push( project )

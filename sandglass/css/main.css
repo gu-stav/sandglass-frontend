@@ -183,6 +183,11 @@ input:-ms-input-placeholder {
   background-color: #FCFCFC;
 }
 
+.timeline > ul > .timeline__item:first-child .timeline__group {
+  display: inherit;
+}
+
+
 .timeline__item {
   position: relative;
   padding: 1em 1em 1em 0;
@@ -217,6 +222,7 @@ input:-ms-input-placeholder {
   left: -7em;
   font-size: .9em;
   top: 1.45em;
+  display: none;
 }
 
 .timeline__button {

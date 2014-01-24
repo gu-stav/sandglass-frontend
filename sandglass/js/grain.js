@@ -43,8 +43,7 @@ define( ['lodash',
 
       this.running = true;
       this.getCollection('grain')
-        .sync( { save: true,
-                 reRender: true } );
+        .sync( { save: true } );
 
       return this;
     },
@@ -118,7 +117,7 @@ define( ['lodash',
     },
 
     /* update the values of the template */
-    update: function( part ) {
+    update: function( part, data ) {
       var _this = this,
           $updatedTemplate = this._getRenderedTemplate(),
           toUpdate = part || ['activity',
@@ -135,7 +134,7 @@ define( ['lodash',
         this.element.removeClass('timeline__item--track');
       }
 
-      this._updatePosition();
+      this._updatePosition( data );
 
       _.forOwn( toUpdate,
                 function( element ) {
@@ -204,7 +203,7 @@ define( ['lodash',
           extraData = {
             duration: formatDifference( this.duration ),
             group: this.startGrouped || '',
-            parsedStarted: this.started.format('HH:mm'),
+            parsedStarted: this.started ? this.started.format('HH:mm') : '',
             parsedEnded: this.ended ? this.ended.format('HH:mm') : ''
           },
 
@@ -221,12 +220,30 @@ define( ['lodash',
       return $template;
     },
 
-    _updatePosition: function() {
+    _updatePosition: function( data ) {
       var search = this.startGrouped.replace(' ', '-'),
           $wrapper = $('.timeline'),
-          $target = $wrapper.children('ul[data-group="' + search + '"]');
+          $target = $wrapper.children('ul[data-group="' + search + '"]'),
+          elementIndex;
 
       if( this.element.parent('ul[data-group="' + search + '"]').length !== 0 ) {
+        elementIndex = this.element.index();
+
+        if( data && data.index ) {
+          if( data.index != elementIndex ) {
+            var $orientation =
+              this.element.parent('ul[data-group="' + search + '"]')
+                .children()
+                .eq( data.index );
+
+            if( data.index == 0 ) {
+              this.element.insertBefore( $orientation );
+            } else {
+              this.element.insertAfter( $orientation );
+            }
+          }
+        }
+
         return this;
       }
 
@@ -235,14 +252,14 @@ define( ['lodash',
           $('<ul/>')
             .addClass('timeline__group-ul')
             .attr('data-group', search )
-            .appendTo( $wrapper );
+            [ data && data.start ? 'prependTo' : 'appendTo' ]( $wrapper );
       }
 
       this.element
         .appendTo( $target );
     },
 
-    render: function( part ) {
+    render: function( part, data ) {
       var _this = this;
 
       this.duration = parseInt( moment( this.ended || moment() )
@@ -250,7 +267,7 @@ define( ['lodash',
 
       /* element is already rendered - only update the element */
       if( this.element ) {
-        return this.update( part );
+        return this.update( part, data );
       }
 
       var $template = this._getRenderedTemplate();
@@ -323,8 +340,8 @@ define( ['lodash',
               .hours( _value.substr(0,2) )
               .minutes( _value.substr(3,2) );
 
-            _this.getCollection( 'grain' ).sync( {reRender: true,
-                                                  save: true});
+            _this.getCollection( 'grain' ).sync( { reRender: true,
+                                                   save: true });
           });
       })
 
@@ -341,7 +358,7 @@ define( ['lodash',
       }
 
       this.element = $template;
-      this._updatePosition();
+      this._updatePosition( data );
 
       if( !this.running ) {
         this._setUpdateInterval('clear');
