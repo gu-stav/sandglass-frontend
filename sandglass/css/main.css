@@ -288,7 +288,9 @@ input:-ms-input-placeholder {
 
 .timeline__activity,
 .timeline__project,
-.timeline__description {
+.timeline__description,
+.timeline__parsedEnded,
+.timeline__parsedStarted {
   outline: none;
   padding: .2em;
   display: inline-block;
