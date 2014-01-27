@@ -14,9 +14,12 @@
       'jquery.ui.widget':       BOWER_PATH + 'jquery-ui/ui/jquery.ui.widget',
       'jquery.ui.position':     BOWER_PATH + 'jquery-ui/ui/jquery.ui.position',
       'jquery.ui.menu':         BOWER_PATH + 'jquery-ui/ui/jquery.ui.menu',
-      'template.track':        '../templates/track',
-      'template.grain':        '../templates/grain',
-      'defaults':              'defaults',
+      'template.track':         '../templates/track',
+      'template.grain':         '../templates/grain',
+      'defaults':               'defaults',
+      'raphael':                BOWER_PATH + 'raphael/raphael',
+      'graphael':               BOWER_PATH + 'g.raphael/g.raphael',
+      'graphaelbar':            BOWER_PATH + 'g.raphael/g.bar'
     },
 
     shim: {
@@ -26,6 +29,16 @@
 
         'jquery': {
           exports: 'jQuery'
+        },
+
+        'raphael': {
+          deps: [ 'jquery' ],
+          exports: 'Raphael'
+        },
+
+        'graphaelbar': {
+          deps: [ 'graphael' ],
+          exports: 'Raphael'
         },
 
         'jquery.ui.autocomplete': [ 'jquery',
@@ -42,8 +55,9 @@
 
   require(
     [ 'jquery',
-      'sandglass' ],
-    function( $, Sandglass ) {
+      'sandglass',
+      'raphael' ],
+    function( $, Sandglass, Raphael ) {
       $( document ).ready(function() {
         new Sandglass();
       });
