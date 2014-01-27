@@ -218,7 +218,7 @@ define( ['lodash',
     this.getCollection( 'grain' )
       .pushAndRender( loadedGrains );
 
-    _.forOwn( this.getCollection( 'grain' ).get(), function( grain ) {
+    _.forOwn( loadedGrains, function( grain ) {
       if( !grain.ended ) {
         grain.start();
       }

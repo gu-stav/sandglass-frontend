@@ -305,9 +305,48 @@ input:-ms-input-placeholder {
 .timeline__description {
   margin: .5em 0 0 1.6em;
   font-size: .8em;
-  line-height: 1.3;
+  line-height: 1.6;
   max-width: 21em;
   vertical-align: top;
+}
+
+.timeline__tag {
+  color: #fff;
+  text-decoration: none;
+  background-color: #53B482;
+  padding: .27em .3em .25em .5em;
+  border-radius: 0 2px 2px 0;
+  position: relative;
+  margin-left: 10px;
+  font-size: .9em;
+}
+
+.timeline__tag:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -9px;
+  width: 0;
+  height: 0;
+  border-color: transparent #53B482 transparent transparent;
+  border-style: solid;
+  border-width: 9px 9px 9px 0;
+}
+
+.timeline__tag:after {
+  content: '';
+  position: absolute;
+  top: 7px;
+  left: -2px;
+  border-radius: 2px;
+  width: 4px;
+  height: 4px;
+  background-color: #fff;
+  box-shadow: -1px -1px 2px rgba(15, 15, 15, 0.31);
+}
+
+.timeline__tag:after {
+
 }
 
 .timeline__parsedStartEnd {

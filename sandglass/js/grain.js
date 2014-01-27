@@ -9,17 +9,12 @@ define( ['lodash',
   var controls,
 
   Grain = function( data ) {
-    var parseDescription = function( text ) {
-      return text.replace( /(#[a-zA-Z\-_]+)/gi, '<a href="$1">$1</a>' );
-    };
-
     if( !data ) {
       data = {};
     }
 
     this.clientId = _.uniqueId( 'grain-' );
     this.serverId = data.id || undefined;
-    this.description = parseDescription( data.description ) || '';
     this.activity = data.activity || '';
     this.project = data.project || '';
     this.changed = false;
@@ -27,6 +22,8 @@ define( ['lodash',
     this.running = false;
     this.visible = true;
     this.collections = {};
+
+    this.setDescription( data.description || '' );
 
     this.started = data.started ? moment( data.started ) : undefined;
     this.ended = data.ended ? moment( data.ended ) : undefined;
@@ -46,7 +43,8 @@ define( ['lodash',
 
       this.running = true;
       this.getCollection('grain')
-        .sync( { save: true } );
+        .sync( { save: true,
+                 reRender: true } );
 
       return this;
     },
@@ -119,6 +117,18 @@ define( ['lodash',
       return this.collections[ index ] || undefined;
     },
 
+    setDescription: function( val ) {
+      this.description = val;
+      this.parsedDescription = val.replace( /(#[a-zA-Z\-_]+)/gi,
+                                            '<a class="timeline__tag" href="$1">$1</a>' );
+
+      return this;
+    },
+
+    getDescription: function( parsed ) {
+      return parsed ? this.parsedDescription : this.description;
+    },
+
     /* update the values of the template */
     update: function( part, data ) {
       var _this = this,
@@ -137,7 +147,7 @@ define( ['lodash',
         this.element.removeClass('timeline__item--track');
       }
 
-     if( !data.conflictWithBefore ) {
+      if( (data && !data.conflictWithBefore) || !data ) {
         this.element.removeClass('timeline__item--conflictWithPrevious');
       } else {
         this.element.addClass('timeline__item--conflictWithPrevious');
@@ -147,7 +157,20 @@ define( ['lodash',
 
       _.forOwn( toUpdate,
                 function( element ) {
+
+                  /* description could contain html (tags), so we update the full
+                     innerHtml here */
+                  if( element === 'description' ) {
+                    var _html = $updatedTemplate.find('.timeline__description').html()
+                    _this.element
+                      .find('.timeline__description')
+                      .html( _html );
+
+                    return this;
+                  }
+
                   var newText = $updatedTemplate.find(".timeline__" + element).text();
+
                   _this.element
                     .find(".timeline__" + element)
                     .text( newText );
@@ -218,14 +241,15 @@ define( ['lodash',
             group: this.startGrouped || '',
             parsedStarted: this.started ? this.started.format( defaults.timeFormat ) : '',
             parsedEnded: this.ended ? this.ended.format( defaults.timeFormat ) : '',
-            conflictWithBefore: data.conflictWithBefore
+            conflictWithBefore: data.conflictWithBefore,
+            parsedDescription: this.getDescription( true )
           },
 
           templateData = _.pick( _.assign( _.clone(this), extraData ),
                                  ['activity',
                                   'project',
                                   'duration',
-                                  'description',
+                                  'parsedDescription',
                                   'startGroupedParsed',
                                   'parsedStarted',
                                   'parsedEnded',
@@ -366,6 +390,12 @@ define( ['lodash',
             _this[ item ]();
             e.preventDefault();
           });
+      });
+
+      /* live binding for contained tags */
+      $template.on('click', 'a.timeline__tag', function( e ) {
+        /* todo: insert into search field (format: #tag #tag2) */
+        e.preventDefault();
       });
 
       if( !this.running ) {
