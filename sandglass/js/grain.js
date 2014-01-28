@@ -132,6 +132,12 @@ define( ['lodash',
 
     /* update the values of the template */
     update: function( part, data ) {
+      if( !this.running ) {
+        this._setUpdateInterval('clear');
+      }
+
+      this._setUpdateInterval( 'minute' );
+
       var _this = this,
           $updatedTemplate = this._getRenderedTemplate( data ),
           toUpdate = part || ['activity',
