@@ -420,12 +420,6 @@ define( ['lodash',
           });
       });
 
-      /* live binding for contained tags */
-      $template.on('click', 'a.timeline__tag', function( e ) {
-        /* todo: insert into search field (format: #tag #tag2) */
-        e.preventDefault();
-      });
-
       if( !this.running ) {
         $template.removeClass('timeline__item--track');
       }
