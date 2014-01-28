@@ -69,10 +69,11 @@ define( ['lodash',
         return this;
       }
 
-      this.ended = undefined;
-      this.running = true;
-      this.getCollection('grain').sync( {save: true,
-                                         reRender: true} );
+      $('.track__activity').val( this.activity );
+      $('.track__project').val( this.project );
+      $('.track__description').val( this.description );
+
+      $('.track').trigger('submit');
 
       return this;
     },
