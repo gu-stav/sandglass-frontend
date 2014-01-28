@@ -119,8 +119,9 @@ define( ['lodash',
 
     setDescription: function( val ) {
       this.description = val;
-      this.parsedDescription = val.replace( /(#[a-zA-Z\-_]+)/gi,
-                                            '<a class="timeline__tag" href="$1">$1</a>' );
+      this.parsedDescription = this.description
+                                .replace( /(#[a-zA-Z\-_]+)/gi,
+                                          '<a class="timeline__tag" href="$1">$1</a>' );
 
       return this;
     },
@@ -161,7 +162,8 @@ define( ['lodash',
                   /* description could contain html (tags), so we update the full
                      innerHtml here */
                   if( element === 'description' ) {
-                    var _html = $updatedTemplate.find('.timeline__description').html()
+                    var _html = $updatedTemplate.find('.timeline__description').html();
+
                     _this.element
                       .find('.timeline__description')
                       .html( _html );
@@ -359,14 +361,34 @@ define( ['lodash',
             if( _this[ item ] === newText ) {
               return this;
             }
-            _this[ item ] = newText;
 
             if( item !== 'description' ) {
+              _this[ item ] = newText;
               _this.getCollection( item ).push( newText );
             }
 
-            _this.getCollection( 'grain' ).sync( {save: true} );
+            /* special logic because of the tags */
+            if( item === 'description' ) {
+              _this.setDescription( newText );
+              _this.render( ['description'] );
+
+              _this.getCollection( 'grain' )
+                .sync( { save: true } );
+
+              return _this;
+            }
+
+            _this.getCollection( 'grain' )
+              .sync( { save: true,
+                       reRender: true } );
           });
+
+          if( item === 'description' ) {
+            _element[0]
+              .addEventListener( 'focus', function( e ) {
+                e.target.innerText = _this.getDescription();
+              });
+          }
       });
 
       _.forOwn( ['parsedStarted', 'parsedEnded'], function( item ) {

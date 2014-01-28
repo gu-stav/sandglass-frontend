@@ -12,7 +12,7 @@ define( ['lodash'],
 
     controls = {
       push: function( data ) {
-        if( !this.data.length ) {
+        if( !this.data || !this.data.length ) {
           this.data = [];
         }
 
