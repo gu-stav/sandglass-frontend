@@ -414,6 +414,9 @@ define( ['lodash',
 
             return false;
           }
+        })
+        .on('blur', function() {
+          $('.sandglass__search').trigger('search');
         });
 
       /* jqueryUI Dateformat mapping */
