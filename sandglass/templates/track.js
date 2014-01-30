@@ -20,6 +20,10 @@ define(function() {
           '</form>' +
 
           '<form class="sandglass__search">' +
+          '<div class="sandglass__sortby"><i class="fa fa-sort sandglass__sortby-icon"></i>' +
+          '<button class="sandglass__sortby-button sandglass__sortby-button--active" value="started">Date</button>' +
+          '<button class="sandglass__sortby-button" value="activity">Activity</button>' +
+          '<button class="sandglass__sortby-button" value="project">Project</button></div>' +
           '<div class="sandglass__search-startend">' +
             '<i class="fa fa-search sandglass__search-icon"></i>' +
             '<input type="text"' +

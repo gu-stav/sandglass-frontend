@@ -55,7 +55,7 @@ define( ['lodash',
             return this;
           },
 
-          group: function() {
+          group: function( orderBy ) {
             /* TODO: reduce number of loops here and enhance performance */
 
             var data = this.get(),
@@ -63,18 +63,31 @@ define( ['lodash',
                 _grouped,
                 _sorted = {};
 
-            /* generate year-day format */
-            _.forOwn( data, function( item ) {
-              item.startGrouped = item.started ? item.started.format( 'YYYY MM DD' ) : '';
-              item.startGroupedParsed = item.started ? item.started.format('MMMM DD') : '';
-            });
+            if( !orderBy ) {
+              orderBy = 'started';
+            }
 
-            /* group all by day */
-            _grouped = _.groupBy( data, 'startGrouped' );
+            if( orderBy === 'started' ) {
+              /* generate year-day format */
+              _.forOwn( data, function( item ) {
+                item.startGrouped = item.started ? item.started.format( 'YYYY MM DD' ) : '';
+                item.startGroupedParsed = item.started ? item.started.format('MMMM DD') : '';
+              });
+
+              /* group all by day */
+              _grouped = _.groupBy( data, 'startGrouped' );
+            } else {
+              _.forOwn( data, function( item ) {
+                item.startGrouped = item[ orderBy ];
+                item.startGroupedParsed = item[ orderBy ];
+              });
+
+              _grouped = _.groupBy( data, orderBy );
+            }
 
             /* sort items per day */
             _.forOwn( _grouped, function( group, index ) {
-              _newData[ index ] = _.sortBy( group, 'started' );
+              _newData[ index ] = _.sortBy( group, orderBy );
             });
 
             /* sort days */
@@ -86,10 +99,14 @@ define( ['lodash',
           },
 
           /* filter grains by term, start and end */
-          filter: function( term, start, end ) {
+          filter: function( term, start, end, orderBy ) {
             var filtered = [],
                 excluded = [],
                 uiDateFormat = defaults.dateFormat;
+
+            if( !orderBy ) {
+              orderBy = 'started';
+            }
 
             /* use a date long in the past */
             if( !start ) {
@@ -107,7 +124,7 @@ define( ['lodash',
 
             /* reset search */
             if( !term && !start && !end ) {
-              this.render();
+              this.render( undefined, orderBy );
               return;
             }
 
@@ -153,17 +170,17 @@ define( ['lodash',
 
             this.filtered = filtered;
             this.excluded = excluded;
-            this.render();
+            this.render( undefined, orderBy );
 
             return this;
           },
 
-          render: function( data ) {
+          render: function( data, orderBy ) {
             if( !data ) {
               data = {};
             }
 
-            _.forOwn( this.group(), function( group, groupIndex ) {
+            _.forOwn( this.group( orderBy ), function( group, groupIndex ) {
               var grainCount = 0;
 
               _.forOwn( group, function( grain, grainIndex ) {
@@ -377,15 +394,28 @@ define( ['lodash',
             };
       });
 
+      $template.find('.sandglass__sortby')
+        .children('button')
+        .on('click', function( e ) {
+          e.preventDefault();
+
+          $(e.target).siblings()
+            .removeClass('sandglass__sortby-button--active');
+
+          $(e.target).addClass('sandglass__sortby-button--active');
+          $template.find('.sandglass__search').trigger('search');
+        });
+
       /* Search bindings */
       $template.find('.sandglass__search')
         .on('search submit', function( e ) {
           var term = $(e.target).find('.sandglass__search-term').val(),
               start = $(e.target).find('input[name="filter_start"]').val(),
-              end = $(e.target).find('input[name="filter_end"]').val();
+              end = $(e.target).find('input[name="filter_end"]').val(),
+              orderBy = $(e.target).find('.sandglass__sortby-button--active').val();
 
           _this.getCollection('grain')
-            .filter( term, start, end );
+            .filter( term, start, end, orderBy );
 
           e.preventDefault();
           e.stopPropagation();

@@ -146,7 +146,7 @@ define( ['lodash',
                               'project',
                               'duration',
                               'description',
-                              'startGrouped',
+                              'group',
                               'parsedStarted',
                               'parsedEnded'];
 
