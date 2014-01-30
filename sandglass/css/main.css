@@ -292,6 +292,8 @@ input:-ms-input-placeholder {
   display: none;
   font-weight: 200;
   font-family: 'Open Sans', sans-serif;
+  max-width: 5.5em;
+  overflow: hidden;
 }
 
 .timeline__button {

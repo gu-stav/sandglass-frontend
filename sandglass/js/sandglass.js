@@ -67,23 +67,18 @@ define( ['lodash',
               orderBy = 'started';
             }
 
-            if( orderBy === 'started' ) {
-              /* generate year-day format */
-              _.forOwn( data, function( item ) {
+            _.forOwn( data, function( item ) {
+              item.startGrouped = item[ orderBy ];
+              item.startGroupedParsed = item[ orderBy ];
+
+              if( orderBy === 'started' ) {
                 item.startGrouped = item.started ? item.started.format( 'YYYY MM DD' ) : '';
                 item.startGroupedParsed = item.started ? item.started.format('MMMM DD') : '';
-              });
+              }
+            });
 
-              /* group all by day */
-              _grouped = _.groupBy( data, 'startGrouped' );
-            } else {
-              _.forOwn( data, function( item ) {
-                item.startGrouped = item[ orderBy ];
-                item.startGroupedParsed = item[ orderBy ];
-              });
-
-              _grouped = _.groupBy( data, orderBy );
-            }
+            /* group all by day */
+            _grouped = _.groupBy( data, 'startGrouped' );
 
             /* sort items per day */
             _.forOwn( _grouped, function( group, index ) {
