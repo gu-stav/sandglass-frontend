@@ -136,9 +136,9 @@ define( ['lodash',
     update: function( part, data ) {
       if( !this.running ) {
         this._setUpdateInterval('clear');
+      } else {
+        this._setUpdateInterval( 'minute' );
       }
-
-      this._setUpdateInterval( 'minute' );
 
       var _this = this,
           $updatedTemplate = this._getRenderedTemplate( data ),
@@ -192,6 +192,14 @@ define( ['lodash',
     _setUpdateInterval: function( intervalType ) {
       if( !intervalType ) {
         intervalType = 'minute';
+      }
+
+      if( intervalType === 'clear' ) {
+        if( this.timer ) {
+          clearInterval( this.timer );
+        }
+
+        return this;
       }
 
       var _this = this,
