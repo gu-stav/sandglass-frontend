@@ -364,6 +364,24 @@ define( ['lodash',
           .addEventListener( 'blur', function( e ) {
             var newText = e.target.innerText;
 
+            /* special logic because of the tags */
+            if( item === 'description' ) {
+              var save = _this.getDescription() !== newText;
+
+              if( save ) {
+                _this.setDescription( newText );
+              }
+
+              _this.render( ['description'] );
+
+              if( save ) {
+                _this.getCollection( 'grain' )
+                  .sync( { save: true } );
+              }
+
+              return _this;
+            }
+
             /* Nothing has changed */
             if( _this[ item ] === newText ) {
               return this;
@@ -372,17 +390,6 @@ define( ['lodash',
             if( item !== 'description' ) {
               _this[ item ] = newText;
               _this.getCollection( item ).push( newText );
-            }
-
-            /* special logic because of the tags */
-            if( item === 'description' ) {
-              _this.setDescription( newText );
-              _this.render( ['description'] );
-
-              _this.getCollection( 'grain' )
-                .sync( { save: true } );
-
-              return _this;
             }
 
             _this.getCollection( 'grain' )
