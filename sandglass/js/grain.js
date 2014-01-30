@@ -44,7 +44,8 @@ define( ['lodash',
       this.running = true;
       this.getCollection('grain')
         .sync( { save: true,
-                 reRender: true } );
+                 reRender: true,
+                 start: true } );
 
       return this;
     },

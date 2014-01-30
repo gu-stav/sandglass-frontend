@@ -69,7 +69,7 @@ define( ['lodash'],
         }
 
         if( data.reRender ) {
-          this.render();
+          this.render( data );
         }
 
         return this;
