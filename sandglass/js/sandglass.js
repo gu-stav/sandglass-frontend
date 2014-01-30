@@ -40,15 +40,15 @@ define( ['lodash',
                          'activity',
                          'project'],
 
-          pushAndRender: function( data ) {
+          pushAndRender: function( data, options ) {
             var _this = this;
 
             if( _.isArray( data ) ) {
               _.forOwn( data, function( item ) {
-                _this.push( item );
+                _this.push( item, options );
               });
             } else {
-              this.push( data );
+              this.push( data, options );
             }
 
             this.render();
@@ -216,7 +216,7 @@ define( ['lodash',
     this.getCollection('activity').set( storage.get('index-activity') );
 
     this.getCollection( 'grain' )
-      .pushAndRender( loadedGrains );
+      .pushAndRender( loadedGrains, {save: false} );
 
     _.forOwn( loadedGrains, function( grain ) {
       if( !grain.ended ) {
