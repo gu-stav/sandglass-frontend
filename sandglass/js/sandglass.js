@@ -378,7 +378,7 @@ define( ['lodash',
       });
 
       /* Search bindings */
-      $('.sandglass__search')
+      $template.find('.sandglass__search')
         .on('search submit', function( e ) {
           var term = $(e.target).find('.sandglass__search-term').val(),
               start = $(e.target).find('input[name="filter_start"]').val(),
@@ -391,60 +391,40 @@ define( ['lodash',
           e.stopPropagation();
         });
 
-      $('.sandglass__search-term')
-        .autocomplete({
-          source: function( req, res ) {
-            var term = req.term,
-                projectRegexp = /@([a-zA-Z]+)$/gi,
-                projectResults = projectRegexp.exec( term ),
-                newTerms = [];
-
-            /* autocomplete for projects */
-            if( projectResults ) {
-              _.forOwn( _this.getCollection('project').get(), function( project ) {
-
-                if( project.indexOf( projectResults[1] ) !== -1 ) {
-                  newTerms.push( { label: project,
-                                   value: '@' + project } );
-                }
-              });
-
-              res( newTerms );
-            }
-
-            return false;
-          }
-        })
-        .on('blur', function() {
-          $('.sandglass__search').trigger('search');
-        });
-
       /* jqueryUI Dateformat mapping */
       var dateFormatJqueryUiMapping = {
         'MM/DD/YYYY': 'mm/dd/yy'
       };
 
-      $('.sandglass__search-start')
+      $template.find('.sandglass__search-start')
         .val( moment().subtract('month', 1).format( defaults.dateFormat ) )
         .datepicker({
           showAnim: '',
           dateFormat: dateFormatJqueryUiMapping[ defaults.dateFormat ],
           maxDate: moment().format( defaults.dateFormat ),
           onSelect: function( date ) {
-            $('.sandglass__search-end').datepicker( 'option', 'minDate', date );
-            $('.sandglass__search').trigger('search');
+            $template
+              .find('.sandglass__search-end')
+                .datepicker( 'option', 'minDate', date );
+            $template
+              .find('.sandglass__search')
+                .trigger('search');
           }
         });
 
-      $('.sandglass__search-end')
+      $template.find('.sandglass__search-end')
         .val( moment().format( defaults.dateFormat ) )
         .datepicker({
           showAnim: '',
           dateFormat: dateFormatJqueryUiMapping[ defaults.dateFormat ],
           maxDate: moment().format( defaults.dateFormat ),
           onSelect: function( date ) {
-            $('.sandglass__search-start').datepicker( 'option', 'maxDate', date );
-            $('.sandglass__search').trigger('search');
+            $template
+              .find('.sandglass__search-start')
+                .datepicker( 'option', 'maxDate', date );
+            $template
+              .find('.sandglass__search')
+                .trigger('search');
           }
         });
 

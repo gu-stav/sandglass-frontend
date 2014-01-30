@@ -1,6 +1,5 @@
 define(function() {
-  return '<form class="track">' +
-            '<label for="track__activity">What are you doing?</label>' +
+  return '<div  class="track"><form>' +
             '<div class="track__row">' +
               '<div class="track__field track__field--inline">' +
                 '<input type="text" name="activity" class="track__activity" id="track__activity" placeholder="Activity" />' +
@@ -18,5 +17,20 @@ define(function() {
                 '<button type="submit" class="track__button js-track__submit">Start</button>' +
               '</div>' +
             '</div>' +
-          '</form>';
+          '</form>' +
+
+          '<form class="sandglass__search">' +
+          '<div class="sandglass__search-startend">' +
+            '<i class="fa fa-search sandglass__search-icon"></i>' +
+            '<input type="text"' +
+                   'class="sandglass__search-start"' +
+                   'name="filter_start"' +
+                   'placeholder="always" />' +
+            '- ' +
+            '<input type="text"' +
+                   'class="sandglass__search-end"' +
+                   'name="filter_end"' +
+                   'placeholder="today" />' +
+          '</div>' +
+        '</form></div>';
 })
