@@ -236,10 +236,12 @@ input:-ms-input-placeholder {
 .timeline__circle {
   background-color: #f7f7f7;
   color: #53B482;
-  font-size: .6em;
+  font-size: .4em;
   position: absolute;
   top: 2.4em;
   left: -6px;
+  border: 1px solid #fff;
+  border-radius: 16px;
 }
 
 .timeline__group {
