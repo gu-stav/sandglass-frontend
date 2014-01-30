@@ -228,7 +228,11 @@ define( ['lodash',
 
       var formatDifference = function( seconds ) {
             if( seconds < 3600 ) {
-              if( seconds < 120 ) {
+              if( seconds < 60 ) {
+                return '<1min';
+              }
+
+              if( seconds == 60 ) {
                 return '1min';
               }
 
