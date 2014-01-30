@@ -95,7 +95,7 @@ input:-ms-input-placeholder {
 /* app */
 .sandglass {
   width: 41em;
-  margin: 1em auto;
+  margin: .5em auto 2em auto;
 }
 
 .sandglass__header {
@@ -203,6 +203,10 @@ input:-ms-input-placeholder {
   margin: 0;
 }
 
+.timeline__group-ul:last-child .timeline__item:last-child {
+  border-radius: 0 0 4px 4px;
+}
+
 .timeline > ul > .timeline__item:first-child .timeline__group {
   display: inherit;
 }
@@ -232,9 +236,9 @@ input:-ms-input-placeholder {
 .timeline__circle {
   background-color: #f7f7f7;
   color: #53B482;
-  font-size: .7em;
+  font-size: .6em;
   position: absolute;
-  top: 1.8em;
+  top: 2.4em;
   left: -6px;
 }
 
