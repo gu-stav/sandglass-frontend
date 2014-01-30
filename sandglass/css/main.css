@@ -240,10 +240,12 @@ input:-ms-input-placeholder {
 
 .timeline__group {
   position: absolute;
-  left: -7em;
-  font-size: .9em;
-  top: 1.45em;
+  left: -6em;
+  font-size: 1em;
+  top: .9em;
   display: none;
+  font-weight: 200;
+  font-family: 'Open Sans', sans-serif;
 }
 
 .timeline__button {
