@@ -17,9 +17,11 @@
       'template.track':         '../templates/track',
       'template.grain':         '../templates/grain',
       'defaults':               'defaults',
-      'raphael':                BOWER_PATH + 'raphael/raphael',
-      'graphael':               BOWER_PATH + 'g.raphael/g.raphael',
-      'graphaelbar':            BOWER_PATH + 'g.raphael/g.bar'
+      'template.track':        '../templates/track',
+      'template.grain':        '../templates/grain',
+      'defaults':              'defaults',
+      'nvd3':                  BOWER_PATH + 'nvd3/nv.d3',
+      'd3':                    BOWER_PATH + 'd3/d3'
     },
 
     shim: {
@@ -31,14 +33,13 @@
           exports: 'jQuery'
         },
 
-        'raphael': {
-          deps: [ 'jquery' ],
-          exports: 'Raphael'
+        'nvd3': {
+          exports: 'nv',
+          deps: [ 'd3' ]
         },
 
-        'graphaelbar': {
-          deps: [ 'graphael' ],
-          exports: 'Raphael'
+        'd3': {
+          exports: 'd3'
         },
 
         'jquery.ui.autocomplete': [ 'jquery',
@@ -55,11 +56,13 @@
 
   require(
     [ 'jquery',
-      'sandglass',
-      'raphael' ],
-    function( $, Sandglass, Raphael ) {
+      'sandglass' ],
+    function( $, Sandglass ) {
       $( document ).ready(function() {
-        new Sandglass();
+        var sandglass = new Sandglass();
+
+        sandglass
+          .init();
       });
   });
 })();

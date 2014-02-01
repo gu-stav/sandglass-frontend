@@ -150,6 +150,12 @@ input:-ms-input-placeholder {
   padding-bottom: .55em;
 }
 
+.sandglass__graph {
+  background-color: #fff;
+  border-left: 3px solid #53B482;
+  border-right: 1px solid #e4e4e4;
+}
+
 
 /* tracking */
 
