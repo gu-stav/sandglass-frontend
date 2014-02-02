@@ -185,12 +185,18 @@ define( ['lodash',
                 data = {};
               }
 
+              if( !orderBy ) {
+                orderBy = 'started';
+              }
+
               var _chartObjects = {};
 
               _.forOwn( this.group( orderBy ), function( group, groupIndex ) {
                 var grainCount = 0;
 
                 _.forOwn( group, function( grain, grainIndex ) {
+                  var _summarized = false;
+
                   data = _.assign( data, { index: grainIndex,
                                            conflictWithBefore: false } );
 
@@ -200,12 +206,25 @@ define( ['lodash',
                     };
                   }
 
-                  _chartObjects[ grain.project ].values
-                    .push({
-                      x: grain.started.format('DD.MM.YYYY'),
-                      y: parseInt( moment( grain.ended || moment() )
-                                  .diff( grain.started, 'milliseconds' ) )
-                    });
+                  /* check if the current day is already created */
+                  _.forEach( _chartObjects[ grain.project ].values, function( val ) {
+                    if( val.x === grain.started.format('DD.MM.YYYY') ) {
+                      val.y = val.y + parseInt( moment( grain.ended || moment() )
+                                        .diff( grain.started, 'minutes' ) );
+                      _summarized = true
+                      return;
+                    }
+                  });
+
+                  /* push, when starting a new day */
+                  if( !_summarized ) {
+                    _chartObjects[ grain.project ].values
+                        .push({
+                          x: grain.started.format('DD.MM.YYYY'),
+                          y: parseInt( moment( grain.ended || moment() )
+                                      .diff( grain.started, 'minutes' ) )
+                        });
+                  }
 
                   /* indicator, if there is a potential conflict */
                   if( grainIndex > 0 ) {

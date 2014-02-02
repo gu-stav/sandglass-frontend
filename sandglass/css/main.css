@@ -529,3 +529,8 @@ input:-ms-input-placeholder {
   border: none;
   color: #53B482;
 }
+
+/* nvd3 overwrites */
+svg text {
+  fill: #333;
+}

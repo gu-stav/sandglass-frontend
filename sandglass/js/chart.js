@@ -11,29 +11,37 @@ define([ 'lodash',
 
       this.svg = d3.select( '#graph svg' );
       this.chart = nv.models.multiBarChart()
-                            .color( [ '#53B482',
-                                      '#A0D1B8',
-                                      '#2F7551' ] )
-                            .showLegend( false )
+                            .color( [ '#333',
+                                      '#e4e4e4' ] )
                             .showControls( false )
                             .showYAxis( false )
-                            .showXAxis( false )
+                            .showXAxis( true )
                             .transitionDuration( 0 )
+                            .stacked( false )
                             .delay( 0 )
-                            .stacked( true )
-                            .reduceXTicks( false )
+                            .reduceXTicks( true )
+                            .groupSpacing( 0.1 )
+                            .tooltip(function(key, x, y, e, graph) {
+                              return '<h3>' + key + '</h3>' +
+                                     '<p>' +  y + ' minutes</p>';
+                            })
                             .margin( {
-                              bottom: 5,
-                              top: 5,
+                              bottom: 30,
+                              top: 25,
                               left: 5,
                               right: 5
                             } );
+
+      /* format the minutes to full integers */
+      this.chart.yAxis
+        .tickFormat(d3.format(',.f'));
     },
 
     controls;
 
     controls = {
       update: function( data ) {
+        console.log(data)
         this.svg
           .datum( data || [] )
           .call( this.chart );
