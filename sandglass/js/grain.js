@@ -44,7 +44,8 @@ define( ['lodash',
       this.running = true;
       this.getCollection('grain')
         .sync( { save: true,
-                 reRender: true } );
+                 reRender: true,
+                 start: true } );
 
       return this;
     },
@@ -69,10 +70,11 @@ define( ['lodash',
         return this;
       }
 
-      this.ended = undefined;
-      this.running = true;
-      this.getCollection('grain').sync( {save: true,
-                                         reRender: true} );
+      $('.track__activity').val( this.activity );
+      $('.track__project').val( this.project );
+      $('.track__description').val( this.description );
+
+      $('.track').trigger('submit');
 
       return this;
     },
@@ -119,8 +121,9 @@ define( ['lodash',
 
     setDescription: function( val ) {
       this.description = val;
-      this.parsedDescription = val.replace( /(#[a-zA-Z\-_]+)/gi,
-                                            '<a class="timeline__tag" href="$1">$1</a>' );
+      this.parsedDescription = this.description
+                                .replace( /(#[a-zA-Z\-_]+)/gi,
+                                          '<a class="timeline__tag" href="$1">$1</a>' );
 
       return this;
     },
@@ -131,13 +134,19 @@ define( ['lodash',
 
     /* update the values of the template */
     update: function( part, data ) {
+      if( !this.running ) {
+        this._setUpdateInterval('clear');
+      } else {
+        this._setUpdateInterval( 'minute' );
+      }
+
       var _this = this,
           $updatedTemplate = this._getRenderedTemplate( data ),
           toUpdate = part || ['activity',
                               'project',
                               'duration',
                               'description',
-                              'startGrouped',
+                              'group',
                               'parsedStarted',
                               'parsedEnded'];
 
@@ -161,7 +170,8 @@ define( ['lodash',
                   /* description could contain html (tags), so we update the full
                      innerHtml here */
                   if( element === 'description' ) {
-                    var _html = $updatedTemplate.find('.timeline__description').html()
+                    var _html = $updatedTemplate.find('.timeline__description').html();
+
                     _this.element
                       .find('.timeline__description')
                       .html( _html );
@@ -182,6 +192,14 @@ define( ['lodash',
     _setUpdateInterval: function( intervalType ) {
       if( !intervalType ) {
         intervalType = 'minute';
+      }
+
+      if( intervalType === 'clear' ) {
+        if( this.timer ) {
+          clearInterval( this.timer );
+        }
+
+        return this;
       }
 
       var _this = this,
@@ -218,7 +236,11 @@ define( ['lodash',
 
       var formatDifference = function( seconds ) {
             if( seconds < 3600 ) {
-              if( seconds < 120 ) {
+              if( seconds < 60 ) {
+                return '<1min';
+              }
+
+              if( seconds == 60 ) {
                 return '1min';
               }
 
@@ -355,18 +377,45 @@ define( ['lodash',
           .addEventListener( 'blur', function( e ) {
             var newText = e.target.innerText;
 
+            /* special logic because of the tags */
+            if( item === 'description' ) {
+              var save = _this.getDescription() !== newText;
+
+              if( save ) {
+                _this.setDescription( newText );
+              }
+
+              _this.render( ['description'] );
+
+              if( save ) {
+                _this.getCollection( 'grain' )
+                  .sync( { save: true } );
+              }
+
+              return _this;
+            }
+
             /* Nothing has changed */
             if( _this[ item ] === newText ) {
               return this;
             }
-            _this[ item ] = newText;
 
             if( item !== 'description' ) {
+              _this[ item ] = newText;
               _this.getCollection( item ).push( newText );
             }
 
-            _this.getCollection( 'grain' ).sync( {save: true} );
+            _this.getCollection( 'grain' )
+              .sync( { save: true,
+                       reRender: true } );
           });
+
+          if( item === 'description' ) {
+            _element[0]
+              .addEventListener( 'focus', function( e ) {
+                e.target.innerText = _this.getDescription();
+              });
+          }
       });
 
       _.forOwn( ['parsedStarted', 'parsedEnded'], function( item ) {
@@ -390,12 +439,6 @@ define( ['lodash',
             _this[ item ]();
             e.preventDefault();
           });
-      });
-
-      /* live binding for contained tags */
-      $template.on('click', 'a.timeline__tag', function( e ) {
-        /* todo: insert into search field (format: #tag #tag2) */
-        e.preventDefault();
       });
 
       if( !this.running ) {

@@ -103,6 +103,12 @@ define( ['lodash',
                   excluded = [],
                   uiDateFormat = defaults.dateFormat;
 
+              /* reset search */
+              if( !term && !start && !end ) {
+                this.render( undefined, orderBy );
+                return;
+              }
+
               if( !orderBy ) {
                 orderBy = 'started';
               }

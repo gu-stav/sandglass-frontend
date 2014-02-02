@@ -11,8 +11,8 @@ define( ['lodash'],
     };
 
     controls = {
-      push: function( data ) {
-        if( !this.data.length ) {
+      push: function( data, options ) {
+        if( !this.data || !this.data.length ) {
           this.data = [];
         }
 
@@ -26,7 +26,7 @@ define( ['lodash'],
         this.data
           .push( data );
 
-        this.sync( { save: true } );
+        this.sync( options || { save: true } );
         return this;
       },
 
@@ -69,7 +69,7 @@ define( ['lodash'],
         }
 
         if( data.reRender ) {
-          this.render();
+          this.render( data );
         }
 
         return this;
