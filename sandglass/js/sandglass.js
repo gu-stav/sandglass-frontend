@@ -4,242 +4,294 @@ define( ['lodash',
          'grain',
          'storage',
          'template.track',
-         'defaults'],
-        function( _, moment, Collection, Grain, storage, templateTrack, defaults ) {
+         'defaults',
+         'chart' ],
+        function( _, moment, Collection, Grain, storage, templateTrack, defaults, Chart ) {
 
   moment.lang( defaults.language );
 
   var controls,
 
-  Sandglass = function() {
-    var _this = this,
-        _grainCollection,
-        _projectCollection,
-        _activityCollection;
-
-    this.id = _.uniqueId( 'sandglass-' );
-    this.element = undefined;
-    this.running = false;
-    this.collections = {};
-
-    _projectCollection =
-      new Collection()
-        .setStorage( storage, 'index-project' );
-
-    _activityCollection =
-      new Collection()
-        .setStorage( storage, 'index-activity' );
-
-    _grainCollection =
-      new Collection()
-        .setStorage( storage, 'grains' )
-        .extend({
-          toJSONValues: ['started',
-                         'ended',
-                         'description',
-                         'activity',
-                         'project'],
-
-          pushAndRender: function( data, options ) {
-            var _this = this;
-
-            if( _.isArray( data ) ) {
-              _.forOwn( data, function( item ) {
-                _this.push( item, options );
-              });
-            } else {
-              this.push( data, options );
-            }
-
-            this.render();
-            return this;
-          },
-
-          group: function( orderBy ) {
-            /* TODO: reduce number of loops here and enhance performance */
-
-            var data = this.get(),
-                _newData = {},
-                _grouped,
-                _sorted = {};
-
-            if( !orderBy ) {
-              orderBy = 'started';
-            }
-
-            _.forOwn( data, function( item ) {
-              item.startGrouped = item[ orderBy ];
-              item.startGroupedParsed = item[ orderBy ];
-
-              if( orderBy === 'started' ) {
-                item.startGrouped = item.started ? item.started.format( 'YYYY MM DD' ) : '';
-                item.startGroupedParsed = item.started ? item.started.format('MMMM DD') : '';
-              }
-            });
-
-            /* group all by day */
-            _grouped = _.groupBy( data, 'startGrouped' );
-
-            /* sort items per day */
-            _.forOwn( _grouped, function( group, index ) {
-              _newData[ index ] = _.sortBy( group, orderBy );
-            });
-
-            /* sort days */
-            _.forOwn( _.keys( _newData ).sort().reverse(), function( item ) {
-              _sorted[ item ] = _newData[ item ];
-            });
-
-            return _sorted;
-          },
-
-          /* filter grains by term, start and end */
-          filter: function( term, start, end, orderBy ) {
-            var filtered = [],
-                excluded = [],
-                uiDateFormat = defaults.dateFormat;
-
-            if( !orderBy ) {
-              orderBy = 'started';
-            }
-
-            /* use a date long in the past */
-            if( !start ) {
-              start = moment().subtract('years', 100);
-            } else {
-              start = moment( start ).startOf('day');
-            }
-
-            /* use a date long in the future */
-            if( !end ) {
-              end = moment().add('years', 100);
-            } else {
-              end = moment( end ).endOf('day')
-            }
-
-            /* reset search */
-            if( !term && !start && !end ) {
-              this.render( undefined, orderBy );
-              return;
-            }
-
-            _.forOwn( this.get(), function( grain ) {
-              var grainStart = grain.started.clone(),
-                  grainEnd = grain.ended ? grain.ended.clone() : end,
-                  description = grain.description,
-                  activity = grain.activity,
-                  project = grain.project,
-
-                  show = false;
-
-              /* use day, month and year only */
-              grainStart = grainStart.startOf('day');
-              grainEnd = grainStart.endOf('day');
-
-              if( grainStart.isAfter( start ) || grainStart.isSame( start ) ) {
-                if( grainEnd.isBefore( end ) || grainEnd.isSame( end ) ) {
-                  if( term ) {
-                    /* normalize the search-string for projects */
-                    var projectTerm = term.indexOf( '@' ) === -1 ?
-                                        term :
-                                        term.substr( 1, term.length );
-
-                    /* grain is within the given timerange */
-                    if( description.indexOf( term ) !== -1 ||
-                        activity.indexOf( term ) !== -1 ||
-                        project.indexOf( projectTerm ) !== -1 ) {
-                      show = true;
-                    }
-                  } else {
-                    show = true;
-                  }
-                }
-              }
-
-              if( show ) {
-                filtered.push( grain );
-              } else {
-                excluded.push( grain );
-              }
-            });
-
-            this.filtered = filtered;
-            this.excluded = excluded;
-            this.render( undefined, orderBy );
-
-            return this;
-          },
-
-          render: function( data, orderBy ) {
-            if( !data ) {
-              data = {};
-            }
-
-            _.forOwn( this.group( orderBy ), function( group, groupIndex ) {
-              var grainCount = 0;
-
-              _.forOwn( group, function( grain, grainIndex ) {
-                data = _.assign( data, { index: grainIndex,
-                                         conflictWithBefore: false } );
-
-                /* indicator, if there is a potential conflict */
-                if( grainIndex > 0 ) {
-                  if( grain.started.isBefore( group[ grainIndex - 1 ].ended ) ) {
-                    data.conflictWithBefore = true;
-                  }
-                }
-
-                grain
-                  .render( undefined, data )
-                  .show();
-
-                ++grainCount;
-              });
-            });
-
-            _.forOwn( this.excluded, function( grain ) {
-              grain.hide();
-            });
-
-            this.filtered = undefined;
-            this.excluded = undefined;
-            return this;
-          }
-        });
-
-    /* load recent grains */
-    var loadedGrains =
-    _.map( storage.get('grains'), function( grainData ) {
-
-      var grain = new Grain( grainData );
-
-      grain.setCollection( 'grain', _grainCollection );
-      grain.setCollection( 'project', _projectCollection );
-      grain.setCollection( 'activity', _activityCollection );
-
-      return grain;
-    });
-
-    this.setCollection( 'project', _projectCollection );
-    this.setCollection( 'activity', _activityCollection );
-    this.setCollection( 'grain', _grainCollection );
-
-    this.getCollection('project').set( storage.get('index-project') );
-    this.getCollection('activity').set( storage.get('index-activity') );
-
-    this.getCollection( 'grain' )
-      .pushAndRender( loadedGrains, {save: false} );
-
-    _.forOwn( loadedGrains, function( grain ) {
-      if( !grain.ended ) {
-        grain.start();
-      }
-    });
-
-    this._render();
-  };
+  Sandglass = function() {};
 
   controls = {
+    init: function(  ) {
+      var _this = this,
+          _grainCollection,
+          _projectCollection,
+          _activityCollection;
+
+      this.id = _.uniqueId( 'sandglass-' );
+      this.element = undefined;
+      this.running = false;
+      this.collections = {};
+
+      _projectCollection =
+        new Collection()
+          .setStorage( storage, 'index-project' );
+
+      _activityCollection =
+        new Collection()
+          .setStorage( storage, 'index-activity' );
+
+      _grainCollection =
+        new Collection()
+          .setStorage( storage, 'grains' )
+          .extend({
+            toJSONValues: ['started',
+                           'ended',
+                           'description',
+                           'activity',
+                           'project'],
+
+            pushAndRender: function( data, options ) {
+              var _this = this;
+
+              if( _.isArray( data ) ) {
+                _.forOwn( data, function( item ) {
+                  _this.push( item, options );
+                });
+              } else {
+                this.push( data, options );
+              }
+
+              this.render();
+              return this;
+            },
+
+            group: function( orderBy ) {
+              /* TODO: reduce number of loops here and enhance performance */
+
+              var data = this.get(),
+                  _newData = {},
+                  _grouped,
+                  _sorted = {};
+
+              if( !orderBy ) {
+                orderBy = 'started';
+              }
+
+              _.forOwn( data, function( item ) {
+                item.startGrouped = item[ orderBy ];
+                item.startGroupedParsed = item[ orderBy ];
+
+                if( orderBy === 'started' ) {
+                  item.startGrouped = item.started ? item.started.format( 'YYYY MM DD' ) : '';
+                  item.startGroupedParsed = item.started ? item.started.format('MMMM DD') : '';
+                }
+              });
+
+              /* group all by day */
+              _grouped = _.groupBy( data, 'startGrouped' );
+
+              /* sort items per day */
+              _.forOwn( _grouped, function( group, index ) {
+                _newData[ index ] = _.sortBy( group, orderBy );
+              });
+
+              /* sort days */
+              _.forOwn( _.keys( _newData ).sort().reverse(), function( item ) {
+                _sorted[ item ] = _newData[ item ];
+              });
+
+              return _sorted;
+            },
+
+            /* filter grains by term, start and end */
+            filter: function( term, start, end, orderBy ) {
+              var filtered = [],
+                  excluded = [],
+                  uiDateFormat = defaults.dateFormat;
+
+              /* reset search */
+              if( !term && !start && !end ) {
+                this.render( undefined, orderBy );
+                return;
+              }
+
+              if( !orderBy ) {
+                orderBy = 'started';
+              }
+
+              /* use a date long in the past */
+              if( !start ) {
+                start = moment().subtract('years', 100);
+              } else {
+                start = moment( start ).startOf('day');
+              }
+
+              /* use a date long in the future */
+              if( !end ) {
+                end = moment().add('years', 100);
+              } else {
+                end = moment( end ).endOf('day')
+              }
+
+              /* reset search */
+              if( !term && !start && !end ) {
+                this.render( undefined, orderBy );
+                return;
+              }
+
+              _.forOwn( this.get(), function( grain ) {
+                var grainStart = grain.started.clone(),
+                    grainEnd = grain.ended ? grain.ended.clone() : end,
+                    description = grain.description,
+                    activity = grain.activity,
+                    project = grain.project,
+
+                    show = false;
+
+                /* use day, month and year only */
+                grainStart = grainStart.startOf('day');
+                grainEnd = grainStart.endOf('day');
+
+                if( grainStart.isAfter( start ) || grainStart.isSame( start ) ) {
+                  if( grainEnd.isBefore( end ) || grainEnd.isSame( end ) ) {
+                    if( term ) {
+                      /* normalize the search-string for projects */
+                      var projectTerm = term.indexOf( '@' ) === -1 ?
+                                          term :
+                                          term.substr( 1, term.length );
+
+                      /* grain is within the given timerange */
+                      if( description.indexOf( term ) !== -1 ||
+                          activity.indexOf( term ) !== -1 ||
+                          project.indexOf( projectTerm ) !== -1 ) {
+                        show = true;
+                      }
+                    } else {
+                      show = true;
+                    }
+                  }
+                }
+
+                if( show ) {
+                  filtered.push( grain );
+                } else {
+                  excluded.push( grain );
+                }
+              });
+
+              this.filtered = filtered;
+              this.excluded = excluded;
+              this.render( undefined, orderBy );
+
+              return this;
+            },
+
+            render: function( data, orderBy ) {
+              if( !data ) {
+                data = {};
+              }
+
+              if( !orderBy ) {
+                orderBy = 'started';
+              }
+
+              var _chartObjects = {};
+
+              _.forOwn( this.group( orderBy ), function( group, groupIndex ) {
+                var grainCount = 0;
+
+                _.forOwn( group, function( grain, grainIndex ) {
+                  var _summarized = false;
+
+                  data = _.assign( data, { index: grainIndex,
+                                           conflictWithBefore: false } );
+
+                  if( !_chartObjects.hasOwnProperty( grain.project ) ) {
+                    _chartObjects[ grain.project ] = {
+                      values: []
+                    };
+                  }
+
+                  /* check if the current day is already created */
+                  _.forEach( _chartObjects[ grain.project ].values, function( val ) {
+                    if( val.x === grain.started.format('DD.MM.YYYY') ) {
+                      val.y = val.y + parseInt( moment( grain.ended || moment() )
+                                        .diff( grain.started, 'minutes' ) );
+                      _summarized = true
+                      return;
+                    }
+                  });
+
+                  /* push, when starting a new day */
+                  if( !_summarized ) {
+                    _chartObjects[ grain.project ].values
+                        .push({
+                          x: grain.started.format('DD.MM.YYYY'),
+                          y: parseInt( moment( grain.ended || moment() )
+                                      .diff( grain.started, 'minutes' ) )
+                        });
+                  }
+
+                  /* indicator, if there is a potential conflict */
+                  if( grainIndex > 0 ) {
+                    if( grain.started.isBefore( group[ grainIndex - 1 ].ended ) ) {
+                      data.conflictWithBefore = true;
+                    }
+                  }
+
+                  grain
+                    .render( undefined, data )
+                    .show();
+
+                  ++grainCount;
+                });
+              });
+
+              /* TODO: hack!!! */
+              if( _this.chart ) {
+                _this.chart.update( _.map( _chartObjects, function( object, index ) {
+                  return { key: index,
+                           values: object.values }
+                }) );
+              }
+
+              _.forOwn( this.excluded, function( grain ) {
+                grain.hide();
+              });
+
+              this.filtered = undefined;
+              this.excluded = undefined;
+              return this;
+            }
+          });
+
+      this._render();
+      this.setChart( new Chart() );
+
+      /* load recent grains */
+      var loadedGrains =
+      _.map( storage.get('grains'), function( grainData ) {
+
+        var grain = new Grain( grainData );
+
+        grain.setCollection( 'grain', _grainCollection );
+        grain.setCollection( 'project', _projectCollection );
+        grain.setCollection( 'activity', _activityCollection );
+
+        return grain;
+      });
+
+      this.setCollection( 'project', _projectCollection );
+      this.setCollection( 'activity', _activityCollection );
+      this.setCollection( 'grain', _grainCollection );
+
+      this.getCollection('project').set( storage.get('index-project') );
+      this.getCollection('activity').set( storage.get('index-activity') );
+
+      this.getCollection( 'grain' )
+        .pushAndRender( loadedGrains, {save: false} );
+
+      _.forOwn( loadedGrains, function( grain ) {
+        if( !grain.ended ) {
+          grain.start();
+        }
+      });
+    },
+
     start: function() {
       if( this.running ) {
         return this.end();
@@ -306,6 +358,10 @@ define( ['lodash',
       this.running = false;
 
       return this;
+    },
+
+    setChart: function( chart ) {
+      this.chart = chart;
     },
 
     setCollection: function( index, collection ) {

@@ -14,9 +14,14 @@
       'jquery.ui.widget':       BOWER_PATH + 'jquery-ui/ui/jquery.ui.widget',
       'jquery.ui.position':     BOWER_PATH + 'jquery-ui/ui/jquery.ui.position',
       'jquery.ui.menu':         BOWER_PATH + 'jquery-ui/ui/jquery.ui.menu',
+      'template.track':         '../templates/track',
+      'template.grain':         '../templates/grain',
+      'defaults':               'defaults',
       'template.track':        '../templates/track',
       'template.grain':        '../templates/grain',
       'defaults':              'defaults',
+      'nvd3':                  BOWER_PATH + 'nvd3/nv.d3',
+      'd3':                    BOWER_PATH + 'd3/d3'
     },
 
     shim: {
@@ -26,6 +31,15 @@
 
         'jquery': {
           exports: 'jQuery'
+        },
+
+        'nvd3': {
+          exports: 'nv',
+          deps: [ 'd3' ]
+        },
+
+        'd3': {
+          exports: 'd3'
         },
 
         'jquery.ui.autocomplete': [ 'jquery',
@@ -45,7 +59,10 @@
       'sandglass' ],
     function( $, Sandglass ) {
       $( document ).ready(function() {
-        new Sandglass();
+        var sandglass = new Sandglass();
+
+        sandglass
+          .init();
       });
   });
 })();
