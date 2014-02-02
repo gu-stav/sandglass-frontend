@@ -14,9 +14,6 @@
       'jquery.ui.widget':       BOWER_PATH + 'jquery-ui/ui/jquery.ui.widget',
       'jquery.ui.position':     BOWER_PATH + 'jquery-ui/ui/jquery.ui.position',
       'jquery.ui.menu':         BOWER_PATH + 'jquery-ui/ui/jquery.ui.menu',
-      'template.track':         '../templates/track',
-      'template.grain':         '../templates/grain',
-      'defaults':               'defaults',
       'template.track':        '../templates/track',
       'template.grain':        '../templates/grain',
       'defaults':              'defaults',
@@ -33,13 +30,13 @@
           exports: 'jQuery'
         },
 
+        'd3': {
+          exports: 'd3'
+        },
+
         'nvd3': {
           exports: 'nv',
           deps: [ 'd3' ]
-        },
-
-        'd3': {
-          exports: 'd3'
         },
 
         'jquery.ui.autocomplete': [ 'jquery',
@@ -57,7 +54,7 @@
   require(
     [ 'jquery',
       'sandglass' ],
-    function( $, Sandglass ) {
+    function( $, Sandglass, d3 ) {
       $( document ).ready(function() {
         var sandglass = new Sandglass();
 

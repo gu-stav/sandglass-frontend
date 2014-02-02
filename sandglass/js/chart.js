@@ -41,7 +41,6 @@ define([ 'lodash',
 
     controls = {
       update: function( data ) {
-        console.log(data)
         this.svg
           .datum( data || [] )
           .call( this.chart );
