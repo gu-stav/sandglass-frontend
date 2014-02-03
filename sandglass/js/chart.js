@@ -18,7 +18,7 @@ define([ 'lodash',
                             .stacked( true )
                             .delay( 0 )
                             .reduceXTicks( true )
-                            .groupSpacing( 0.1 )
+                            .groupSpacing( 0.01 )
                             .tooltip(function(key, x, y, e, graph) {
                               return '<h3>' + key + '</h3>' +
                                      '<p>' +  y + ' minutes</p>';
