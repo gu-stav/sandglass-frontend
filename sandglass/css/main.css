@@ -296,7 +296,7 @@ input:-ms-input-placeholder {
   overflow: hidden;
   color: #fff;
   background-color: #53B482;
-  width: 100.6%;
+  width: 100.5%;
   padding: .3em 0 .3em 1.3em;
   font-family: 'Open Sans', sans-serif;
   font-weight: 400;
@@ -313,9 +313,20 @@ input:-ms-input-placeholder {
 
 .timeline__button {
   position: absolute;
-  top: .1em;
+  top: 0;
   font-size: .8em;
   display: none;
+  height: 100%;
+  padding: 0 .8em;
+  color: #fff;
+  background-color: #53B482;
+  opacity: .7;
+}
+
+.timeline__button:hover,
+.timeline__button:focus {
+  background-color: #63C994;
+  color: #fff;
 }
 
 .timeline__item:hover .timeline__button,
@@ -324,7 +335,7 @@ input:-ms-input-placeholder {
 }
 
 .timeline__item-restart {
-  right: 25px;
+  right: 31px;
 }
 
 .timeline__item-restart:before {
@@ -334,7 +345,7 @@ input:-ms-input-placeholder {
 }
 
 .timeline__item-delete {
-  right: 1em;
+  right: -1px;
 }
 
 .timeline__item-delete:before {
@@ -345,7 +356,7 @@ input:-ms-input-placeholder {
 
 .timeline__item-end {
   display: none !important;
-  right: 25px;
+  right: -1px;
 }
 
 .timeline__item-end:before {
@@ -358,7 +369,8 @@ input:-ms-input-placeholder {
   display: inherit !important;
 }
 
-.timeline__item--track .timeline__item-restart {
+.timeline__item--track .timeline__item-restart,
+.timeline__item--track .timeline__item-delete {
   display: none !important;
 }
 

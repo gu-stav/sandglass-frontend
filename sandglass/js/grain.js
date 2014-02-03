@@ -14,10 +14,8 @@ define( ['lodash',
     }
 
     this.clientId = _.uniqueId( 'grain-' );
-    this.serverId = data.id || undefined;
     this.activity = data.activity || '';
     this.project = data.project || '';
-    this.changed = false;
     this.element = undefined;
     this.running = false;
     this.visible = true;
