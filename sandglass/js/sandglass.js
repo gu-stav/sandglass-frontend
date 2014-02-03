@@ -12,7 +12,21 @@ define( ['lodash',
 
   var controls,
 
-  Sandglass = function() {};
+  Sandglass = function() {
+    /* test for window features */
+    _.forEach( [ 'localStorage',
+                 'Promise' ], function( feature ) {
+      if( !feature in window ) {
+        throw new Error( 'Your browser does not support ' + feature );
+      }
+    });
+
+    _.forEach( [ 'querySelector' ], function( feature ) {
+      if( !feature in document ) {
+        throw new Error( 'Your browser does not support ' + feature );
+      }
+    });
+  };
 
   controls = {
     init: function(  ) {
