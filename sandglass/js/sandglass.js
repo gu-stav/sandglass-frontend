@@ -243,6 +243,31 @@ define( ['lodash',
 
               /* TODO: hack!!! */
               if( _this.chart ) {
+                /* prepare for stacking */
+                _.forEach( _chartObjects, function( project, projectIndex ) {
+                  _.forEach( project.values, function( val ) {
+                    var date = val.x,
+                        _found = false;
+
+                    _.forEach( _chartObjects, function( otherProject, otherProjectIndex ) {
+                      _.forEach( otherProject.values, function( otherValue ) {
+                        if( otherValue.x === date ) {
+                          _found = true;
+                          return;
+                        }
+                      })
+
+                      if( !_found ) {
+                        _chartObjects[ otherProjectIndex ].values
+                          .push({
+                            x: date,
+                            y: 0
+                          })
+                      }
+                    });
+                  });
+                });
+
                 _this.chart.update( _.map( _chartObjects, function( object, index ) {
                   return { key: index,
                            values: object.values }

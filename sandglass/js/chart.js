@@ -11,13 +11,11 @@ define([ 'lodash',
 
       this.svg = d3.select( '#graph svg' );
       this.chart = nv.models.multiBarChart()
-                            .color( [ '#333',
-                                      '#e4e4e4' ] )
                             .showControls( false )
                             .showYAxis( false )
                             .showXAxis( true )
                             .transitionDuration( 0 )
-                            .stacked( false )
+                            .stacked( true )
                             .delay( 0 )
                             .reduceXTicks( true )
                             .groupSpacing( 0.1 )
