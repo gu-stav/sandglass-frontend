@@ -14,6 +14,10 @@ body {
   border-top: 3px solid #53B482;
 }
 
+a {
+  color: #53B482;
+}
+
 h1 {
   padding: 0 0 .4em 0;
 }
@@ -90,6 +94,11 @@ input:-ms-input-placeholder {
 .button--transparent:focus {
   color: #53B482;
   background-color: transparent;
+}
+
+.form--centered {
+  background-color: #fff;
+  padding: 1em;
 }
 
 /* app */
@@ -211,6 +220,10 @@ input:-ms-input-placeholder {
 .track__field--inline {
   display: inline-block;
   vertical-align: top;
+}
+
+.track__field--inline + .track__field--inline {
+  margin-left: -4px;
 }
 
 .track__activity {
@@ -545,4 +558,90 @@ input:-ms-input-placeholder {
 /* nvd3 overwrites */
 svg text {
   fill: #949494;
+}
+
+/* notifications */
+.notification {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  position: absolute;
+  top: 3px;
+  right: 0;
+}
+
+.notification__text {
+  margin: 0;
+  font-size: .9em;
+}
+
+.notification__item {
+  padding: .5em;
+  border-left-width: 2px;
+  border-left-style: solid;
+}
+
+.notification__item + .notification__item {
+  margin-top: 5px;
+}
+
+.notification__item--error {
+  border-color: #d9534f;
+  background-color: #fdf7f7;
+}
+
+.notification__item--warning {
+  border-color: #f0ad4e;
+  background-color: #fcf8f2;
+}
+
+.notification__item--success {
+  border-color: #3c763d;
+  background-color: #dff0d8;
+}
+
+/* login */
+.login {
+  display: inline-block;
+  vertical-align: top;
+  margin: .4em 0 0 4.96em;
+  text-align: right;
+}
+
+.login__text {
+  font-size: .8em;
+  margin: .6em 13.3em 0 0;
+  border-radius: 2px;
+  border: none;
+}
+
+.login__email {
+  width: 10em;
+  border-radius: 2px 0 0 2px;
+  border: none;
+  color: #333;
+  font-size: .9em;
+  border: 1px solid #e4e4e4;
+}
+
+.login__password {
+  width: 10em;
+  border-radius: 0 2px 2px 0;
+  border: none;
+  font-size: .9em;
+  border: 1px solid #e4e4e4;
+  border-left: none;
+  margin-left: -4px;
+}
+
+.login__submit {
+  padding: .32em .8em;
+}
+
+/* logout */
+.logout {
+  float: right;
+  margin: 1em 0 0 0;
+  font-size: .9em;
 }
