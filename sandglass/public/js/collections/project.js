@@ -1,27 +1,27 @@
 define([ 'lodash',
          'backbone',
          'defaults',
-         'models/activity',
+         'models/project',
          'models/notification' ],
   function( _,
             Backbone,
             defaults,
-            Activity,
+            Project,
             Notification ) {
 
-  var ActivityCollection = Backbone.Collection.extend({
-    url: defaults.urlRoot + 'activities/',
-    model: Activity,
+  var ProjectCollection = Backbone.Collection.extend({
+    url: defaults.urlRoot + 'projects/',
+    model: Project,
 
-    loadRecent: function() {
+    loadAll: function() {
       new Notification({
         type: 'success',
-        text: 'Load recent activities'
+        text: 'Load all projects'
       });
 
       return this.fetch();
     }
   });
 
-  return new ActivityCollection();
+  return new ProjectCollection();
 });

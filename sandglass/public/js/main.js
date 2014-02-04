@@ -19,7 +19,8 @@
       'defaults':              'defaults',
       'nvd3':                  BOWER_PATH + 'nvd3/nv.d3',
       'd3':                    BOWER_PATH + 'd3/d3',
-      'backbone':              BOWER_PATH + 'backbone/backbone'
+      'backbone':              BOWER_PATH + 'backbone/backbone',
+      'async':                 BOWER_PATH + 'async/lib/async'
     },
 
     shim: {
@@ -69,7 +70,11 @@
       'views/signup',
       'models/user',
       'models/notification',
-      'collections/notification' ],
+      'collections/notification',
+      'collections/activity',
+      'collections/project',
+      'collections/task',
+      'async' ],
     function( _,
               Backbone,
               __cookie,
@@ -79,16 +84,27 @@
               SignupView,
               User,
               Notification,
-              NotificationCollection ) {
+              NotificationCollection,
+              ActivityCollection,
+              ProjectCollection,
+              TaskCollection,
+              async ) {
 
       var cookieData = $.cookie( 'user' ),
           User = cookieData ? new User( JSON.parse( cookieData ) ) : undefined;
 
       window.Sandglass = {
         User: User,
+
         collections: {
-          notification: NotificationCollection
+          notification: NotificationCollection,
+
+          activity: ActivityCollection,
+
+          project: ProjectCollection,
+          task: TaskCollection
         },
+
         views: {
           login: new LoginView(),
           logout: new LogoutView(),
@@ -107,24 +123,38 @@
           },
 
           start: function() {
-            if( window.Sandglass.User ) {
+            if( Sandglass.User ) {
               Backbone.history.navigate('track', { trigger : true });
             }
           },
 
           logout: function() {
-            window.Sandglass.User.logout();
+            Sandglass.User.logout();
           },
 
           track: function() {
-            if( !window.Sandglass.User ) {
+            if( !Sandglass.User ) {
               new Notification({
                 type: 'warning',
                 message: 'Please login before tracking!'
               });
             }
 
-            window.Sandglass.views.track.show();
+            Sandglass.views.track.show();
+
+            /* load recent data */
+            async.parallel([
+              function( cb ) {
+                Sandglass.collections.project.loadAll()
+                  .then( cb );
+              },
+              function( cb ) {
+                Sandglass.collections.task.loadAll()
+                  .then( cb );
+              }
+            ], function( err, data ) {
+              Sandglass.collections.activity.loadRecent();
+            });
           },
 
           signup: function() {}
@@ -141,13 +171,13 @@
               }
             });
 
-            if( window.Sandglass.User ) {
-              window.Sandglass.views.login.hide();
-              window.Sandglass.views.logout.show();
+            if( Sandglass.User ) {
+              Sandglass.views.login.hide();
+              Sandglass.views.logout.show();
               return;
             } else {
-              window.Sandglass.views.login.show();
-              window.Sandglass.views.logout.hide();
+              Sandglass.views.login.show();
+              Sandglass.views.logout.hide();
             }
 
             new Notification( { type: 'success',

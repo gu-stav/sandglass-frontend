@@ -569,6 +569,8 @@ svg text {
   position: absolute;
   top: 3px;
   right: 0;
+
+  width: 12em;
 }
 
 .notification__text {
@@ -580,6 +582,24 @@ svg text {
   padding: .5em;
   border-left-width: 2px;
   border-left-style: solid;
+
+  right: -12em;
+  position: relative;
+  overflow: hidden;
+
+  -webkit-animation: flyin .5s ease-out;
+  -webkit-animation-fill-mode: forwards;
+}
+
+@-webkit-keyframes flyin {
+  from {
+    visibility: hidden;
+  }
+
+  to {
+    right: 0;
+    visibility: visible;
+  }
 }
 
 .notification__item + .notification__item {

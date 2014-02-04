@@ -1,27 +1,27 @@
 define([ 'lodash',
          'backbone',
          'defaults',
-         'models/activity',
+         'models/task',
          'models/notification' ],
   function( _,
             Backbone,
             defaults,
-            Activity,
+            Task,
             Notification ) {
 
-  var ActivityCollection = Backbone.Collection.extend({
-    url: defaults.urlRoot + 'activities/',
-    model: Activity,
+  var TaskCollection = Backbone.Collection.extend({
+    url: defaults.urlRoot + 'tasks/',
+    model: Task,
 
-    loadRecent: function() {
+    loadAll: function() {
       new Notification({
         type: 'success',
-        text: 'Load recent activities'
+        text: 'Load all tasks'
       });
 
       return this.fetch();
     }
   });
 
-  return new ActivityCollection();
+  return new TaskCollection();
 });

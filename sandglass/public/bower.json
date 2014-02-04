@@ -2,7 +2,7 @@
   "name": "sandglass",
   "version": "0.0.1",
   "dependencies": {
-    "jquery": "~2.1.0",
+    "jquery": "2.1.0",
     "jquery-ui": "~1.10.3",
     "lodash": "~2.4.1",
     "momentjs": "~2.5.1",
@@ -10,12 +10,9 @@
     "font-awesome": "~4.0.3",
     "requirejs": "~2.1.10",
     "nvd3": "~1.1.15",
-    "d3": "~3.4.1",
-    "backbone": "~1.1.10",
-    "jquery.cookie": "~1.4.0"
-  },
-  "resolutions": {
-    "d3": "~3.4.1",
-    "jquery": "~2.1.0"
+    "d3": "git@github.com:mbostock/d3.git",
+    "backbone": "git@github.com:jashkenas/backbone.git",
+    "jquery-cookie": "~1.4.0",
+    "async": "0.2.5"
   }
 }
