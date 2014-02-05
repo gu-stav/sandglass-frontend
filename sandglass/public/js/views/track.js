@@ -41,16 +41,16 @@ define([ 'lodash',
             },
 
             select: function( e, ui ) {
-              Backbone.$( e.target )
+              this.$( e.target )
                 .val( ui.item.label )
                 .data( 'selectedId', ui.item.value );
 
               return false;
-            },
+            }.bind( this ),
 
             delay: 0
           });
-      });
+      }.bind( this ));
     },
 
     start: function( e ) {
