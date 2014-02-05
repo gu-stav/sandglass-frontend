@@ -13,22 +13,15 @@ define([ 'lodash',
     url: defaults.urlRoot + 'tasks/',
 
     initialize: function() {
-      if( this.isNew() ) {
+      return new Promise(function( res, rej ) {
+        if( !this.isNew() ) {
+          return res();
+        }
 
-        return this.save()
-          .done(function() {
-            new Notification({
-              type: 'success',
-              text: 'Create new task'
-            });
-          })
-          .fail(function( data ) {
-            new Notification({
-              type: 'error',
-              text: data.responseText
-            })
-          });
-      }
+        this.save()
+          .done( res )
+          .fail( rej );
+      }.bind( this ));
     },
 
     toCollection: function() {
