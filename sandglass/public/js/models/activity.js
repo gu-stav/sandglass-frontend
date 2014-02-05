@@ -48,53 +48,49 @@ define([ 'lodash',
     },
 
     setProjectId: function() {
-      var _this = this;
-
       return new Promise(function( res, rej ) {
 
-        if( _this.get('projectId') ) {
+        if( this.get('projectId') ) {
           return res();
         }
 
         var foundInCollection =
           Sandglass.collections.project
-            .findWhere({ name: _this.get('project') });
+            .findWhere({ name: this.get('project') });
 
         if( foundInCollection ) {
-          _this.set('projectId', foundInCollection.id);
+          this.set('projectId', foundInCollection.id);
           return res();
         }
 
         return new Project({
-          name: _this.get('project')
+          name: this.get('project')
         });
 
-      });
+      }.bind( this ));
     },
 
     setTaskId: function() {
-      var _this = this;
-
       return new Promise(function( res, rej ) {
 
-        if( _this.get('taskId') ) {
+        if( this.get('taskId') ) {
           return res();
         }
 
         var foundInCollection =
           Sandglass.collections.task
-            .findWhere({ name: _this.get('task') });
+            .findWhere({ name: this.get('task') });
 
         if( foundInCollection ) {
-          _this.set('taskId', foundInCollection.id);
+          this.set('taskId', foundInCollection.id);
           return res()
         }
 
         return new Task({
-          name: _this.get('task')
+          name: this.get('task')
         });
 
-      });
+      }.bind( this ));
     },
 
     start: function() {
