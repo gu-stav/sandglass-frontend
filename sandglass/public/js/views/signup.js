@@ -24,7 +24,7 @@ define([ 'lodash',
       new User({
         email: this.$('input[name="email"]').val(),
         name: this.$('input[name="name"]').val()
-      }).create();
+      });
     },
 
     show: function() {

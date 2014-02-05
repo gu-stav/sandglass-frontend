@@ -10,12 +10,12 @@ define([ 'lodash',
   var User = Backbone.Model.extend({
     url: defaults.urlRoot + 'users/',
 
-    create: function() {
-      var rawName = this.get('name').split(' '),
+    initialize: function() {
+      return new Promise(function( res, rej ) {
+        var rawName = this.get('name').split(' '),
           firstName = rawName[0],
           lastName = rawName[1];
 
-      return new Promise(function( res, rej ) {
         this.save( {
           email: this.get('email'),
           first_name: firstName,
