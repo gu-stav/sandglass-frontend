@@ -570,12 +570,12 @@ svg text {
   top: 3px;
   right: 0;
 
-  width: 12em;
+  width: 8em;
 }
 
 .notification__text {
   margin: 0;
-  font-size: .9em;
+  font-size: .75em;
 }
 
 .notification__item {
@@ -583,11 +583,11 @@ svg text {
   border-left-width: 2px;
   border-left-style: solid;
 
-  right: -12em;
+  right: -8em;
   position: relative;
   overflow: hidden;
 
-  -webkit-animation: flyin .5s ease-out;
+  -webkit-animation: flyin .3s ease-in;
   -webkit-animation-fill-mode: forwards;
 }
 

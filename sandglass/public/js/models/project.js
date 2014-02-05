@@ -1,15 +1,38 @@
 define([ 'lodash',
          'backbone',
          'moment',
-         'defaults' ],
+         'defaults',
+         'models/Notification' ],
   function( _,
             Backbone,
             moment,
-            defaults ) {
+            defaults,
+            Notification ) {
 
   var Project = Backbone.Model.extend({
-    urlRoot: defaults.urlRoot,
-    url: 'projects/'
+    url: defaults.urlRoot + 'projects/',
+
+    initialize: function() {
+      if( this.isNew() ) {
+        return this.save()
+          .done(function() {
+            new Notification({
+              type: 'success',
+              text: 'Create new project'
+            });
+          })
+          .fail(function( data ) {
+            new Notification({
+              type: 'error',
+              text: data.responseText
+            })
+          });
+      }
+    },
+
+    toCollection: function() {
+      Sandglass.collections.project.add( this );
+    }
   });
 
   return Project;

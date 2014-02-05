@@ -20,6 +20,15 @@ define([ 'lodash',
       });
 
       return this.fetch();
+    },
+
+    getAutocompleteList: function() {
+      return _.map( this.models, function( model ) {
+        return {
+          value: model.get('id'),
+          label: model.get('name')
+        }
+      })
     }
   });
 

@@ -145,15 +145,18 @@
             /* load recent data */
             async.parallel([
               function( cb ) {
-                Sandglass.collections.project.loadAll()
+                Sandglass.collections.project
+                  .loadAll()
                   .then( cb );
               },
               function( cb ) {
-                Sandglass.collections.task.loadAll()
+                Sandglass.collections.task
+                  .loadAll()
                   .then( cb );
               }
             ], function( err, data ) {
-              Sandglass.collections.activity.loadRecent();
+              Sandglass.collections.activity
+                .loadRecent();
             });
           },
 
