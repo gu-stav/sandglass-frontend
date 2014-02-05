@@ -11,64 +11,48 @@ define([ 'lodash',
     url: defaults.urlRoot + 'users/',
 
     create: function() {
-      var _this = this;
+      var rawName = this.get('name').split(' '),
+          firstName = rawName[0],
+          lastName = rawName[1];
 
-      this.save( {
-        email: this.get('email'),
-        first_name: this.get('name').split(' ')[0],
-        last_name: this.get('name').split(' ')[1]
-      } )
-        .done(function() {
-
-          window.Sandglass.User = _this;
+      return new Promise(function( res, rej ) {
+        this.save( {
+          email: this.get('email'),
+          first_name: firstName,
+          last_name: lastName
         })
-        .fail(function( xhr, type, error ) {
-          new Notification( { type: 'error',
-                              text: error } );
-        });
+          .done(function() {
+            Sandglass.User = this;
+
+            return res();
+          }.bind( this ));
+      }.bind( this ));
     },
 
     login: function() {
-      var _this = this;
-
-      this.fetch( {
-        data: {
-          'get_by_email': this.get('email')
-        }
-      })
-        .done(function( userData ) {
-          /* nothing was found */
-          if( !userData.length ) {
-            new Notification( { type: 'warning',
-                                text: 'User ' + _this.get('email') + ' not found' } );
-            return;
+      return new Promise(function( res, rej ) {
+        this.fetch( {
+          data: {
+            'call': 'user_by_credential',
+            'email' : this.get('email')
           }
-
-          $.cookie('user', JSON.stringify( _this.attributes ) );
-          window.Sandglass.User = _this;
-
-          new Notification( { type: 'success',
-                              text: 'Login successful' } );
-
-          Backbone.history
-            .navigate('track', { trigger : true });
         })
-        .fail(function( xhr, type, error ) {
-          new Notification( { type: 'error',
-                              text: error || 'Server unreachable' } );
-        });
+        .done(function( userData ) {
+          Sandglass.User = this;
+          $.cookie('user', JSON.stringify( this.attributes ) );
+          Backbone.history.navigate('track', { trigger : true });
+
+          return res();
+        }.bind( this ));
+      }.bind( this ));
     },
 
     logout: function() {
-      $.removeCookie('user');
-
-      window.Sandglass.User = undefined;
-
-      new Notification( { type: 'success',
-                              text: 'Logout successful' } );
-
-      Backbone.history
-            .navigate('/', { trigger : true });
+      return new Promise(function( res, rej ) {
+        window.Sandglass.User = undefined;
+        $.removeCookie('user');
+        Backbone.history.navigate('/', { trigger : true });
+      }.bind( this ));
     }
   });
 
