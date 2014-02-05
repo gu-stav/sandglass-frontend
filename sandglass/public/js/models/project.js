@@ -13,21 +13,15 @@ define([ 'lodash',
     url: defaults.urlRoot + 'projects/',
 
     initialize: function() {
-      if( this.isNew() ) {
-        return this.save()
-          .done(function() {
-            new Notification({
-              type: 'success',
-              text: 'Create new project'
-            });
-          })
-          .fail(function( data ) {
-            new Notification({
-              type: 'error',
-              text: data.responseText
-            })
-          });
-      }
+      return new Promise(function( res, rej ) {
+        if( !this.isNew() ) {
+          return res();
+        }
+
+        this.save()
+          .done( res )
+          .rej( rej )
+      }.bind( this ));
     },
 
     toCollection: function() {
