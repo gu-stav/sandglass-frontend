@@ -14,12 +14,20 @@ define([ 'lodash',
     model: Task,
 
     loadAll: function() {
-      new Notification({
-        type: 'success',
-        text: 'Load all tasks'
-      });
+      return new Promise(function( res, rej ) {
+        this.fetch()
+          .done( res )
+          .fail( rej )
+      }.bind( this ));
+    },
 
-      return this.fetch();
+    getAutocompleteList: function() {
+      return _.map( this.models, function( model ) {
+        return {
+          value: model.get('id'),
+          label: model.get('name')
+        }
+      })
     }
   });
 

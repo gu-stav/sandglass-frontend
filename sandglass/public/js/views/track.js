@@ -17,46 +17,46 @@ define([ 'lodash',
     },
 
     initialize: function() {
-      this.$el.show();
+      /* apply autocomplete */
+      _.forOwn( ['project', 'task'], function( item ) {
+        this.$('input[name="' + item + '"]')
+          .autocomplete({
+            minLength: 0,
+            source: function( req, res ) {
+              var term = req.term,
+                  raw = Sandglass.collections[ item ].getAutocompleteList(),
+                  filtered;
 
-      this.$('input[name="project"]')
-        .autocomplete({
-          minLength: 0,
-          source: function( req, res ) {
-            var term = req.term,
-                raw = Sandglass.collections.project
-                        .getAutocompleteList(),
-                filtered;
+              filtered = _.map( raw, function( el ) {
+                if( el.label.indexOf( term ) !== -1 ) {
+                  return el;
+                }
+              });
 
-            filtered = _.map( raw, function( el ) {
-              if( el.label.indexOf( term ) !== -1 ) {
-                return el;
-              }
-            });
+              res( _.compact( filtered ) );
+            },
 
-            res( _.compact( filtered ) );
-          },
+            focus: function() {
+              return false;
+            },
 
-          focus: function() {
-            return false;
-          },
+            select: function( e, ui ) {
+              Backbone.$( e.target )
+                .val( ui.item.label )
+                .data( 'selectedId', ui.item.value );
 
-          select: function( e, ui ) {
-            Backbone.$( e.target )
-              .val( ui.item.label )
-              .data( 'selectedId', ui.item.value );
+              return false;
+            },
 
-            return false;
-          },
-
-          delay: 0
-        });
+            delay: 0
+          });
+      });
     },
 
     start: function( e ) {
       e.preventDefault();
 
-      var $task = this.$('input[name="activity"]'),
+      var $task = this.$('input[name="task"]'),
           $project = this.$('input[name="project"]'),
           $description = this.$('input[name="description"]');
 
