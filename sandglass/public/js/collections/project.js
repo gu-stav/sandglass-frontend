@@ -14,7 +14,7 @@ define([ 'lodash',
     model: Project,
 
     loadAll: function() {
-      return new Promise(funtion( res, rej ) {
+      return new Promise(function( res, rej ) {
         this.fetch()
           .done( res )
           .fail( rej );
