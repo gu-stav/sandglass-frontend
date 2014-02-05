@@ -20,27 +20,26 @@ define([ 'lodash',
     url: 'activities/',
 
     initialize: function() {
-      var _this = this;
+      return new Promise(function( res, rej ) {
+        this.toCollection();
 
-      this.toCollection();
-
-      async.parallel([
-        function( cb ) {
-          _this.setProjectId()
-            .then( cb );
-        },
-        function( cb ) {
-          _this.setTaskId()
-            .then( cb );
-        }
-      ], function() {
-        new Notification({
-          type: 'success',
-          text: 'Create activity'
-        });
-
-        _this.save();
-      });
+        async.parallel([
+          function( cb ) {
+            this.setProjectId()
+              .then( cb )
+          }.bind( this ),
+          function( cb ) {
+            this.setTaskId()
+              .then( cb );
+          }.bind( this )
+        ], function() {
+          if( this.isNew() ) {
+            this.save()
+              .done( res )
+              .fail( rej );
+          }
+        }.bind( this ));
+      }.bind( this ));
     },
 
     toCollection: function() {
@@ -94,11 +93,15 @@ define([ 'lodash',
     },
 
     start: function() {
-      this.set('started', moment);
+      return new Promise(function( res, rej ) {
+        this.set('started', moment);
+      }.bind( this ));
     },
 
     end: function() {
-      this.set('ended', moment);
+      return new Promise(function( res, rej ) {
+        this.set('ended', moment);
+      }.bind( this ))
     }
   });
 
