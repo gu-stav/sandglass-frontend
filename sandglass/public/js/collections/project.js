@@ -14,12 +14,11 @@ define([ 'lodash',
     model: Project,
 
     loadAll: function() {
-      new Notification({
-        type: 'success',
-        text: 'Load all projects'
-      });
-
-      return this.fetch();
+      return new Promise(funtion( res, rej ) {
+        this.fetch()
+          .done( res )
+          .fail( rej );
+      }.bind( this ));
     },
 
     getAutocompleteList: function() {

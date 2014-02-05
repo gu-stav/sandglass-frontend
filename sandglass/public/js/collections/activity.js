@@ -14,12 +14,11 @@ define([ 'lodash',
     model: Activity,
 
     loadRecent: function() {
-      new Notification({
-        type: 'success',
-        text: 'Load recent activities'
-      });
-
-      return this.fetch();
+      return new Promise(function( res, rej ) {
+        this.fetch()
+          .done( res )
+          .fail( rej );
+      }.bind( this ));
     }
   });
 
