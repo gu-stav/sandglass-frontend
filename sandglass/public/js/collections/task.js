@@ -1,13 +1,11 @@
 define([ 'lodash',
          'backbone',
          'defaults',
-         'models/task',
-         'models/notification' ],
+         'models/task' ],
   function( _,
             Backbone,
             defaults,
-            Task,
-            Notification ) {
+            Task ) {
 
   var TaskCollection = Backbone.Collection.extend({
     url: defaults.urlRoot + 'tasks/',
@@ -15,7 +13,9 @@ define([ 'lodash',
 
     loadAll: function() {
       return new Promise(function( res, rej ) {
-        this.fetch()
+        this.fetch({
+          url: defaults.urlRoot + 'users/' + Sandglass.User.get('id') + '/tasks/'
+        })
           .done( res )
           .fail( rej )
       }.bind( this ));
@@ -28,8 +28,16 @@ define([ 'lodash',
           label: model.get('name')
         }
       })
+    },
+
+    getNameById: function( id ) {
+      var obj = this.get( id );
+
+      if( obj ) {
+        return obj.get('name');
+      }
     }
   });
 
-  return new TaskCollection();
+  return TaskCollection;
 });

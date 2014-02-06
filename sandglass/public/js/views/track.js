@@ -13,7 +13,8 @@ define([ 'lodash',
     el: '.track',
 
     events: {
-      'submit form': 'start'
+      'submit form': 'start',
+      'click .sandglass__sortby-button': 'sort'
     },
 
     initialize: function() {
@@ -66,7 +67,25 @@ define([ 'lodash',
         project: $project.val(),
         projectId: $project.data('selectedId'),
         description: $description.val()
-      });
+      })
+        .create()
+        .then(function( activity ) {
+          this.listenTo( activity, 'change:end', this.stop );
+
+          _.each(['task', 'project', 'description'], function( item ) {
+            this.$( 'input[name="' + item + '"]' ).prop( 'disabled', true );
+          }.bind( this ));
+
+          this.$('.js-track__submit').text('Stop');
+        }.bind( this ));
+    },
+
+    stop: function() {
+      _.each(['task', 'project', 'description'], function( item ) {
+        this.$( 'input[name="' + item + '"]' ).prop( 'disabled', false );
+      }.bind( this ));
+
+      this.$('.js-track__submit').text('Start');
     },
 
     show: function() {
@@ -75,6 +94,11 @@ define([ 'lodash',
 
     hide: function() {
       this.$el.hide();
+    },
+
+    sort: function( e ) {
+      e.preventDefault();
+      Sandglass.views.timeline.sort( Backbone.$(e.target).val() );
     }
   });
 

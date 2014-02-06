@@ -1,13 +1,11 @@
 define([ 'lodash',
          'backbone',
          'defaults',
-         'models/project',
-         'models/notification' ],
+         'models/project' ],
   function( _,
             Backbone,
             defaults,
-            Project,
-            Notification ) {
+            Project ) {
 
   var ProjectCollection = Backbone.Collection.extend({
     url: defaults.urlRoot + 'projects/',
@@ -15,7 +13,9 @@ define([ 'lodash',
 
     loadAll: function() {
       return new Promise(function( res, rej ) {
-        this.fetch()
+        this.fetch({
+          url: defaults.urlRoot + 'users/' + Sandglass.User.get('id') + '/projects/'
+        })
           .done( res )
           .fail( rej );
       }.bind( this ));
@@ -28,8 +28,16 @@ define([ 'lodash',
           label: model.get('name')
         }
       })
+    },
+
+    getNameById: function( id ) {
+      var obj = this.get( id );
+
+      if( obj ) {
+        return obj.get('name');
+      }
     }
   });
 
-  return new ProjectCollection();
+  return ProjectCollection;
 });

@@ -1,11 +1,9 @@
 define([ 'lodash',
          'backbone',
-         'defaults',
-         'models/Notification' ],
+         'defaults' ],
   function( _,
             Backbone,
-            defaults,
-            Notification ) {
+            defaults ) {
 
   var User = Backbone.Model.extend({
     url: defaults.urlRoot + 'users/',
@@ -33,7 +31,7 @@ define([ 'lodash',
       return new Promise(function( res, rej ) {
         this.fetch( {
           data: {
-            'call': 'user_by_credential',
+            'search': '',
             'email' : this.get('email')
           }
         })

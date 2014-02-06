@@ -68,9 +68,8 @@
       'views/logout',
       'views/track',
       'views/signup',
+      'views/timeline',
       'models/user',
-      'models/notification',
-      'collections/notification',
       'collections/activity',
       'collections/project',
       'collections/task',
@@ -82,9 +81,8 @@
               LogoutView,
               TrackView,
               SignupView,
+              TimelineView,
               User,
-              Notification,
-              NotificationCollection,
               ActivityCollection,
               ProjectCollection,
               TaskCollection,
@@ -97,19 +95,17 @@
         User: User,
 
         collections: {
-          notification: NotificationCollection,
-
-          activity: ActivityCollection,
-
-          project: ProjectCollection,
-          task: TaskCollection
+          activity: new ActivityCollection(),
+          project: new ProjectCollection(),
+          task: new TaskCollection()
         },
 
         views: {
           login: new LoginView(),
           logout: new LogoutView(),
           track: new TrackView(),
-          signup: new SignupView()
+          signup: new SignupView(),
+          timeline: new TimelineView()
         }
       };
 
@@ -167,6 +163,10 @@
         new Workspace()
           .bind('route', function( route ) {
             _.forEach( Sandglass.views, function( view, index ) {
+              if( index === 'timeline' ) {
+                return;
+              }
+
               if( index === route ) {
                 view.show();
               } else {
@@ -182,9 +182,6 @@
               Sandglass.views.login.show();
               Sandglass.views.logout.hide();
             }
-
-            new Notification( { type: 'success',
-                                text: 'Changed route ' + route } );
           });
 
         Backbone.history
