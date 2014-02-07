@@ -20,11 +20,27 @@ define([ 'lodash',
       }.bind( this ));
     },
 
-    loadRecent: function() {
+    loadRecent: function( from, to ) {
       return new Promise(function( res, rej ) {
+        /* default today minus 1 month */
+        if( !from ) {
+          from = moment().subtract( 'months', 1 );
+        }
+
+        /* use now as end date */
+        if( !to ) {
+          to = moment();
+        }
+
+        /* always empty the whole collection, so we call it later with
+           a new timerange */
+        this.reset( undefined, { silent: true } );
+
         this.fetch({
-          /* see issue: https://bitbucket.org/sandglass/sandglass/issue/1/missing-route-for-user-activities
-           url: defaults.urlRoot + 'users/' + Sandglass.User.get('id') + '/activities/' */
+          /* see #1 */
+           url: defaults.urlRoot + 'users/' + Sandglass.User.get('id') +
+                '/?action=get_activities&from=' + encodeURIComponent( from.format() )
+                + '&to=' + encodeURIComponent( to.format() ) + '/'
         })
           .done( res )
           .fail( rej );

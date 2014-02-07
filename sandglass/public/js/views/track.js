@@ -18,7 +18,8 @@ define([ 'lodash',
 
     events: {
       'submit form': 'start',
-      'click .sandglass__sortby-button': 'sort'
+      'click .sandglass__sortby-button': 'sort',
+      'blur .sandglass__search-startend > input': 'loadRecent'
     },
 
     initialize: function() {
@@ -141,6 +142,31 @@ define([ 'lodash',
     sort: function( e ) {
       e.preventDefault();
       Sandglass.views.timeline.sort( Backbone.$(e.target).val() );
+    },
+
+    loadRecent: function( e ) {
+      var from,
+          to,
+          $target = $(e.target),
+          $other = $target.siblings('input');
+
+      if( $target.attr('name') === 'filter_start' ) {
+        from = $target.val();
+        to = $other.val();
+      } else {
+        to = $target.val();
+        from = $other.val();
+      }
+
+      if( from ) {
+        from = moment( from, defaults.dateFormat );
+      }
+
+      if( to ) {
+        to = moment( to, defaults.dateFormat );
+      }
+
+      Sandglass.collections.activity.loadRecent( from, to );
     }
   });
 
