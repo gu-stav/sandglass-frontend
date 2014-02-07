@@ -1,13 +1,17 @@
 define([ 'lodash',
          'backbone',
          'defaults',
+         'moment',
          'models/activity',
-         'jquery.ui.autocomplete' ],
+         'jquery.ui.autocomplete',
+         'jquery.ui.datepicker' ],
   function( _,
             Backbone,
             defaults,
+            moment,
             Activity,
-            $ ) {
+            __autocomplete,
+            __datepicker ) {
 
   var Track = Backbone.View.extend({
     el: '.track',
@@ -18,8 +22,12 @@ define([ 'lodash',
     },
 
     initialize: function() {
+      /* select default filter method */
+      this.$('button[value="start"].sandglass__sortby-button')
+        .addClass('sandglass__sortby-button--active')
+
       /* apply autocomplete */
-      _.forOwn( ['project', 'task'], function( item ) {
+      _.forEach( ['project', 'task'], function( item ) {
         this.$('input[name="' + item + '"]')
           .autocomplete({
             minLength: 0,
@@ -51,6 +59,19 @@ define([ 'lodash',
 
             delay: 0
           });
+      }.bind( this ));
+
+      /* apply datepicker */
+      _.forEach(['start', 'end'], function( item ) {
+        var _prefill = moment();
+
+        if( item === 'start' ) {
+          _prefill = _prefill; /* todo minus one month */
+        }
+
+        this.$('.sandglass__search-' + item)
+          .datepicker({})
+          .val( _prefill.format( defaults.dateFormat ) );
       }.bind( this ));
     },
 

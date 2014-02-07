@@ -48,9 +48,12 @@ define([ 'lodash',
     },
 
     render: function() {
+      var _groupLabel = this.attributes.groupName;
+
+      /* insert visual grouping element */
       if( !this.$el.children('.timeline__groupHeader').length ) {
         this.$el.prepend('<li class="timeline__groupHeader"><strong>' +
-                         this.attributes.groupName + '</strong></li>');
+                         _groupLabel + '</strong></li>');
       }
 
       if( !this.activityCollection.models.length ) {
