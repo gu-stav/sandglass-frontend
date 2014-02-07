@@ -18,18 +18,47 @@ define([ 'lodash',
 
     initialize: function() {
       if( !this.get('user_id') ) {
-        this.set('user_id', Sandglass.User.get('id'));
+        this.set( {
+          'user_id': Sandglass.User.get('id') }, { silent: true } );
       }
 
-      this.set('start', moment( this.get('start') || undefined ));
+      this.set( {
+        'start': moment( this.get('start') || undefined )
+      }, { silent: true });
 
       if( this.get('end') ) {
-        this.set('end', moment( this.get('end') ));
+        this.set( {
+          'end': moment( this.get('end') ) }, { silent: true } );
       }
 
-      if( !this.isNew() ) {
-        this.toCollection();
+      return this;
+    },
+
+    /* overwrite to ensure moment() on start/end */
+    set: function ( attr, opts ) {
+      if( typeof attr === 'string' ) {
+        switch( attr ) {
+          case 'start':
+          case 'end':
+            opts = moment( opts );
+          break;
+        }
+      } else if( typeof attr === 'object' ) {
+        _.forEach( attr, function( val, index ) {
+          if( !val ) {
+            return;
+          }
+
+          switch( index ) {
+            case 'start':
+            case 'end':
+              attr[index] = moment( val );
+            break;
+          }
+        });
       }
+
+      return Backbone.Model.prototype.set.call( this, attr, opts );
     },
 
     create: function() {
@@ -46,13 +75,13 @@ define([ 'lodash',
           }.bind( this )
         ], function() {
           if( !this.isNew() ) {
-            return res();
+            return res( this );
           }
 
           this.save()
             .done(function() {
               this.toCollection();
-              res( this );
+              return res( this );
             }.bind( this ))
             .fail( rej );
         }.bind( this ));
@@ -119,14 +148,15 @@ define([ 'lodash',
 
     start: function() {
       return new Promise(function( res, rej ) {
-        this.set('start', moment());
+        this.set( { 'start': moment() } );
       }.bind( this ));
     },
 
     end: function() {
       return new Promise(function( res, rej ) {
-        this.save( _.assign( {}, this.attributes, { end: moment() } ) , {
-          url: defaults.urlRoot + 'activities/' + this.get('id') + '/'
+        this.set( { 'end': moment() } );
+        this.save( undefined , {
+          url: this.url + this.get('id') + '/'
         })
           .done( res )
           .fail( rej );
@@ -136,7 +166,7 @@ define([ 'lodash',
     delete: function() {
       return new Promise(function( res, rej ) {
         this.destroy({
-          url: defaults.urlRoot + 'activities/' + this.get('id') + '/'
+          url: this.url + this.get('id') + '/'
         })
           .done( res )
           .fail( rej )

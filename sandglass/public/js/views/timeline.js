@@ -12,7 +12,6 @@ define([ 'lodash',
 
     initialize: function() {
       this._activityGroups = [];
-      this._activities = [];
 
       this.attributes = {
         sortBy: defaults.sortActivitiesBy
@@ -29,7 +28,7 @@ define([ 'lodash',
 
         this._activityGroups = [];
 
-        _.forEach( this._activities, function( activity ) {
+        _.forEach( Sandglass.collections.activity.models, function( activity ) {
           this.createGroup( activity );
         }.bind( this ));
       }
@@ -47,7 +46,6 @@ define([ 'lodash',
     },
 
     add: function( model ) {
-      this._activities.push( model );
       this.createGroup( model );
       this.sort( this.attributes.sortBy );
     },
@@ -58,16 +56,12 @@ define([ 'lodash',
           _view;
 
       if( this.attributes.sortBy === 'start' ) {
-        if( typeof _modelFindBy === 'string' ) {
-          _modelFindBy = moment( _modelFindBy );
-        }
-
         _modelFindBy = _modelFindBy.format('YYYY-MM-DD');
       }
 
       _.each(['task', 'project'], function( item ) {
         if( this.attributes.sortBy === item + '_id' ) {
-          _modelFindBy = Sandglass.collections.task
+          _modelFindBy = Sandglass.collections[ item ]
                           .getNameById( model.get( item + '_id' ) );
         }
       }.bind( this ));
@@ -76,6 +70,12 @@ define([ 'lodash',
         if( groupView.attributes.groupName === _modelFindBy ) {
           groupView.add( model );
           _added = true;
+
+          groupView.listenTo( model,
+                             'destroy',
+                             function() {
+                              groupView.removeModel( model );
+                             });
         }
       });
 
@@ -84,6 +84,12 @@ define([ 'lodash',
                                                    groupName: _modelFindBy } } );
         _view.add( model );
         this._activityGroups.push( _view );
+
+        _view.listenTo( model,
+                        'destroy',
+                       function() {
+                        _view.removeModel( model );
+                       });
       }
     },
 

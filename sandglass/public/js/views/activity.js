@@ -45,14 +45,6 @@ define([ 'lodash',
     },
 
     render: function() {
-      if( typeof this.model.get('start') === 'string' ) {
-        this.model.set('start', moment( this.model.get('start') ));
-      }
-
-      if( typeof this.model.get('end') === 'string' ) {
-        this.model.set('end', moment( this.model.get('end') ));
-      }
-
       var _data = {
         task: Sandglass.collections.task.getNameById ( this.model.get('task_id') ),
         project: Sandglass.collections.project.getNameById ( this.model.get('project_id') ),
@@ -121,11 +113,14 @@ define([ 'lodash',
     clone: function( e ) {
       e.preventDefault();
 
-      var _attr = this.model.attributes;
-      _attr.end = undefined;
-      _attr.id = undefined;
+      var _overwrites = {
+        start: undefined,
+        end: undefined,
+        id: undefined
+      };
 
-      new ActivityModel( _attr ).create();
+      new ActivityModel( _.assign( {}, this.model.attributes, _overwrites ) )
+        .create();
     },
 
     delete: function( e ) {

@@ -55,22 +55,33 @@ define([ 'lodash',
     },
 
     start: function( e ) {
+      if( this.tracking ) {
+        return this.stop( e );
+      }
+
       e.preventDefault();
 
       var $task = this.$('input[name="task"]'),
+          task = $task.val() || '',
           $project = this.$('input[name="project"]'),
+          project = $project.val() || '',
           $description = this.$('input[name="description"]');
 
+      if( task.length <= 2 || project.length <= 2 ) {
+        return this;
+      }
+
       new Activity({
-        task: $task.val(),
-        taskId: $task.data('selectedId'),
-        project: $project.val(),
-        projectId: $project.data('selectedId'),
+        task: task,
+        task_id: $task.data('selectedId'),
+        project: project,
+        project_id: $project.data('selectedId'),
         description: $description.val()
       })
         .create()
         .then(function( activity ) {
-          this.listenTo( activity, 'change:end', this.stop );
+          this.activity = activity;
+          this.tracking = true;
 
           _.each(['task', 'project', 'description'], function( item ) {
             this.$( 'input[name="' + item + '"]' ).prop( 'disabled', true );
@@ -80,12 +91,22 @@ define([ 'lodash',
         }.bind( this ));
     },
 
-    stop: function() {
+    stop: function( e ) {
+      e.preventDefault();
+
       _.each(['task', 'project', 'description'], function( item ) {
         this.$( 'input[name="' + item + '"]' ).prop( 'disabled', false );
       }.bind( this ));
 
       this.$('.js-track__submit').text('Start');
+
+      if( this.activity ) {
+        this.activity.end()
+          .then(function() {
+            this.stopListening( this.activity );
+            this.tracking = false;
+          }.bind( this ));
+      }
     },
 
     show: function() {
