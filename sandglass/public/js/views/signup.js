@@ -7,34 +7,54 @@ define([ 'lodash',
             defaults,
             User ) {
 
-  var LoginView = Backbone.View.extend({
-    el: 'form.signup',
+  var SignupView = Backbone.View.extend({
+    tagName: 'form',
+
+    className: 'signup form form--centered',
+
+    template: _.template('<h2 class="signup__headline">Signup</h2>' +
+                '<div class="signup__name-wrap">' +
+                  '<input type="text" name="name" placeholder="name" class="signup__name" />' +
+                '</div>' +
+                '<div class="signup__email-wrap">' +
+                  '<input type="text" name="email" placeholder="email" class="signup__email" />' +
+                '</div>' +
+                '<div>' +
+                  '<button type="submit">Create user</button>' +
+                '</div>'),
 
     events: {
       'submit': 'signup'
     },
 
-    initialize: function() {
-      this.$el.show();
-    },
-
     signup: function( e ) {
       e.preventDefault();
 
+      var email = this.$el.find('input[name="email"]').val(),
+          name = this.$el.find('input[name="name"]').val();
+
       new User({
-        email: this.$('input[name="email"]').val(),
-        name: this.$('input[name="name"]').val()
-      });
+        email: email,
+        name: name
+      }).create()
+        .then(function( user ) {
+          user.login();
+        });
     },
 
     show: function() {
-      this.$el.show();
+      this.render().$el.insertAfter( 'header' );
     },
 
     hide: function() {
-      this.$el.hide();
+      this.$el.empty().detach();
+    },
+
+    render: function() {
+      this.$el.html( this.template() );
+      return this;
     }
   });
 
-  return LoginView;
+  return SignupView;
 });

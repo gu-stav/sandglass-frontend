@@ -8,7 +8,7 @@ define([ 'lodash',
   var User = Backbone.Model.extend({
     url: defaults.urlRoot + 'users/',
 
-    initialize: function() {
+    create: function() {
       return new Promise(function( res, rej ) {
         var rawName = this.get('name').split(' '),
           firstName = rawName[0],
@@ -22,7 +22,7 @@ define([ 'lodash',
           .done(function() {
             Sandglass.User = this;
 
-            return res();
+            return res( this );
           }.bind( this ));
       }.bind( this ));
     },

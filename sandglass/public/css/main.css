@@ -595,6 +595,72 @@ svg text {
   padding: .32em .8em;
 }
 
+/* signup */
+.signup {
+  border-top: 3px solid #53B482;
+}
+
+.signup__headline {
+  margin: 0 0 .5em 0;
+}
+
+.signup__name,
+.signup__email {
+  margin-left: 2.95em;
+  border-left: none;
+}
+
+.signup__name-wrap,
+.signup__email-wrap {
+  position: relative;
+}
+
+.signup__name {
+  width: 18em;
+}
+
+.signup__email {
+  border-top: none;
+  width: 18em;
+}
+
+.signup__name-wrap:before {
+  content: '\f007';
+  position: absolute;
+  font-family: FontAwesome;
+  top: 0;
+  left: 0;
+  border: 1px solid #ccc;
+  border-right: 1px solid #e4e4e4;
+  height: 101%;
+  box-sizing: border-box;
+  font-size: 1.2em;
+  padding: .3em .8em;
+  color: #53B482;
+  width: 2.4em;
+}
+
+.signup__email-wrap:before {
+  content: '\f084';
+  position: absolute;
+  font-family: FontAwesome;
+  top: 0;
+  left: 0;
+  border: 1px solid #ccc;
+  border-right: 1px solid #e4e4e4;
+  border-top: none;
+  height: 101%;
+  box-sizing: border-box;
+  font-size: 1.1em;
+  padding: .4em .88em;
+  color: #53B482;
+  width: 2.6em;
+}
+
+.signup__email-wrap {
+  margin-bottom: 1em;
+}
+
 /* logout */
 .logout {
   float: right;

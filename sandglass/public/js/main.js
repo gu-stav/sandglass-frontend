@@ -121,6 +121,8 @@
           start: function() {
             if( Sandglass.User ) {
               Backbone.history.navigate('track', { trigger : true });
+            } else {
+              Backbone.history.navigate('signup', { trigger : true });
             }
           },
 
@@ -130,10 +132,7 @@
 
           track: function() {
             if( !Sandglass.User ) {
-              new Notification({
-                type: 'warning',
-                message: 'Please login before tracking!'
-              });
+              return Backbone.history.navigate('signup', { trigger : true });
             }
 
             Sandglass.views.track.show();
@@ -167,12 +166,14 @@
                 return;
               }
 
-              if( index === route ) {
-                view.show();
-              } else {
-                view.hide();
-              }
+              view.hide();
             });
+
+            if( Sandglass.views[ route ] ) {
+              Sandglass.views[ route ].show();
+            } else {
+              Sandglass.views.signup.show();
+            }
 
             if( Sandglass.User ) {
               Sandglass.views.login.hide();

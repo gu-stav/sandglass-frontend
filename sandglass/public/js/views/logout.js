@@ -4,23 +4,32 @@ define([ 'lodash',
             Backbone ) {
 
   var Logout = Backbone.View.extend({
-    el: '.logout',
+    tagName: 'a',
+
+    className: 'logout',
+
+    attributes: {
+      href: '/logout'
+    },
 
     events: {
       'click': 'logout'
     },
 
+    template: _.template('Logout'),
+
     logout: function( e ) {
       e.preventDefault();
-      window.Sandglass.User.logout();
+      Sandglass.User.logout();
     },
 
     show: function() {
-      this.$el.show();
+      this.render().$el.appendTo( 'header' );
+      this.$el.text( 'Logout' );
     },
 
     hide: function() {
-      this.$el.hide();
+      this.$el.empty().detach();
     }
   });
 
