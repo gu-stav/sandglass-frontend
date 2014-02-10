@@ -17,20 +17,8 @@ define([ 'lodash',
     url: defaults.urlRoot + 'activities/',
 
     initialize: function() {
-      if( !this.get('user_id') ) {
-        this.set( {
-          'user_id': Sandglass.User.get('id') }, { silent: true } );
-      }
-
-      this.set( {
-        'start': moment( this.get('start') || undefined )
-      }, { silent: true });
-
-      if( this.get('end') ) {
-        this.set( {
-          'end': moment( this.get('end') ) }, { silent: true } );
-      }
-
+      this.set( 'user_id',  Sandglass.User.get('id') );
+      this.set( 'start', moment( this.get('start') || undefined ));
       return this;
     },
 
@@ -59,6 +47,30 @@ define([ 'lodash',
       }
 
       return Backbone.Model.prototype.set.call( this, attr, opts );
+    },
+
+    update: function() {
+      return new Promise(function( res, rej ) {
+        async.parallel([
+          function( cb ) {
+            this.setProjectId()
+              .then( cb )
+          }.bind( this ),
+
+          function( cb ) {
+            this.setTaskId()
+              .then( cb );
+          }.bind( this )
+        ], function() {
+          this.save( undefined , {
+            url: this.url + this.get('id') + '/'
+          })
+          .done(function() {
+             res();
+          })
+          .fail( rej )
+        }.bind( this ));
+      }.bind( this ));
     },
 
     create: function() {
@@ -94,8 +106,7 @@ define([ 'lodash',
 
     setProjectId: function() {
       return new Promise(function( res, rej ) {
-
-        if( this.get('project_id') ) {
+        if( !this.get('project') ) {
           return res();
         }
 
@@ -121,8 +132,7 @@ define([ 'lodash',
 
     setTaskId: function() {
       return new Promise(function( res, rej ) {
-
-        if( this.get('task_id') ) {
+        if( !this.get('task') ) {
           return res();
         }
 

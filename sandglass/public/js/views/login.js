@@ -15,10 +15,6 @@ define([ 'lodash',
       'submit': 'login'
     },
 
-    initialize: function() {
-
-    },
-
     show: function() {
       this.$el.show();
     },
@@ -31,7 +27,11 @@ define([ 'lodash',
       e.preventDefault();
       new User({
         email: this.$('input[name="email"]').val()
-      }).login();
+      }).login()
+        .then( function() {},
+               function() {
+                this.$el.addClass('login--error');
+               }.bind( this ));
     },
 
     toSignup: function( e ) {

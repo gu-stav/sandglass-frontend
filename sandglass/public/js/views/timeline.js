@@ -53,10 +53,13 @@ define([ 'lodash',
     createGroup: function( model ) {
       var _modelFindBy = model.get( this.attributes.sortBy ),
           _added = false,
-          _view;
+          _view,
+          _groupLabel;
 
       if( this.attributes.sortBy === 'start' ) {
-        _modelFindBy = _modelFindBy.format('YYYY-MM-DD');
+        _modelFindBy = _modelFindBy.format( 'YYYY-MM-DD' );
+        _groupLabel = model.get( this.attributes.sortBy )
+                        .format( defaults.dateFormat );
       }
 
       _.each(['task', 'project'], function( item ) {
@@ -81,7 +84,8 @@ define([ 'lodash',
 
       if( !_added ) {
         _view = new ActivityGroup( { attributes: { sortBy: this.attributes.sortBy,
-                                                   groupName: _modelFindBy } } );
+                                                   groupName: _modelFindBy,
+                                                   groupLabel: _groupLabel ? _groupLabel : _modelFindBy } } );
         _view.add( model );
         this._activityGroups.push( _view );
 

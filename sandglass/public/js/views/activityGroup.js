@@ -44,11 +44,15 @@ define([ 'lodash',
 
     removeModel: function( activity ) {
       this.activityCollection.remove( activity );
-      this.render();
+
+      /* only re-render when we removed the last item */
+      if( !this.activityCollection.models.length ) {
+        this.render();
+      }
     },
 
     render: function() {
-      var _groupLabel = this.attributes.groupName;
+      var _groupLabel = this.attributes.groupLabel;
 
       /* insert visual grouping element */
       if( !this.$el.children('.timeline__groupHeader').length ) {

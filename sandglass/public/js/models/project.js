@@ -10,10 +10,6 @@ define([ 'lodash',
 
     create: function() {
       return new Promise(function( res, rej ) {
-        if( !this.isNew() ) {
-          return res();
-        }
-
         this.save()
           .done(function() {
             this.toCollection();

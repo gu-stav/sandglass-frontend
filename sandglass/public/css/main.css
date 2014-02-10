@@ -292,7 +292,8 @@ input:-ms-input-placeholder {
   background-color: #fff;
 }
 
-.timeline .timeline__item.timeline__item--track {
+.timeline .timeline__item.timeline__item--track,
+.timeline .timeline__item.timeline__item--edit {
   background-color: #FFF3D5;
 }
 
@@ -305,7 +306,7 @@ input:-ms-input-placeholder {
   overflow: hidden;
   color: #fff;
   background-color: #53B482;
-  padding: .3em 0 .3em 1.3em;
+  padding: .3em 0 .3em 1em;
   font-family: 'Open Sans', sans-serif;
   font-weight: 400;
   border-left: 3px solid #53B482;
@@ -375,6 +376,24 @@ input:-ms-input-placeholder {
   display: inline-block;
 }
 
+.timeline__item--edit .timeline__item-edit,
+.timeline__item--edit .timeline__item-delete {
+  display: inherit;
+  transition: right .3s ease-in-out;
+}
+
+.timeline__item--edit .timeline__item-edit {
+  right: -33px;
+}
+
+.timeline__item--edit .timeline__item-delete {
+  right: -65px;
+}
+
+.timeline__item--edit .timeline__item-clone {
+  display: none !important;
+}
+
 .timeline__item--track .timeline__item-end {
   display: inherit !important;
 }
@@ -436,13 +455,13 @@ input:-ms-input-placeholder {
   display: inline-block;
 }
 
-.timeline__activity:focus,
+.timeline__task:focus,
 .timeline__project:focus,
 .timeline__description:focus {
   background-color: #fff;
 }
 
-.timeline__activity {
+.timeline__task {
   display: inline-block;
   font-weight: 400;
 }
@@ -563,6 +582,10 @@ svg text {
   vertical-align: top;
   margin: .4em 0 0 4.96em;
   text-align: right;
+}
+
+.login--error input {
+  border-color: red;
 }
 
 .login__text {

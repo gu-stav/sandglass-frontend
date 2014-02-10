@@ -41,7 +41,8 @@ define([ 'lodash',
           Backbone.history.navigate('track', { trigger : true });
 
           return res();
-        }.bind( this ));
+        }.bind( this ))
+        .fail( rej );
       }.bind( this ));
     },
 

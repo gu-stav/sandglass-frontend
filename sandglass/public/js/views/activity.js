@@ -17,7 +17,7 @@ define([ 'lodash',
 
                           /* activity & project */
                           '<h2 class="timeline__headline">' +
-                             '<span class="timeline__activity">${ task }</span> - ' +
+                             '<span class="timeline__task">${ task }</span> - ' +
                              '<span class="timeline__project">${ project }</span>' +
                           '</h2>' +
 
@@ -85,17 +85,24 @@ define([ 'lodash',
     edit: function( e ) {
       e.preventDefault();
 
-      if( this.attributes.edit === true ) {
+      if( this.edit === true ) {
         return this.endEdit( e );
       }
 
       _.forEach( this.editable, function( item ) {
-        this.$el.find('.timeline__' + item ).prop( 'contenteditable', true );
+        var $el = this.$el.find('.timeline__' + item );
+
+        $el
+          .prop( 'contenteditable', true )
+          .on('blur', function( e ) {
+            this.model.set( item, $(e.target).text(), { silent: true } );
+          }.bind( this ));
+
       }.bind( this ));
 
       this.$el.addClass('timeline__item--edit');
 
-      this.attributes.edit = true;
+      this.edit = true;
     },
 
     endEdit: function( e ) {
@@ -105,9 +112,9 @@ define([ 'lodash',
         this.$el.find('.timeline__' + item ).prop( 'contenteditable', false );
       }.bind( this ));
 
+      this.model.update();
       this.$el.removeClass('timeline__item--edit');
-
-      this.attributes.edit = false;
+      this.edit = false;
     },
 
     clone: function( e ) {

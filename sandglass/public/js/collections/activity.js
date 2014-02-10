@@ -18,6 +18,10 @@ define([ 'lodash',
       this.on('add', function( model ) {
         Sandglass.views.timeline.add( model );
       }.bind( this ));
+
+      this.on('reset', function() {
+        Sandglass.views.timeline.render();
+      });
     },
 
     loadRecent: function( from, to ) {
@@ -34,13 +38,13 @@ define([ 'lodash',
 
         /* always empty the whole collection, so we call it later with
            a new timerange */
-        this.reset( undefined, { silent: true } );
+        this.reset();
 
         this.fetch({
           /* see #1 */
-           url: defaults.urlRoot + 'users/' + Sandglass.User.get('id') +
-                '/?action=get_activities&from=' + encodeURIComponent( from.format() )
-                + '&to=' + encodeURIComponent( to.format() ) + '/'
+          url: defaults.urlRoot + 'users/' + Sandglass.User.get('id') +
+               '/?action=get_activities&from=' + encodeURIComponent( from.format() )
+               + '&to=' + encodeURIComponent( to.format() ) + '/'
         })
           .done( res )
           .fail( rej );
