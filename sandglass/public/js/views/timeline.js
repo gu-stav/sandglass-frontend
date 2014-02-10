@@ -102,6 +102,10 @@ define([ 'lodash',
         this.$el
           .append( activityGroup.render().$el );
       }.bind( this ));
+    },
+
+    hide: function() {
+      this.$el.empty().detach();
     }
   });
 

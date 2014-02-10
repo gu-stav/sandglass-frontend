@@ -65,10 +65,10 @@
       'backbone',
       'jquery.cookie',
       'views/login',
-      'views/logout',
       'views/track',
       'views/signup',
       'views/timeline',
+      'views/user',
       'models/user',
       'collections/activity',
       'collections/project',
@@ -78,10 +78,10 @@
               Backbone,
               __cookie,
               LoginView,
-              LogoutView,
               TrackView,
               SignupView,
               TimelineView,
+              UserView,
               User,
               ActivityCollection,
               ProjectCollection,
@@ -91,22 +91,22 @@
       var cookieData = $.cookie( 'user' ),
           User = cookieData ? new User( JSON.parse( cookieData ) ) : undefined;
 
-      window.Sandglass = {
-        User: User,
+      window.Sandglass = {};
 
-        collections: {
-          activity: new ActivityCollection(),
-          project: new ProjectCollection(),
-          task: new TaskCollection()
-        },
+      window.Sandglass.User = User;
 
-        views: {
-          login: new LoginView(),
-          logout: new LogoutView(),
-          track: new TrackView(),
-          signup: new SignupView(),
-          timeline: new TimelineView()
-        }
+      window.Sandglass.collections = {
+        activity: new ActivityCollection(),
+        project: new ProjectCollection(),
+        task: new TaskCollection()
+      };
+
+      window.Sandglass.views = {
+        login: new LoginView(),
+        track: new TrackView(),
+        signup: new SignupView(),
+        timeline: new TimelineView(),
+        user: new UserView()
       };
 
       $(function() {
@@ -166,7 +166,9 @@
                 return;
               }
 
-              view.hide();
+              if( view.hasOwnProperty('hide') ) {
+                view.hide();
+              }
             });
 
             if( Sandglass.views[ route ] ) {
@@ -177,11 +179,11 @@
 
             if( Sandglass.User ) {
               Sandglass.views.login.hide();
-              Sandglass.views.logout.show();
+              Sandglass.views.user.render().$el.appendTo( 'header' )
               return;
             } else {
               Sandglass.views.login.show();
-              Sandglass.views.logout.hide();
+              Sandglass.views.user.hide();
             }
           });
 

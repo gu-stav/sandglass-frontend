@@ -684,9 +684,32 @@ svg text {
   margin-bottom: 1em;
 }
 
-/* logout */
-.logout {
+/* user */
+.user {
+  display: inline-block;
+  font-size: .8em;
   float: right;
-  margin: 1em 0 0 0;
-  font-size: .9em;
+  margin: .7em 0 0 0;
+}
+
+.user__userinfo {
+  display: inline-block;
+  margin: 0 0 0 .5em;
+}
+
+.user__image {
+  vertical-align: top;
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  background-color: #e4e4e4;
+  border: 1px solid #fff;
+}
+
+.user__name {
+  display: block;
+}
+
+.user__email {
+  display: block;
 }
