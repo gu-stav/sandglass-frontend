@@ -62,7 +62,7 @@ define([ 'lodash',
 
                   /* apply datepicker */
                   _.forEach(['start', 'end'], function( item ) {
-                    var _prefill = moment(),
+                    var _prefill = moment().zone( defaults.timezoneOffset ),
                         _uiDateFormat = defaults.dateFormat;
 
                     if( item === 'start' ) {
@@ -173,11 +173,12 @@ define([ 'lodash',
       }
 
       if( from ) {
-        from = moment( from, defaults.dateFormat );
+        from = moment( from, defaults.dateFormat ).zone( defaults.timezoneOffset );
       }
 
       if( to ) {
         to = moment( to, defaults.dateFormat )
+              .zone( defaults.timezoneOffset )
               .hour( 23 )
               .minute( 59 )
               .second( 59 );

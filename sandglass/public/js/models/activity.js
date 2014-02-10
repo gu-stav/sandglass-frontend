@@ -18,7 +18,7 @@ define([ 'lodash',
 
     initialize: function() {
       this.set( 'user_id',  Sandglass.User.get('id') );
-      this.set( 'start', moment( this.get('start') || undefined ));
+      this.set( 'start', moment( this.get('start') || undefined ).zone( defaults.timezoneOffset ));
       return this;
     },
 
@@ -28,7 +28,7 @@ define([ 'lodash',
         switch( attr ) {
           case 'start':
           case 'end':
-            opts = moment( opts );
+            opts = moment( opts ).zone( defaults.timezoneOffset );
           break;
         }
       } else if( typeof attr === 'object' ) {
@@ -158,13 +158,13 @@ define([ 'lodash',
 
     start: function() {
       return new Promise(function( res, rej ) {
-        this.set( { 'start': moment() } );
+        this.set( { 'start': moment().zone( defaults.timezoneOffset ) } );
       }.bind( this ));
     },
 
     end: function() {
       return new Promise(function( res, rej ) {
-        this.set( { 'end': moment() } );
+        this.set( { 'end': moment().zone( defaults.timezoneOffset ) } );
         this.save( undefined , {
           url: this.url + this.get('id') + '/'
         })
@@ -185,7 +185,7 @@ define([ 'lodash',
 
     getDuration: function() {
       var _start = this.get('start'),
-          _end = this.get('end') || moment(),
+          _end = this.get('end') || moment().zone( defaults.timezoneOffset ),
           duration = parseInt( moment( _end ).diff( _start, 'minutes' ) );
 
       if( duration < 1 ) {
