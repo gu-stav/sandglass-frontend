@@ -40,7 +40,7 @@ define([ 'lodash',
     },
 
     initialize: function() {
-      this.editable = ['duration', 'task', 'project', 'description'];
+      this.editable = ['duration', 'task', 'project', 'description', 'parsedStarted'];
       this.listenTo( this.model, 'sync', this.render );
     },
 
@@ -95,7 +95,20 @@ define([ 'lodash',
         $el
           .prop( 'contenteditable', true )
           .on('blur', function( e ) {
-            this.model.set( item, $(e.target).text(), { silent: true } );
+            var _text = $(e.target).text();
+
+            if( ['parsedStarted', 'parsedEnded'].indexOf( item ) !== -1 ) {
+              var _parsed = moment( _text, defaults.timeFormat ),
+                  _hours = _parsed.hours(),
+                  _minutes = _parsed.minutes(),
+                  _internalKey = ( item === 'parsedStarted' ? 'start' : 'end' )
+                  _newDate = moment( this.model.get( _internalKey ) ).hours( _hours ).minutes( _minutes );
+
+              this.model.set( _internalKey, _newDate );
+              return this;
+            }
+
+            this.model.set( item, _text );
           }.bind( this ));
 
       }.bind( this ));

@@ -166,15 +166,11 @@
                 return;
               }
 
-              if( view.hasOwnProperty('hide') ) {
-                view.hide();
-              }
+              view.hide();
             });
 
             if( Sandglass.views[ route ] ) {
               Sandglass.views[ route ].show();
-            } else {
-              Sandglass.views.signup.show();
             }
 
             if( Sandglass.User ) {

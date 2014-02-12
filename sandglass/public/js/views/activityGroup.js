@@ -9,6 +9,7 @@ define([ 'lodash',
 
   var ActivityGroup = Backbone.View.extend({
     tagName: 'ul',
+
     className: 'timeline__group-ul',
 
     initialize: function() {
@@ -27,17 +28,12 @@ define([ 'lodash',
       _.sortBy( this.activityCollection.models, function( activity ) {
         var _attr = activity.get( this.attributes.sortBy );
 
-        if( this.attributes.sortBy === 'start' ||
-           this.attributes.sortBy === 'end' ) {
+        if( ['start', 'end'].indexOf( this.attributes.sortBy ) !== -1 ) {
           return _attr.format('HH:ii');
         }
 
         return _attr;
       }.bind( this ));
-
-      if( this.attributes.sortBy === 'start' ) {
-        this.activityCollection.models.reverse();
-      }
 
       return this;
     },
@@ -52,21 +48,20 @@ define([ 'lodash',
     },
 
     render: function() {
-      var _groupLabel = this.attributes.groupLabel;
-
       /* insert visual grouping element */
       if( !this.$el.children('.timeline__groupHeader').length ) {
         this.$el.prepend('<li class="timeline__groupHeader"><strong>' +
-                         _groupLabel + '</strong></li>');
+                         this.attributes.groupLabel + '</strong></li>');
       }
 
+      /* no models */
       if( !this.activityCollection.models.length ) {
         this.$el.children('.timeline__groupHeader').remove();
+        return this;
       }
 
       _.forEach( this.activityCollection.models, function( activity ) {
-        this.$el
-          .append( activity._view.render().$el );
+        this.$el.append( activity._view.render().$el );
       }.bind( this ));
 
       return this;
