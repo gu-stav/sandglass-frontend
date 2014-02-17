@@ -8,37 +8,58 @@ define([ 'lodash',
             User ) {
 
   var LoginView = Backbone.View.extend({
-    el: 'form.login',
+    className: 'login form',
+    tagName: 'form',
+
+    template: _.template( '<input class="login__email"' +
+                          '       type="text"' +
+                          '       name="email"' +
+                          '       placeholder="email" />' +
+
+                          '<input class="login__password"' +
+                          '       type="password"' +
+                          '       name="password"' +
+                          '       placeholder="password" />' +
+
+                          '<button class="button login__submit"' +
+                          '        type="submit">Login</button>' ),
 
     events: {
-      'click a[href="/signup"]': 'toSignup',
       'submit': 'login'
     },
 
-    show: function() {
-      this.$el.show();
-    },
-
-    hide: function() {
-      this.$el.hide();
+    initialize: function() {
+      this.render();
     },
 
     login: function( e ) {
       e.preventDefault();
+
+      var email = this.$('input[name="email"]').val();
+
+      if( !email ) {
+        this.$el.addClass('form--error');
+        return;
+      } else {
+        this.$el.removeClass('form--error');
+      }
+
       new User({
-        email: this.$('input[name="email"]').val()
+        email: email
       }).login()
-        .then( function() {},
+        .then( function() {
+                 Sandglass.User = user;
+                 Backbone.history.navigate('track', { trigger : true });
+               },
                function() {
-                this.$el.addClass('login--error');
+                 this.$el.addClass('form--error');
                }.bind( this ));
     },
 
-    toSignup: function( e ) {
-      e.preventDefault();
-
-      Backbone.history
-        .navigate('signup', { trigger : true });
+    render: function() {
+      this.$el.html( this.template() );
+      this.$el.appendTo( 'header' );
+      this.$el.find('input:first-child').focus();
     }
   });
 

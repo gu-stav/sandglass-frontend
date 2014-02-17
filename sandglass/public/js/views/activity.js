@@ -40,7 +40,9 @@ define([ 'lodash',
     },
 
     initialize: function() {
-      this.editable = ['duration', 'task', 'project', 'description', 'parsedStarted'];
+      this.editable = ['duration', 'task', 'project',
+                       'description', 'parsedStarted', 'parsedEnded'];
+
       this.listenTo( this.model, 'sync', this.render );
     },
 
@@ -104,11 +106,11 @@ define([ 'lodash',
                   _internalKey = ( item === 'parsedStarted' ? 'start' : 'end' )
                   _newDate = moment( this.model.get( _internalKey ) ).hours( _hours ).minutes( _minutes );
 
-              this.model.set( _internalKey, _newDate );
+              this.model.set( _internalKey, _newDate, { silent: true } );
               return this;
             }
 
-            this.model.set( item, _text );
+            this.model.set( item, _text, { silent: true } );
           }.bind( this ));
 
       }.bind( this ));

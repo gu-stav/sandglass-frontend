@@ -183,10 +183,14 @@ define([ 'lodash',
       }.bind( this ));
     },
 
-    getDuration: function() {
+    getDuration: function( raw ) {
       var _start = this.get('start'),
           _end = this.get('end') || moment().zone( defaults.timezoneOffset ),
-          duration = parseInt( moment( _end ).diff( _start, 'minutes' ) );
+          duration = parseInt( moment( _end ).diff( _start, raw ? 'seconds' : 'minutes' ) );
+
+      if( raw ) {
+        return duration;
+      }
 
       if( duration < 1 ) {
         return '< 1min';

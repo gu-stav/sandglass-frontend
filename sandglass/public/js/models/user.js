@@ -21,7 +21,6 @@ define([ 'lodash',
         })
           .done(function() {
             Sandglass.User = this;
-
             return res( this );
           }.bind( this ));
       }.bind( this ));
@@ -29,18 +28,15 @@ define([ 'lodash',
 
     login: function() {
       return new Promise(function( res, rej ) {
-        this.fetch( {
+        this.fetch({
           data: {
             'search': '',
             'email' : this.get('email')
           }
         })
         .done(function( userData ) {
-          Sandglass.User = this;
           $.cookie('user', JSON.stringify( this.attributes ) );
-          Backbone.history.navigate('track', { trigger : true });
-
-          return res();
+          return res( this );
         }.bind( this ))
         .fail( rej );
       }.bind( this ));

@@ -17,18 +17,19 @@ define([ 'lodash',
                          '<a href="/logout" class="user__logout">Logout</a>' +
                          '</div>'),
 
+    initialize: function() {
+      this.render();
+    },
+
     render: function() {
       this.$el.html( this.template( Sandglass.User.attributes ) );
+      this.$el.appendTo( 'header' );
       return this;
     },
 
     logout: function( e ) {
       e.preventDefault();
       Sandglass.User.logout();
-    },
-
-    hide: function() {
-      this.$el.empty().detach();
     }
   });
 

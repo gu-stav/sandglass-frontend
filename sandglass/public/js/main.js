@@ -88,104 +88,92 @@
               TaskCollection,
               async ) {
 
-      var cookieData = $.cookie( 'user' ),
-          User = cookieData ? new User( JSON.parse( cookieData ) ) : undefined;
+      var userCookie = $.cookie( 'user' ),
+          user;
 
-      window.Sandglass = {};
-
-      window.Sandglass.User = User;
-
-      window.Sandglass.collections = {
-        activity: new ActivityCollection(),
-        project: new ProjectCollection(),
-        task: new TaskCollection()
+      Sandglass = {
+        views: {}
       };
 
-      window.Sandglass.views = {
-        login: new LoginView(),
-        track: new TrackView(),
-        signup: new SignupView(),
-        timeline: new TimelineView(),
-        user: new UserView()
-      };
+      if( userCookie ) {
+        user = new User( JSON.parse( userCookie ) );
 
-      $(function() {
-        var Workspace = Backbone.Router.extend({
-          routes: {
-            '':        'start',
-            'logout':  'logout',
-            'track':   'track',
-            'signup':  'signup'
-          },
-
-          start: function() {
-            if( Sandglass.User ) {
-              Backbone.history.navigate('track', { trigger : true });
-            } else {
-              Backbone.history.navigate('signup', { trigger : true });
-            }
-          },
-
-          logout: function() {
-            Sandglass.User.logout();
-          },
-
-          track: function() {
-            if( !Sandglass.User ) {
-              return Backbone.history.navigate('signup', { trigger : true });
-            }
-
-            Sandglass.views.track.show();
-
-            /* load recent data */
-            async.parallel([
-              function( cb ) {
-                Sandglass.collections.project
-                  .loadAll()
-                  .then( cb );
-              },
-              function( cb ) {
-                Sandglass.collections.task
-                  .loadAll()
-                  .then( cb );
-              }
-            ], function( err, data ) {
-              Sandglass.collections.activity
-                .loadRecent();
-            });
-          },
-
-          signup: function() {}
-        });
-
-        /* handle login/logout on route change */
-        new Workspace()
-          .bind('route', function( route ) {
-            _.forEach( Sandglass.views, function( view, index ) {
-              if( index === 'timeline' ) {
-                return;
-              }
-
-              view.hide();
-            });
-
-            if( Sandglass.views[ route ] ) {
-              Sandglass.views[ route ].show();
-            }
-
-            if( Sandglass.User ) {
-              Sandglass.views.login.hide();
-              Sandglass.views.user.render().$el.appendTo( 'header' )
-              return;
-            } else {
-              Sandglass.views.login.show();
-              Sandglass.views.user.hide();
-            }
+        user.login()
+          .then(function( user ) {
+            Sandglass.User = user;
+            Backbone.history.navigate('track', { trigger : true });
+          }, function() {
+            user.logout();
           });
+      } else {
+        Backbone.history.navigate('signup', { trigger : true });
+      }
 
-        Backbone.history
-          .start( { pushState: true,
-                    start: '/' } );
+      var Workspace = Backbone.Router.extend({
+        routes: {
+          '':        'start',
+          'login':   'login',
+          'logout':  'logout',
+          'track':   'track',
+          'signup':  'signup'
+        },
+
+        start: function() {
+          Backbone.history.navigate('track', { trigger : true });
+        },
+
+        login: function() {
+          Sandglass.views.login = new LoginView();
+          Sandglass.views.signup = new SignupView();
+        },
+
+        logout: function() {
+          Sandglass.User.logout();
+        },
+
+        track: function() {
+          if( !Sandglass.User ) {
+            return Backbone.history.navigate('login', { trigger : true });
+          }
+
+          Sandglass.views.user = new UserView();
+          Sandglass.views.timeline = new TimelineView();
+          Sandglass.views.track = new TrackView();
+
+          Sandglass.collections = {
+            activity: new ActivityCollection(),
+            project: new ProjectCollection(),
+            task: new TaskCollection()
+          };
+
+          /* load recent data */
+          async.parallel([
+            function( cb ) {
+              Sandglass.collections.project
+                .loadAll()
+                .then( cb );
+            },
+            function( cb ) {
+              Sandglass.collections.task
+                .loadAll()
+                .then( cb );
+            }
+          ], function( err, data ) {
+            Sandglass.collections.activity
+              .loadRecent();
+          });
+        },
+
+        signup: function() {
+          Sandglass.views.signup = new SignupView();
+          Sandglass.views.login = new LoginView();
+        }
       });
+
+      /* handle login/logout on route change */
+      new Workspace();
+
+      Backbone.history
+        .start( { pushState: true, start: '/' } );
   });
 })();

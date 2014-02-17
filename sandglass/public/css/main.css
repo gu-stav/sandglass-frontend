@@ -23,6 +23,10 @@ h1 {
 }
 
 /* forms */
+.form--error input {
+  border-color: red;
+}
+
 input,
 textarea,
 button {
@@ -571,6 +575,11 @@ input:-ms-input-placeholder {
   color: #53B482;
 }
 
+.ui-datepicker-header {
+  background: #53B482;
+  color: #fff;
+}
+
 /* nvd3 overwrites */
 svg text {
   fill: #949494;
@@ -582,10 +591,6 @@ svg text {
   vertical-align: top;
   margin: .4em 0 0 4.96em;
   text-align: right;
-}
-
-.login--error input {
-  border-color: red;
 }
 
 .login__text {

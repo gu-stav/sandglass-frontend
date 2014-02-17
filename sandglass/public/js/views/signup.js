@@ -9,12 +9,11 @@ define([ 'lodash',
 
   var SignupView = Backbone.View.extend({
     tagName: 'form',
-
     className: 'signup form form--centered',
 
     template: _.template('<h2 class="signup__headline">Signup</h2>' +
                 '<div class="signup__name-wrap">' +
-                  '<input type="text" name="name" placeholder="name" class="signup__name" />' +
+                  '<input type="text" name="name" placeholder="fistname lastname" class="signup__name" />' +
                 '</div>' +
                 '<div class="signup__email-wrap">' +
                   '<input type="text" name="email" placeholder="email" class="signup__email" />' +
@@ -27,31 +26,38 @@ define([ 'lodash',
       'submit': 'signup'
     },
 
+    initialize: function() {
+      this.render();
+    },
+
     signup: function( e ) {
       e.preventDefault();
 
-      var email = this.$el.find('input[name="email"]').val(),
+      return new Promise(function( res, rej ) {
+        var email = this.$el.find('input[name="email"]').val(),
           name = this.$el.find('input[name="name"]').val();
 
-      new User({
-        email: email,
-        name: name
-      }).create()
-        .then(function( user ) {
-          user.login();
-        });
-    },
+        if( !email || !name ) {
+          this.$el.addClass('form--error');
+          return rej();
+        } else {
+          this.$el.removeClass('form--error');
+        }
 
-    show: function() {
-      this.render().$el.insertAfter( 'header' );
-    },
-
-    hide: function() {
-      this.$el.empty().detach();
+        new User({
+          email: email,
+          name: name
+        }).create()
+          .then(function( user ) {
+            user.login()
+              .then( res, rej );
+          });
+      }.bind( this ));
     },
 
     render: function() {
       this.$el.html( this.template() );
+      this.$el.insertAfter( 'header' );
       return this;
     }
   });

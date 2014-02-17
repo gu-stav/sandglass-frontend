@@ -8,7 +8,7 @@ define([ 'lodash',
             ActivityGroup ) {
 
   var Timeline = Backbone.View.extend({
-    el: $('.timeline'),
+    className: 'timeline',
 
     initialize: function() {
       this._activityGroups = [];
@@ -16,6 +16,8 @@ define([ 'lodash',
       this.attributes = {
         sortBy: defaults.sortActivitiesBy
       };
+
+      this.render();
     },
 
     sort: function( index, keepBuild ) {
@@ -102,11 +104,9 @@ define([ 'lodash',
         this.$el
           .append( activityGroup.render().$el );
       }.bind( this ));
-    },
 
-    hide: function() {
-      this.$el.empty().detach();
-    }
+      this.$el.appendTo('.sandglass');
+    },
   });
 
   return Timeline;

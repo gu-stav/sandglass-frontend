@@ -84,6 +84,8 @@ define([ 'lodash',
                       })
                       .val( _prefill.format( defaults.dateFormat ) );
                   }.bind( this ));
+
+                  this.render();
                 }.bind( this ));
     },
 
@@ -143,14 +145,6 @@ define([ 'lodash',
             this.tracking = false;
           }.bind( this ));
       }
-    },
-
-    show: function() {
-      this.$el.show();
-    },
-
-    hide: function() {
-      this.$el.hide();
     },
 
     sort: function( e ) {
