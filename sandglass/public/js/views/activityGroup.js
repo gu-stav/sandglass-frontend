@@ -1,40 +1,36 @@
 define([ 'lodash',
          'backbone',
-         'defaults',
          'views/activity' ],
   function( _,
             Backbone,
-            defaults,
             Activity ) {
 
   var ActivityGroup = Backbone.View.extend({
     tagName: 'ul',
-
     className: 'timeline__group-ul',
+    duration: 0,
 
     initialize: function() {
       this.activityCollection = new Backbone.Collection();
+      this.addModelListener( this.model );
+      return this;
+    },
 
-      this.listenTo( this.model, 'destroy',
+    addModelListener: function( model ) {
+      this.listenTo( model, 'destroy',
                      function() {
-                      _view.removeModel( model );
-                     });
+                      this.removeModel( model );
+                     }.bind( this ));
 
       return this;
     },
 
     add: function( model ) {
-      var _view = new Activity( { model: model } ),
-          _model = model;
-
-      _model._view = _view;
-
-      this.listenTo( model, 'destroy',
-                     function() {
-                      _view.removeModel( model );
-                     });
+      var _view = new Activity( { model: model } );
+      model._view = _view;
 
       this.activityCollection.push( model );
+      this.addModelListener( model );
       this.render();
 
       return this;
@@ -47,28 +43,11 @@ define([ 'lodash',
       if( !this.activityCollection.models.length ) {
         this.render();
       }
+
+      return this;
     },
 
-    render: function() {
-      var _groupDuration = 0;
-
-      _.forEach( this.activityCollection.models, function( activity ) {
-        _groupDuration = _groupDuration + activity.getDuration( true );
-      });
-
-      /* insert visual grouping element */
-      if( !this.$el.children('.timeline__groupHeader').length ) {
-        this.$el.prepend('<li class="timeline__groupHeader"><strong>' +
-                         this.attributes.groupLabel +
-                          '</strong>' + ' - ' + _groupDuration + 'sec</li>');
-      }
-
-      /* no models */
-      if( !this.activityCollection.models.length ) {
-        this.$el.children('.timeline__groupHeader').remove();
-        return this;
-      }
-
+    sort: function () {
       this.activityCollection.models =
       _.sortBy( this.activityCollection.models, function( activity ) {
         var _attr = activity.get( this.attributes.sortBy );
@@ -80,9 +59,29 @@ define([ 'lodash',
         return _attr;
       }.bind( this ));
 
+      return this;
+    },
+
+    render: function() {
+      this.sort();
+
       _.forEach( this.activityCollection.models, function( activity ) {
+        this.duration = this.duration + activity.getDuration( true );
         this.$el.append( activity._view.render().$el );
       }.bind( this ));
+
+      /* insert visual grouping element */
+      if( !this.$el.children('.timeline__groupHeader').length ) {
+        this.$el.prepend('<li class="timeline__groupHeader"><strong>' +
+                         this.attributes.groupLabel +
+                          '</strong>' + ' - ' + this.duration + 'sec</li>');
+      }
+
+      /* no models */
+      if( !this.activityCollection.models.length ) {
+        this.$el.children('.timeline__groupHeader').remove();
+        return this;
+      }
 
       return this;
     }
