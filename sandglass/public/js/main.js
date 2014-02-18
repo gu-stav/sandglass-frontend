@@ -123,8 +123,13 @@
         },
 
         login: function() {
-          Sandglass.views.login = new LoginView();
-          Sandglass.views.signup = new SignupView();
+          if( !Sandglass.views.login ) {
+            Sandglass.views.login = new LoginView();
+          }
+
+          if( !Sandglass.views.signup ) {
+            Sandglass.views.signup = new SignupView();
+          }
         },
 
         logout: function() {
@@ -136,7 +141,13 @@
             return Backbone.history.navigate('login', { trigger : true });
           }
 
-          Sandglass.views.user = new UserView();
+          Sandglass.views.login.remove();
+          Sandglass.views.signup.remove();
+
+          if( !Sandglass.views.user ) {
+            Sandglass.views.user = new UserView();
+          }
+
           Sandglass.views.timeline = new TimelineView();
           Sandglass.views.track = new TrackView();
 
@@ -165,8 +176,13 @@
         },
 
         signup: function() {
-          Sandglass.views.signup = new SignupView();
-          Sandglass.views.login = new LoginView();
+          if( !Sandglass.views.login ) {
+            Sandglass.views.login = new LoginView();
+          }
+
+          if( !Sandglass.views.signup ) {
+            Sandglass.views.signup = new SignupView();
+          }
         }
       });
 

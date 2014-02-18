@@ -633,13 +633,15 @@ svg text {
 }
 
 .signup__name,
-.signup__email {
+.signup__email,
+.signup__password {
   margin-left: 2.95em;
   border-left: none;
 }
 
 .signup__name-wrap,
-.signup__email-wrap {
+.signup__email-wrap,
+.signup__password-wrap {
   position: relative;
 }
 
@@ -647,6 +649,7 @@ svg text {
   width: 18em;
 }
 
+.signup__password,
 .signup__email {
   border-top: none;
   width: 18em;
@@ -668,7 +671,7 @@ svg text {
   width: 2.4em;
 }
 
-.signup__email-wrap:before {
+.signup__password-wrap:before {
   content: '\f084';
   position: absolute;
   font-family: FontAwesome;
@@ -685,7 +688,24 @@ svg text {
   width: 2.6em;
 }
 
-.signup__email-wrap {
+.signup__email-wrap:before {
+  content: '\f003';
+  position: absolute;
+  font-family: FontAwesome;
+  top: 0;
+  left: 0;
+  border: 1px solid #ccc;
+  border-right: 1px solid #e4e4e4;
+  border-top: none;
+  height: 101%;
+  box-sizing: border-box;
+  font-size: 1.1em;
+  padding: .4em .88em;
+  color: #53B482;
+  width: 2.6em;
+}
+
+.signup__password-wrap {
   margin-bottom: 1em;
 }
 

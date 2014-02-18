@@ -18,6 +18,9 @@ define([ 'lodash',
                 '<div class="signup__email-wrap">' +
                   '<input type="text" name="email" placeholder="email" class="signup__email" />' +
                 '</div>' +
+                '<div class="signup__password-wrap">' +
+                  '<input type="password" name="password" placeholder="password" class="signup__password" />' +
+                '</div>' +
                 '<div>' +
                   '<button type="submit">Create user</button>' +
                 '</div>'),
@@ -35,7 +38,8 @@ define([ 'lodash',
 
       return new Promise(function( res, rej ) {
         var email = this.$el.find('input[name="email"]').val(),
-          name = this.$el.find('input[name="name"]').val();
+            name = this.$el.find('input[name="name"]').val(),
+            password = this.$el.find('input[name="password"]').val();
 
         if( !email || !name ) {
           this.$el.addClass('form--error');
@@ -46,7 +50,8 @@ define([ 'lodash',
 
         new User({
           email: email,
-          name: name
+          name: name,
+          password: password
         }).create()
           .then(function( user ) {
             user.login()

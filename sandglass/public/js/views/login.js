@@ -35,7 +35,8 @@ define([ 'lodash',
     login: function( e ) {
       e.preventDefault();
 
-      var email = this.$('input[name="email"]').val();
+      var email = this.$('input[name="email"]').val(),
+          password = this.$('input[name="password"]').val();
 
       if( !email ) {
         this.$el.addClass('form--error');
@@ -45,7 +46,8 @@ define([ 'lodash',
       }
 
       new User({
-        email: email
+        email: email,
+        password: password
       }).login()
         .then( function() {
                  Sandglass.User = user;

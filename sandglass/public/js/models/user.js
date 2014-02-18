@@ -12,12 +12,15 @@ define([ 'lodash',
       return new Promise(function( res, rej ) {
         var rawName = this.get('name').split(' '),
           firstName = rawName[0],
-          lastName = rawName[1];
+          lastName = rawName[1],
+          password = this.get('password');
 
         this.save( {
           email: this.get('email'),
           first_name: firstName,
           last_name: lastName
+        }, {
+          url: this.url + '?signup'
         })
           .done(function() {
             Sandglass.User = this;
@@ -28,14 +31,34 @@ define([ 'lodash',
 
     login: function() {
       return new Promise(function( res, rej ) {
-        this.fetch({
-          data: {
-            'search': '',
-            'email' : this.get('email')
-          }
+        $.ajax({
+          type: "POST",
+          url: this.url + '?signin',
+          data: JSON.stringify( this.attributes ),
+          processData: false,
+          contentType: 'application/json'
         })
         .done(function( userData ) {
-          $.cookie('user', JSON.stringify( this.attributes ) );
+          var pick = [ 'first_name',
+                       'last_name',
+                       'email_md5' ];
+
+          this.set( _.pick( userData, pick ) );
+          this.set( 'basic_auth', btoa( userData.token + ':' +
+                                        userData.key ) );
+
+          Sandglass.User = this;
+
+          Backbone.$.ajaxSetup({
+            headers: { 'Authorization': 'Basic ' + this.get('basic_auth') }
+          });
+
+          if( !$.cookie('user') ) {
+            $.cookie('user', JSON.stringify( this.attributes ) );
+          }
+
+          Backbone.history.navigate('/track', { trigger : true });
+
           return res( this );
         }.bind( this ))
         .fail( rej );
@@ -44,9 +67,11 @@ define([ 'lodash',
 
     logout: function() {
       return new Promise(function( res, rej ) {
-        window.Sandglass.User = undefined;
+
+        Sandglass.User = undefined;
         $.removeCookie('user');
         Backbone.history.navigate('/', { trigger : true });
+
       }.bind( this ));
     }
   });

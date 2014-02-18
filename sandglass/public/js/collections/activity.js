@@ -28,12 +28,12 @@ define([ 'lodash',
       return new Promise(function( res, rej ) {
         /* default today minus 1 month */
         if( !from ) {
-          from = moment().subtract( 'months', 1 );
+          from = moment().utc().subtract( 'months', 1 );
         }
 
         /* use now as end date */
         if( !to ) {
-          to = moment();
+          to = moment().utc();
         }
 
         /* always empty the whole collection, so we call it later with
