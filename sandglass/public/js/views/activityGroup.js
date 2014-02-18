@@ -14,6 +14,12 @@ define([ 'lodash',
 
     initialize: function() {
       this.activityCollection = new Backbone.Collection();
+
+      this.listenTo( this.model, 'destroy',
+                     function() {
+                      _view.removeModel( model );
+                     });
+
       return this;
     },
 
@@ -22,6 +28,11 @@ define([ 'lodash',
           _model = model;
 
       _model._view = _view;
+
+      this.listenTo( model, 'destroy',
+                     function() {
+                      _view.removeModel( model );
+                     });
 
       this.activityCollection.push( model );
       this.render();

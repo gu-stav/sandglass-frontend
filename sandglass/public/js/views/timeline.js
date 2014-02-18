@@ -62,14 +62,14 @@ define([ 'lodash',
         _modelFindBy = _modelFindBy.format( 'YYYY-MM-DD' );
         _groupLabel = model.get( this.attributes.sortBy )
                         .format( defaults.dateFormat );
+      } else {
+        _.each(['task', 'project'], function( item ) {
+          if( this.attributes.sortBy === item + '_id' ) {
+            _modelFindBy = Sandglass.collections[ item ]
+                            .getNameById( model.get( item + '_id' ) );
+          }
+        }.bind( this ));
       }
-
-      _.each(['task', 'project'], function( item ) {
-        if( this.attributes.sortBy === item + '_id' ) {
-          _modelFindBy = Sandglass.collections[ item ]
-                          .getNameById( model.get( item + '_id' ) );
-        }
-      }.bind( this ));
 
       _.forEach( this._activityGroups, function( groupView ) {
         if( groupView.attributes.groupName === _modelFindBy ) {
@@ -81,22 +81,25 @@ define([ 'lodash',
                              function() {
                               groupView.removeModel( model );
                              });
+
+          return false;
         }
       });
 
-      if( !_added ) {
-        _view = new ActivityGroup( { attributes: { sortBy: this.attributes.sortBy,
-                                                   groupName: _modelFindBy,
-                                                   groupLabel: _groupLabel ? _groupLabel : _modelFindBy } } );
-        _view.add( model );
-        this._activityGroups.push( _view );
-
-        _view.listenTo( model,
-                        'destroy',
-                       function() {
-                        _view.removeModel( model );
-                       });
+      if( _added ) {
+        return this;
       }
+
+      _view = new ActivityGroup( { model: model,
+                                   attributes: {
+                                     sortBy: this.attributes.sortBy,
+                                     groupName: _modelFindBy,
+                                     groupLabel: _groupLabel ? _groupLabel :
+                                                               _modelFindBy }
+                                  } );
+
+      this._activityGroups.push( _view );
+      return this;
     },
 
     render: function() {
