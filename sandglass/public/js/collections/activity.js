@@ -28,7 +28,7 @@ define([ 'lodash',
       return new Promise(function( res, rej ) {
         /* default today minus 1 month */
         if( !from ) {
-          from = moment().zone( defaults.timezoneOffset ).subtract( 'months', 1 );
+          from = moment().subtract( 'months', 1 );
         }
 
         /* use now as end date */

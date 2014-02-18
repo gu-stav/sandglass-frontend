@@ -18,7 +18,7 @@ define([ 'lodash',
 
     initialize: function() {
       this.set( 'user_id',  Sandglass.User.get('id') );
-      this.set( 'start', moment( this.get('start') || undefined ).zone( defaults.timezoneOffset ));
+      this.set( 'start', this.getDate( this.get('start') || undefined ) );
       return this;
     },
 
@@ -28,7 +28,7 @@ define([ 'lodash',
         switch( attr ) {
           case 'start':
           case 'end':
-            opts = moment( opts ).zone( defaults.timezoneOffset );
+            opts = this.getDate( opts );
           break;
         }
       } else if( typeof attr === 'object' ) {
@@ -40,10 +40,10 @@ define([ 'lodash',
           switch( index ) {
             case 'start':
             case 'end':
-              attr[index] = moment( val );
+              attr[index] = this.getDate( val );
             break;
           }
-        });
+        }.bind( this ));
       }
 
       return Backbone.Model.prototype.set.call( this, attr, opts );
@@ -156,15 +156,25 @@ define([ 'lodash',
       }.bind( this ));
     },
 
+    getTimezoneOffset: function() {
+      return new Date().getTimezoneOffset();
+    },
+
+    getDate: function( date, timeformat ) {
+      return moment( date || undefined, timeformat || undefined )
+              .zone( this.getTimezoneOffset() )
+              .utc();
+    },
+
     start: function() {
       return new Promise(function( res, rej ) {
-        this.set( { 'start': moment().zone( defaults.timezoneOffset ) } );
+        this.set( { 'start': this.getDate() } );
       }.bind( this ));
     },
 
     end: function() {
       return new Promise(function( res, rej ) {
-        this.set( { 'end': moment().zone( defaults.timezoneOffset ) } );
+        this.set( { 'end': this.getDate() } );
         this.save( undefined , {
           url: this.url + this.get('id') + '/'
         })
@@ -185,8 +195,8 @@ define([ 'lodash',
 
     getDuration: function( raw ) {
       var _start = this.get('start'),
-          _end = this.get('end') || moment().zone( defaults.timezoneOffset ),
-          duration = parseInt( moment( _end ).diff( _start, raw ? 'seconds' : 'minutes' ) );
+          _end = this.get('end') || this.getDate(),
+          duration = parseInt( _end.diff( _start, raw ? 'seconds' : 'minutes' ) );
 
       if( raw ) {
         return duration;

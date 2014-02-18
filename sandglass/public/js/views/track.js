@@ -23,6 +23,8 @@ define([ 'lodash',
       this.$('button[value="start"].sandglass__sortby-button')
         .addClass('sandglass__sortby-button--active');
 
+      this.render();
+
       require([ 'jquery.ui.autocomplete',
                 'jquery.ui.datepicker'], function() {
                   /* apply autocomplete */
@@ -62,7 +64,7 @@ define([ 'lodash',
 
                   /* apply datepicker */
                   _.forEach(['start', 'end'], function( item ) {
-                    var _prefill = moment().zone( defaults.timezoneOffset ),
+                    var _prefill = moment(),
                         _uiDateFormat = defaults.dateFormat;
 
                     if( item === 'start' ) {
@@ -84,8 +86,6 @@ define([ 'lodash',
                       })
                       .val( _prefill.format( defaults.dateFormat ) );
                   }.bind( this ));
-
-                  this.render();
                 }.bind( this ));
     },
 
@@ -167,12 +167,11 @@ define([ 'lodash',
       }
 
       if( from ) {
-        from = moment( from, defaults.dateFormat ).zone( defaults.timezoneOffset );
+        from = moment( from, defaults.dateFormat );
       }
 
       if( to ) {
         to = moment( to, defaults.dateFormat )
-              .zone( defaults.timezoneOffset )
               .hour( 23 )
               .minute( 59 )
               .second( 59 );

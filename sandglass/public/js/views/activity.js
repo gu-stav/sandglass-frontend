@@ -100,11 +100,13 @@ define([ 'lodash',
             var _text = $(e.target).text();
 
             if( ['parsedStarted', 'parsedEnded'].indexOf( item ) !== -1 ) {
-              var _parsed = moment( _text, defaults.timeFormat ),
+              var _parsed = this.model.getDate( _text, defaults.timeFormat ),
                   _hours = _parsed.hours(),
                   _minutes = _parsed.minutes(),
                   _internalKey = ( item === 'parsedStarted' ? 'start' : 'end' )
-                  _newDate = moment( this.model.get( _internalKey ) ).hours( _hours ).minutes( _minutes );
+                  _newDate = moment( this.model.get( _internalKey ) )
+                              .hours( _hours )
+                              .minutes( _minutes );
 
               this.model.set( _internalKey, _newDate, { silent: true } );
               return this;
@@ -116,7 +118,6 @@ define([ 'lodash',
       }.bind( this ));
 
       this.$el.addClass('timeline__item--edit');
-
       this.edit = true;
     },
 
