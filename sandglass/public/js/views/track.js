@@ -220,7 +220,8 @@ define([ 'lodash',
 
     sort: function( e ) {
       e.preventDefault();
-      Sandglass.views.timeline.sort( Backbone.$(e.target).val() );
+      Sandglass.views.timeline
+        .sort( Backbone.$(e.target).val(), false ).render();
     },
 
     loadRecent: function( e ) {

@@ -43,12 +43,14 @@ define([ 'lodash',
         this._activityGroups.reverse();
       }
 
-      this.render();
+      return this;
     },
 
     add: function( model ) {
       this.createGroup( model );
-      this.sort( this.attributes.sortBy );
+      this.sort( this.attributes.sortBy, true );
+
+      return this;
     },
 
     createGroup: function( model ) {
@@ -65,6 +67,8 @@ define([ 'lodash',
           if( this.attributes.sortBy === item + '_id' ) {
             _modelFindBy = Sandglass.collections[ item ]
                             .getNameById( model.get( item + '_id' ) );
+
+            return false;
           }
         }.bind( this ));
       }

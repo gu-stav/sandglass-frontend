@@ -100,6 +100,7 @@ define([ 'lodash',
       this.sort();
 
       this.$el.html( this.template( _data ) );
+      this.$el.appendTo( '.timeline' );
 
       _.forEach( this.activityCollection.models, function( activity ) {
         this.$el.append( activity._view.render().$el );

@@ -14,11 +14,6 @@ define([ 'lodash',
                           '<% } %>' +
                           '<button class="timeline__item-end timeline__button '+
                                           'button button--link"></button>' +
-                          '<% if (!tracking) { %>' +
-                          '<button class="timeline__item-clone ' +
-                                         'timeline__button button button--link">' +
-                          '</button>' +
-                          '<% } %>' +
 
                           '<% if (!tracking) { %>' +
                           '<button class="timeline__item-edit timeline__button ' +
@@ -46,7 +41,6 @@ define([ 'lodash',
 
     events: {
       'click .timeline__item-edit':   'edit',
-      'click .timeline__item-clone':  'clone',
       'click .timeline__item-delete': 'delete',
       'click .timeline__item-end':    'end'
     },
@@ -187,18 +181,6 @@ define([ 'lodash',
         }.bind( this ));
 
       return this;
-    },
-
-    /* create a new activity with the most if this */
-    clone: function( e ) {
-      e.preventDefault();
-
-      var _newAttributes = _.pluck( this.model.attributes,
-                                    [ 'task_id',
-                                      'description',
-                                      'project_id' ] );
-
-      return new Activity( _newAttributes ).create();
     },
 
     delete: function( e ) {
