@@ -12,6 +12,7 @@ define([ 'lodash',
 
     initialize: function() {
       this.activityCollection = new Backbone.Collection();
+      this.add( this.model );
       this.addModelListener( this.model );
       return this;
     },
