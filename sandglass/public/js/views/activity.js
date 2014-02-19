@@ -5,7 +5,7 @@ define([ 'lodash',
             Backbone,
             Activity ) {
 
-  var Activity = Backbone.View.extend({
+  var ActivityView = Backbone.View.extend({
     tagName: 'li',
     className: 'timeline__item',
     template: _.template( '<% if (!tracking) { %>' +
@@ -97,16 +97,19 @@ define([ 'lodash',
       this.timer = setInterval(function() {
         this.render();
       }.bind( this ), ( 1000 / 3 ) * 60 );
+
+      return this;
     },
 
     /* stop automatic updates */
     clearInterval: function() {
       clearInterval( this.timer );
+
+      return this;
     },
 
     /* start editing */
     edit: function( e ) {
-      console.log('edit')
       e.preventDefault();
 
       if( this.edit === true ) {
@@ -181,6 +184,7 @@ define([ 'lodash',
       return this;
     },
 
+    /* create new activity based on the old data */
     clone: function( e ) {
       e.preventDefault();
 
@@ -192,6 +196,7 @@ define([ 'lodash',
       return new Activity( _newAttributes ).create();
     },
 
+    /* delete activity */
     delete: function( e ) {
       e.preventDefault();
 
@@ -213,5 +218,5 @@ define([ 'lodash',
     }
   });
 
-  return Activity;
+  return ActivityView;
 });
