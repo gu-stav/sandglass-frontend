@@ -97,11 +97,15 @@ define([ 'lodash',
       this.timer = setInterval(function() {
         this.render();
       }.bind( this ), ( 1000 / 3 ) * 60 );
+
+      return this;
     },
 
     /* stop automatic updates */
     clearInterval: function() {
       clearInterval( this.timer );
+
+      return this;
     },
 
     /* start editing */
@@ -181,6 +185,7 @@ define([ 'lodash',
       return this;
     },
 
+    /* create a new activity with the most if this data */
     clone: function( e ) {
       e.preventDefault();
 
