@@ -1,10 +1,8 @@
 define([ 'lodash',
          'backbone',
-         'defaults',
          'models/user' ],
   function( _,
             Backbone,
-            defaults,
             User ) {
 
   var LoginView = Backbone.View.extend({
@@ -38,7 +36,7 @@ define([ 'lodash',
       var email = this.$('input[name="email"]').val(),
           password = this.$('input[name="password"]').val();
 
-      if( !email ) {
+      if( !email || !password ) {
         this.$el.addClass('form--error');
         return;
       } else {
