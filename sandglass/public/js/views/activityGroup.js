@@ -61,7 +61,12 @@ define([ 'lodash',
         return '< 1min';
       }
 
-      return  _minutes + 'min';
+      if( _minutes < 60 ) {
+        return  _minutes + 'min';
+      }
+
+      return parseInt( _minutes / 60, 10 ) + 'h ' +
+             ( _minutes - ( parseInt( _minutes / 60, 10 ) * 60 ) ) + 'min';
     },
 
     sort: function () {
