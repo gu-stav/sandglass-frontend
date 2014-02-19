@@ -351,6 +351,7 @@ input:-ms-input-placeholder {
 
 .timeline__item-delete {
   right: -1px;
+  transition: right .3s ease-in-out;
 }
 
 .timeline__item-delete:before {
@@ -372,6 +373,7 @@ input:-ms-input-placeholder {
 
 .timeline__item-edit {
   right: 67px;
+  transition: right .3s ease-in-out;
 }
 
 .timeline__item-edit:before {
@@ -383,7 +385,6 @@ input:-ms-input-placeholder {
 .timeline__item--edit .timeline__item-edit,
 .timeline__item--edit .timeline__item-delete {
   display: inherit;
-  transition: right .3s ease-in-out;
 }
 
 .timeline__item--edit .timeline__item-edit {

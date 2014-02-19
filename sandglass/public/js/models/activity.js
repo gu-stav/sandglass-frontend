@@ -160,8 +160,8 @@ define([ 'lodash',
       return new Date().getTimezoneOffset();
     },
 
-    getDate: function( date, timeformat ) {
-      return moment( date || undefined, timeformat || undefined )
+    getDate: function( date, format ) {
+      return moment( date || undefined, format || undefined )
               .zone( this.getTimezoneOffset() )
               .utc();
     },

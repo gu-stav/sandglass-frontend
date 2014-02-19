@@ -102,16 +102,13 @@ define([ 'lodash',
             var _text = $(e.target).text();
 
             if( ['parsedStarted', 'parsedEnded'].indexOf( item ) !== -1 ) {
-              var _parsed = this.model.getDate( _text, defaults.timeFormat ),
-                  _hours = _parsed.hours(),
-                  _minutes = _parsed.minutes(),
-                  _internalKey = ( item === 'parsedStarted' ? 'start' : 'end' )
-                  _newDate = moment( this.model.get( _internalKey ) )
-                              .hours( _hours )
-                              .minutes( _minutes );
+              var _internalKey = ( item === 'parsedStarted' ? 'start' : 'end' )
+                  _parsed = /(\d+):(\d+)/.exec( _text ),
+                  _text = this.model.getDate( this.model.get( _internalKey ) )
+                              .hours( _parsed[1] )
+                              .minutes( _parsed[2] );
 
-              this.model.set( _internalKey, _newDate, { silent: true } );
-              return this;
+              item = _internalKey;
             }
 
             this.model.set( item, _text, { silent: true } );
@@ -122,10 +119,13 @@ define([ 'lodash',
       this.$el.addClass('timeline__item--edit');
       this.edit = true;
 
+      /* TODO - remove that hack */
       setTimeout(function() {
         $( window )
           .on('click.activity_edit', function( e ) {
-            this.endEdit( e );
+            if( !$(e.target).closest( this.$el ).length ) {
+              this.endEdit( e );
+            }
           }.bind( this ));
       }.bind( this ), 10);
 
