@@ -14,13 +14,15 @@ define([ 'lodash',
     loadAll: function() {
       return new Promise(function( res, rej ) {
         this.fetch({
-          url: defaults.urlRoot + 'users/' + Sandglass.User.get('id') + '/tasks/'
-        })
-          .done( res )
+          url: defaults.urlRoot + 'users/' +
+               Sandglass.User.get('id') +
+               '/tasks/'
+        }).done( res )
           .fail( rej )
       }.bind( this ));
     },
 
+    /* returns a new array for jquery ui key:value */
     getAutocompleteList: function() {
       return _.map( this.models, function( model ) {
         return {
@@ -30,12 +32,15 @@ define([ 'lodash',
       })
     },
 
+    /* return the name of a task by the given id */
     getNameById: function( id ) {
       var obj = this.get( id );
 
       if( obj ) {
         return obj.get('name');
       }
+
+      return undefined;
     }
   });
 

@@ -5,15 +5,16 @@ define([ 'lodash',
 
   var User = Backbone.View.extend({
     tagName: 'div',
-
     className: 'user',
-
     events: {
       'click .user__logout': 'logout'
     },
 
-    template: _.template('<img class="user__image" src="https://www.gravatar.com/avatar/<%= email_md5 %>?s=40">' +
-                         '<div class="user__userinfo"><strong class="user__name"><%= first_name %> <%= last_name %></strong>' +
+    template: _.template('<img class="user__image"' +
+                         'src="<%= gravatar_url %>">' +
+                         '<div class="user__userinfo">' +
+                         '<strong class="user__name"><%= first_name %> ' +
+                         '<%= last_name %></strong>' +
                          '<a href="/logout" class="user__logout">Logout</a>' +
                          '</div>'),
 
@@ -21,8 +22,26 @@ define([ 'lodash',
       this.render();
     },
 
+    /* returns url to the user gravatar image */
+    getGravatarUrl: function() {
+      var SIZE = 40,
+          hash = this.model.get('email_md5');
+
+      if( !hash ) {
+        return undefined;
+      }
+
+      return 'https://www.gravatar.com/avatar/' +
+             hash +
+             '?s=' + SIZE;
+    },
+
     render: function() {
-      this.$el.html( this.template( Sandglass.User.attributes ) );
+      var _data = _.assign( {},
+                            this.model.attributes,
+                            { gravatar_url: this.getGravatarUrl() } );
+
+      this.$el.html( this.template( _data ) );
       this.$el.appendTo( 'header' );
       return this;
     },

@@ -209,7 +209,7 @@
           Sandglass.views.signup.remove();
 
           if( !Sandglass.views.user ) {
-            Sandglass.views.user = new UserView();
+            Sandglass.views.user = new UserView({ model: Sandglass.User });
           }
 
           Sandglass.views.timeline = new TimelineView();
