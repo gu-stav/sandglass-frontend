@@ -10,7 +10,65 @@ define([ 'lodash',
             Activity ) {
 
   var Track = Backbone.View.extend({
-    el: '.track',
+    className: 'track',
+
+    template: _.template( '<form>' +
+                          '  <div class="track__row">' +
+                          '    <div class="track__field track__field--inline">' +
+                          '      <input type="text"' +
+                          '             name="task"' +
+                          '             class="track__task"' +
+                          '             id="track__task"' +
+                          '             placeholder="Task" />' +
+                          '    </div>' +
+
+                          '    <div class="track__field track__field--inline">' +
+                          '      <input type="text"' +
+                          '             name="project"' +
+                          '             class="track__project"' +
+                          '             id="track__activity"' +
+                          '             placeholder="Project" />' +
+                          '    </div>' +
+
+                          '    <div class="track__field track__field--inline">' +
+                          '      <input type="text"' +
+                          '             name="description"' +
+                          '             class="track__description"' +
+                          '             id="track__activity"' +
+                          '             placeholder="Description" />' +
+                          '    </div>' +
+
+                          '    <div class="track__field track__field--inline">' +
+                          '      <button type="submit"' +
+                          '              class="track__button js-track__submit">Start</button>' +
+                          '    </div>' +
+                          '  </div>' +
+                          '</form>' +
+
+                          '<form class="sandglass__search">' +
+                          '  <div class="sandglass__sortby">' +
+                          '    <i class="fa fa-sort sandglass__sortby-icon"></i>' +
+                          '    <button class="sandglass__sortby-button"' +
+                          '            value="start">Date</button>' +
+                          '    <button class="sandglass__sortby-button"' +
+                          '            value="task_id">Task</button>' +
+                          '    <button class="sandglass__sortby-button"' +
+                          '            value="project_id">Project</button>' +
+                          '  </div>' +
+
+                          '  <div class="sandglass__search-startend">' +
+                          '    <i class="fa fa-search sandglass__search-icon"></i>' +
+                          '    <input type="text"' +
+                          '           class="sandglass__search-start"' +
+                          '           name="filter_start"' +
+                          '           placeholder="always" /> - ' +
+
+                          '    <input type="text"' +
+                          '           class="sandglass__search-end"' +
+                          '           name="filter_end"' +
+                          '           placeholder="today" />' +
+                          '  </div>' +
+                          '</form>' ),
 
     events: {
       'submit form': 'start',
@@ -178,6 +236,12 @@ define([ 'lodash',
       }
 
       Sandglass.collections.activity.loadRecent( from, to );
+    },
+
+    render: function() {
+      this.$el.html( this.template() );
+      this.$el.appendTo( '.sandglass' );
+      return this;
     }
   });
 
