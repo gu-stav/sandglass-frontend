@@ -121,10 +121,22 @@ define([ 'lodash',
 
       this.$el.addClass('timeline__item--edit');
       this.edit = true;
+
+      setTimeout(function() {
+        $( window )
+          .on('click.activity_edit', function( e ) {
+            this.endEdit( e );
+          }.bind( this ));
+      }.bind( this ), 10);
+
+      return this;
     },
 
     endEdit: function( e ) {
       e.preventDefault();
+
+      $( window )
+        .off('.activity_edit');
 
       _.forEach( this.editable, function( item ) {
         this.$el.find('.timeline__' + item ).prop( 'contenteditable', false );
@@ -133,6 +145,8 @@ define([ 'lodash',
       this.model.update();
       this.$el.removeClass('timeline__item--edit');
       this.edit = false;
+
+      return this;
     },
 
     clone: function( e ) {
@@ -144,21 +158,28 @@ define([ 'lodash',
         id: undefined
       };
 
-      new ActivityModel( _.assign( {}, this.model.attributes, _overwrites ) )
+      return new ActivityModel( _.assign( {}, this.model.attributes, _overwrites ) )
         .create();
     },
 
     delete: function( e ) {
       e.preventDefault();
-      this.model.delete()
-        .then(function() {
-          this.remove();
-        }.bind( this ));
+
+      return new Promise(function( res, rej ) {
+        this.model.delete()
+          .then(function() {
+            this.remove();
+            res();
+          }.bind( this ),
+          function() {
+            rej();
+          });
+      }.bind( this ));
     },
 
     end: function( e ) {
       e.preventDefault();
-      this.model.end();
+      return this.model.end();
     }
   });
 
