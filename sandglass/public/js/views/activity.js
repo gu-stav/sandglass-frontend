@@ -99,18 +99,26 @@ define([ 'lodash',
         $el
           .prop( 'contenteditable', true )
           .on('blur', function( e ) {
-            var _text = $(e.target).text();
+            var _text = $(e.target).text(),
+                _currentText = this.model.get( item );
 
             if( ['parsedStarted', 'parsedEnded'].indexOf( item ) !== -1 ) {
-              var _internalKey = ( item === 'parsedStarted' ? 'start' : 'end' )
-                  _parsed = /(\d+):(\d+)/.exec( _text ),
-                  _text = this.model.getDate( this.model.get( _internalKey ) )
+              item = ( item === 'parsedStarted' ? 'start' : 'end' );
+
+              var _parsed = /^(\d+):(\d+)$/.exec( _text ),
+                  _text = this.model.getDate( this.model.get( item ) )
                               .hours( _parsed[1] )
                               .minutes( _parsed[2] );
-
-              item = _internalKey;
             }
 
+            /* do not update when nothing has changed */
+            if( _text === _currentText ) {
+              return;
+            }
+
+            /* save silently, because the whole activity is getting saved,
+               when the edit mode ends to avoid requests and wrong durations,
+               caused by navigation with tab */
             this.model.set( item, _text, { silent: true } );
           }.bind( this ));
 
