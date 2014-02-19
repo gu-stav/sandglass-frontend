@@ -1,19 +1,29 @@
 define([ 'lodash',
          'backbone',
-         'moment',
          'models/activity' ],
   function( _,
             Backbone,
-            moment,
-            ActivityModel ) {
+            Activity ) {
 
   var Activity = Backbone.View.extend({
     tagName: 'li',
     className: 'timeline__item',
-    template: _.template( '<% if (!tracking) {%><button class="timeline__item-delete timeline__button button button--link"></button><%}%>' +
-                          '<button class="timeline__item-end timeline__button button button--link"></button>' +
-                          '<% if (!tracking) {%><button class="timeline__item-clone timeline__button button button--link"></button><%}%>' +
-                          '<% if (!tracking) {%><button class="timeline__item-edit timeline__button button button--link"></button><%}%>' +
+    template: _.template( '<% if (!tracking) { %>' +
+                          '<button class="timeline__item-delete timeline__button ' +
+                                         'button button--link"></button>' +
+                          '<% } %>' +
+                          '<button class="timeline__item-end timeline__button '+
+                                          'button button--link"></button>' +
+                          '<% if (!tracking) { %>' +
+                          '<button class="timeline__item-clone ' +
+                                         'timeline__button button button--link">' +
+                          '</button>' +
+                          '<% } %>' +
+
+                          '<% if (!tracking) { %>' +
+                          '<button class="timeline__item-edit timeline__button ' +
+                                         'button button--link"></button>' +
+                          '<% } %>' +
 
                           /* activity & project */
                           '<h2 class="timeline__headline">' +
@@ -22,31 +32,32 @@ define([ 'lodash',
                           '</h2>' +
 
                           /* description */
-                          '<p class="timeline__description">${ parsedDescription }</p>' +
+                          '<p class="timeline__description">' +
+                          '${ parsedDescription }</p>' +
 
                           '<div class="timeline__time">'+
-                             '<strong class="timeline__duration">${ duration }</strong>' +
-                             '<small class="timeline__parsedStartEnd">' +
-                                '<span class="timeline__parsedStarted">${ parsedStarted }</span>' +
-                                ' - <span class="timeline__parsedEnded">${ parsedEnded }</span>' +
-                             '</small>' +
+                          '<strong class="timeline__duration">${ duration }</strong>' +
+                          '<small class="timeline__parsedStartEnd">' +
+                          '<span class="timeline__parsedStarted">${ parsedStarted }</span>' +
+                          ' - <span class="timeline__parsedEnded">${ parsedEnded }</span>' +
+                          '</small>' +
                           '</div>'),
 
     events: {
-      'click .timeline__item-edit': 'edit',
-      'click .timeline__item-clone': 'clone',
+      'click .timeline__item-edit':   'edit',
+      'click .timeline__item-clone':  'clone',
       'click .timeline__item-delete': 'delete',
-      'click .timeline__item-end': 'end'
+      'click .timeline__item-end':    'end'
     },
 
-    initialize: function() {
-      /* editable elements in edit mode */
-      this.editable = [ 'task',
-                        'project',
-                        'description',
-                        'parsedStarted',
-                        'parsedEnded'];
+    /* editable elements in edit mode */
+    editable: [ 'task',
+                'project',
+                'description',
+                'parsedStarted',
+                'parsedEnded'],
 
+    initialize: function() {
       this.listenTo( this.model, 'sync', this.render );
     },
 
@@ -95,6 +106,7 @@ define([ 'lodash',
 
     /* start editing */
     edit: function( e ) {
+      console.log('edit')
       e.preventDefault();
 
       if( this.edit === true ) {
@@ -172,15 +184,12 @@ define([ 'lodash',
     clone: function( e ) {
       e.preventDefault();
 
-      var _overwrites = {
-        start: undefined,
-        end: undefined,
-        id: undefined
-      };
+      var _newAttributes = _.pluck( this.model.attributes,
+                                    [ 'task_id',
+                                      'description',
+                                      'project_id' ] );
 
-      return new ActivityModel( _.assign( {},
-                                          this.model.attributes,
-                                          _overwrites ) ).create();
+      return new Activity( _newAttributes ).create();
     },
 
     delete: function( e ) {
