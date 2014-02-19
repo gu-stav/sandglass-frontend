@@ -3,7 +3,7 @@ define([ 'lodash',
          'views/activity' ],
   function( _,
             Backbone,
-            Activity ) {
+            ActivityView ) {
 
   var ActivityGroup = Backbone.View.extend({
     tagName: 'ul',
@@ -33,7 +33,7 @@ define([ 'lodash',
     },
 
     add: function( model ) {
-      var _view = new Activity( { model: model } );
+      var _view = new ActivityView( { model: model } );
       model._view = _view;
 
       this.activityCollection.push( model );
@@ -55,7 +55,7 @@ define([ 'lodash',
     },
 
     getFormattedDuration: function() {
-      var _minutes = parseInt( this.duration / 60, 10 );
+      var _minutes = parseInt( this.duration / 120, 10 );
 
       if( _minutes === 0 ) {
         return '< 1min';
@@ -80,6 +80,11 @@ define([ 'lodash',
     },
 
     render: function() {
+
+      _.forEach( this.activityCollection.models, function( activity ) {
+        this.duration = this.duration + activity.getDuration( true );
+      }.bind( this ));
+
       var _data = {
         groupLabel: this.attributes.groupLabel,
         duration: this.getFormattedDuration(),
@@ -91,7 +96,6 @@ define([ 'lodash',
       this.$el.html( this.template( _data ) );
 
       _.forEach( this.activityCollection.models, function( activity ) {
-        this.duration = this.duration + activity.getDuration( true );
         this.$el.append( activity._view.render().$el );
       }.bind( this ));
 
