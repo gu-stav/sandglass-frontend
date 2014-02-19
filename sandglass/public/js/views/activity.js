@@ -82,7 +82,7 @@ define([ 'lodash',
 
       this.timer = setInterval(function() {
         this.render();
-      }.bind( this ), ( 1000 / 3 ) * 60);
+      }.bind( this ), ( 1000 / 3 ) * 60 );
     },
 
     /* stop automatic updates */

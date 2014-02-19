@@ -78,11 +78,13 @@ define([ 'lodash',
 
     initialize: function() {
       /* select default filter method */
-      this.$('button[value="start"].sandglass__sortby-button')
+      this
+        .$('button[value="start"].sandglass__sortby-button')
         .addClass('sandglass__sortby-button--active');
 
       this.render();
 
+      /* add autocomplete & datepicker */
       require([ 'jquery.ui.autocomplete',
                 'jquery.ui.datepicker'], function() {
                   /* apply autocomplete */
@@ -92,26 +94,39 @@ define([ 'lodash',
                         minLength: 0,
                         source: function( req, res ) {
                           var term = req.term,
-                              raw = Sandglass.collections[ item ].getAutocompleteList(),
                               filtered;
 
-                          filtered = _.map( raw, function( el ) {
-                            if( el.label.indexOf( term ) !== -1 ) {
-                              return el;
-                            }
-                          });
+                          /* filter elements */
+                          filtered =
+                            _.map( Sandglass.collections[ item ].getAutocompleteList(),
+                                   function( el ) {
+                                     if( el.label.indexOf( term ) !== -1 ) {
+                                       return el;
+                                     }
+                                   });
 
                           res( _.compact( filtered ) );
                         },
 
+                        /* do not fill input when focusing elements */
                         focus: function() {
                           return false;
                         },
 
                         select: function( e, ui ) {
-                          this.$( e.target )
+                          var $target = $(e.target);
+
+                          /* fill with label & save the id */
+                          $target
                             .val( ui.item.label )
                             .data( 'selectedId', ui.item.value );
+
+                          /* focus next input field */
+                          $target
+                            .parent()
+                            .next('div')
+                              .children('input')
+                                .focus();
 
                           return false;
                         }.bind( this ),
@@ -122,19 +137,16 @@ define([ 'lodash',
 
                   /* apply datepicker */
                   _.forEach(['start', 'end'], function( item ) {
-                    var _prefill = moment(),
+                    var _prefill = moment().utc(),
                         _uiDateFormat = defaults.dateFormat;
 
-                    if( item === 'start' ) {
-                      _prefill = _prefill.subtract( 'months', 1 );
-                    }
-
+                    /* mapping for jquery ui dateformat */
                     _uiDateFormat = _uiDateFormat.replace('MM', 'mm');
                     _uiDateFormat = _uiDateFormat.replace('DD', 'dd');
                     _uiDateFormat = _uiDateFormat.replace('YYYY', 'yy');
 
                     if( item === 'start' ) {
-                      _prefill = _prefill; /* todo minus one month */
+                      _prefill = _prefill.subtract( 'months', 1 );
                     }
 
                     this.$('.sandglass__search-' + item)
@@ -142,26 +154,32 @@ define([ 'lodash',
                         dateFormat: _uiDateFormat,
                         maxDate: new Date()
                       })
+                      /* prefill */
                       .val( _prefill.format( defaults.dateFormat ) );
                   }.bind( this ));
                 }.bind( this ));
     },
 
     start: function( e ) {
+      e.preventDefault();
+
       if( this.tracking ) {
         return this.stop( e );
       }
-
-      e.preventDefault();
 
       var $task = this.$('input[name="task"]'),
           task = $task.val() || '',
           $project = this.$('input[name="project"]'),
           project = $project.val() || '',
-          $description = this.$('input[name="description"]');
+          description = this.$('input[name="description"]').val() || '';
 
-      if( task.length <= 2 || project.length <= 2 ) {
+      if( task.length <= 2 ||
+          project.length <= 2 ||
+          description.length <= 2 ) {
+        this.$el.addClass('form--error');
         return this;
+      } else {
+        this.$el.removeClass('form-error');
       }
 
       new Activity({
@@ -169,7 +187,7 @@ define([ 'lodash',
         task_id: $task.data('selectedId'),
         project: project,
         project_id: $project.data('selectedId'),
-        description: $description.val()
+        description: description
       })
         .create()
         .then(function( activity ) {
