@@ -24,7 +24,7 @@ define([ 'lodash',
       /* do not delete existing groups - only reorder (no data was added) */
       if( !keepBuild ) {
         _.forEach( this._activityGroups, function( activityGroup ) {
-          activityGroup.remove();
+          activityGroup.$el.empty().detach();
         });
 
         this._activityGroups = [];
@@ -48,7 +48,8 @@ define([ 'lodash',
 
     add: function( model ) {
       this.createGroup( model );
-      this.sort( this.attributes.sortBy, true );
+      this.sort( this.attributes.sortBy, false );
+      this.render();
 
       return this;
     },

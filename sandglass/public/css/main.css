@@ -339,16 +339,6 @@ input:-ms-input-placeholder {
   display: inherit;
 }
 
-.timeline__item-clone {
-  right: 31px;
-}
-
-.timeline__item-clone:before {
-  content: '\f079';
-  font-family: FontAwesome;
-  display: inline-block;
-}
-
 .timeline__item-delete {
   right: -1px;
   transition: right .3s ease-in-out;
@@ -372,7 +362,7 @@ input:-ms-input-placeholder {
 }
 
 .timeline__item-edit {
-  right: 67px;
+  right: 31px;
   transition: right .3s ease-in-out;
 }
 
@@ -395,15 +385,10 @@ input:-ms-input-placeholder {
   right: -65px;
 }
 
-.timeline__item--edit .timeline__item-clone {
-  display: none !important;
-}
-
 .timeline__item--track .timeline__item-end {
   display: inherit !important;
 }
 
-.timeline__item--track .timeline__item-clone,
 .timeline__item--track .timeline__item-delete {
   display: none !important;
 }
