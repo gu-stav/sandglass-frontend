@@ -55,7 +55,7 @@ define([ 'lodash',
     },
 
     getFormattedDuration: function() {
-      var _minutes = parseInt( this.duration / 120, 10 );
+      var _minutes = parseInt( this.duration, 10 );
 
       if( _minutes === 0 ) {
         return '< 1min';
@@ -80,6 +80,7 @@ define([ 'lodash',
     },
 
     render: function() {
+      this.duration = 0;
 
       _.forEach( this.activityCollection.models, function( activity ) {
         this.duration = this.duration + activity.getDuration( true );

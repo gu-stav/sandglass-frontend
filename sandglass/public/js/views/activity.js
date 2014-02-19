@@ -33,7 +33,8 @@ define([ 'lodash',
 
                           /* description */
                           '<p class="timeline__description">' +
-                          '${ parsedDescription }</p>' +
+                          '${ parsedDescription }' +
+                          '</p>' +
 
                           '<div class="timeline__time">'+
                           '<strong class="timeline__duration">${ duration }</strong>' +
@@ -55,7 +56,7 @@ define([ 'lodash',
                 'project',
                 'description',
                 'parsedStarted',
-                'parsedEnded'],
+                'parsedEnded' ],
 
     initialize: function() {
       this.listenTo( this.model, 'sync', this.render );
@@ -110,12 +111,13 @@ define([ 'lodash',
 
     /* start editing */
     edit: function( e ) {
-      console.log('edit')
       e.preventDefault();
 
       if( this.edit === true ) {
         return this.endEdit( e );
       }
+
+      this.clearInterval();
 
       this.$el.addClass('timeline__item--edit');
       this.edit = true;
@@ -173,6 +175,8 @@ define([ 'lodash',
           this.$el.removeClass('timeline__item--edit');
           this.edit = false;
 
+          this.setInterval();
+
           /* remove clickhandler, for ending edit mode */
           $( window ).off('.activity_edit');
 
@@ -185,7 +189,7 @@ define([ 'lodash',
       return this;
     },
 
-    /* create a new activity with the most if this data */
+    /* create a new activity with the most if this */
     clone: function( e ) {
       e.preventDefault();
 

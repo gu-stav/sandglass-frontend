@@ -112,7 +112,7 @@
         user = new User( JSON.parse( userCookie ) );
 
         user.login()
-          .then(function( user ) {
+          .then(function() {
             Sandglass.User = user;
             Backbone.history.navigate('track', { trigger : true });
           }, function() {

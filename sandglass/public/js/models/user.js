@@ -73,7 +73,7 @@ define([ 'lodash',
 
         Sandglass.User = undefined;
 
-        Sandglas.deleteUserData();
+        Sandglass.deleteUserData();
         Backbone.history.navigate('/', { trigger : true });
 
       }.bind( this ));

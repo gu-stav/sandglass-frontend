@@ -208,7 +208,7 @@ define([ 'lodash',
     getDuration: function( raw ) {
       var _start = this.getDate( this.get('start') ),
           _end =  this.getDate( this.get('end') ),
-          duration = _end.diff( _start, raw ? 'seconds' : 'minutes' );
+          duration = _end.diff( _start, 'minutes' );
 
       if( raw ) {
         return duration;
