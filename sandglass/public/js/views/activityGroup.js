@@ -10,10 +10,16 @@ define([ 'lodash',
     className: 'timeline__group-ul',
     duration: 0,
 
+    template: _.template( '<% if ( modelCount ) { %>' +
+                          '<li class="timeline__groupHeader">' +
+                          '<strong><%= groupLabel %></strong>' +
+                          ' <%= duration %>' +
+                          '</li>' +
+                          '<% } %>' ),
+
     initialize: function() {
       this.activityCollection = new Backbone.Collection();
       this.add( this.model );
-      this.addModelListener( this.model );
       return this;
     },
 
@@ -48,6 +54,16 @@ define([ 'lodash',
       return this;
     },
 
+    getFormattedDuration: function() {
+      var _minutes = parseInt( this.duration / 60, 10 );
+
+      if( _minutes === 0 ) {
+        return '< 1min';
+      }
+
+      return  _minutes + 'min';
+    },
+
     sort: function () {
       this.activityCollection.models =
       _.sortBy( this.activityCollection.models, function( activity ) {
@@ -64,25 +80,20 @@ define([ 'lodash',
     },
 
     render: function() {
+      var _data = {
+        groupLabel: this.attributes.groupLabel,
+        duration: this.getFormattedDuration(),
+        modelCount: this.activityCollection.models.length > 0
+      };
+
       this.sort();
+
+      this.$el.html( this.template( _data ) );
 
       _.forEach( this.activityCollection.models, function( activity ) {
         this.duration = this.duration + activity.getDuration( true );
         this.$el.append( activity._view.render().$el );
       }.bind( this ));
-
-      /* insert visual grouping element */
-      if( !this.$el.children('.timeline__groupHeader').length ) {
-        this.$el.prepend('<li class="timeline__groupHeader"><strong>' +
-                         this.attributes.groupLabel +
-                          '</strong>' + ' - ' + this.duration + 'sec</li>');
-      }
-
-      /* no models */
-      if( !this.activityCollection.models.length ) {
-        this.$el.children('.timeline__groupHeader').remove();
-        return this;
-      }
 
       return this;
     }
