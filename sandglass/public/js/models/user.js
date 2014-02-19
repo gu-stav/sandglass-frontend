@@ -55,8 +55,9 @@ define([ 'lodash',
             headers: { 'Authorization': 'Basic ' + this.get('basic_auth') }
           });
 
-          if( !$.cookie('user') ) {
-            $.cookie('user', JSON.stringify( this.attributes ) );
+          if( !Sandglass.getUserData() ) {
+            /* TODO: save user to localstorage */
+            Sandglass.setUserData( this.attributes );
           }
 
           Backbone.history.navigate('/track', { trigger : true });
@@ -71,7 +72,8 @@ define([ 'lodash',
       return new Promise(function( res, rej ) {
 
         Sandglass.User = undefined;
-        $.removeCookie('user');
+
+        Sandglas.deleteUserData();
         Backbone.history.navigate('/', { trigger : true });
 
       }.bind( this ));

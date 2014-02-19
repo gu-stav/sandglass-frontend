@@ -1,9 +1,11 @@
 define([ 'lodash',
          'backbone',
+         'moment',
          'defaults',
          'models/activity' ],
   function( _,
             Backbone,
+            moment,
             defaults,
             Activity ) {
 
@@ -43,7 +45,7 @@ define([ 'lodash',
         this.fetch({
           /* see #1 */
           url: defaults.urlRoot + 'users/' + Sandglass.User.get('id') +
-               '/?action=get_activities&from=' + encodeURIComponent( from.format() )
+               '/?action=activities&from=' + encodeURIComponent( from.format() )
                + '&to=' + encodeURIComponent( to.format() ) + '/'
         })
           .done( res )

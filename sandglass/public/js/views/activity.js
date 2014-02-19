@@ -1,9 +1,11 @@
 define([ 'lodash',
          'backbone',
+         'moment',
          'defaults',
          'models/activity' ],
   function( _,
             Backbone,
+            moment,
             defaults,
             ActivityModel ) {
 

@@ -88,12 +88,25 @@
               TaskCollection,
               async ) {
 
-      var userCookie = $.cookie( 'user' ),
-          user;
-
       Sandglass = {
         views: {}
       };
+
+      /* TODO: Sandglass = new Workspace() */
+      Sandglass.getUserData = function() {
+        return $.cookie( 'user' );
+      };
+
+      Sandglass.setUserData = function( data ) {
+        $.cookie('user', JSON.stringify( data ) );
+      };
+
+      Sandglass.deleteUserData = function() {
+        $.removeCookie('user');
+      };
+
+      var userCookie = Sandglass.getUserData(),
+          user;
 
       if( userCookie ) {
         user = new User( JSON.parse( userCookie ) );
@@ -116,6 +129,57 @@
           'logout':  'logout',
           'track':   'track',
           'signup':  'signup'
+        },
+
+        _views: {},
+
+        /* check for localStorage support */
+        hasLocalStorage: function() {
+          return localStorage in window;
+        },
+
+        /* Storage abstraction to support localStorage & cookieFallback */
+        storageSet: function( index, data ) {
+          /* when data is undefined, delete key */
+          if( typeof( data ) === 'undefined' ) {
+            localStorage.removeItem( index );
+          }
+
+          /* make sure we always use (json)strings */
+          if( typeof( data ) !== 'string' ) {
+            data = JSON.stringify( data );
+          }
+
+          if( this.hasLocalStorage() ) {
+            return localStorage.setItem( index, data );
+          } else {
+            return $.cookie( index, data );
+          }
+        },
+
+        /* Storage abstraction to support localStorage & cookieFallback */
+        storageGet: function( index ) {
+          var _return;
+
+          if( this.hasLocalStorage() ) {
+            _return = localStorage.getItem( index );
+          } else {
+            _return = $.cookie( index );
+          }
+
+          return JSON.parse( _return );
+        },
+
+        getUserData: function() {
+          return this.storageGet( 'user' );
+        },
+
+        setUserData: function( data ) {
+          return this.storageSet( 'user', data );
+        },
+
+        deleteUserData: function() {
+          $.storageSet( 'user', undefined );
         },
 
         start: function() {
