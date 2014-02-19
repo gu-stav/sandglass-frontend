@@ -1,10 +1,8 @@
 define([ 'lodash',
          'backbone',
-         'defaults',
          'models/user' ],
   function( _,
             Backbone,
-            defaults,
             User ) {
 
   var SignupView = Backbone.View.extend({
@@ -13,13 +11,24 @@ define([ 'lodash',
 
     template: _.template('<h2 class="signup__headline">Signup</h2>' +
                 '<div class="signup__name-wrap">' +
-                  '<input type="text" name="name" placeholder="fistname lastname" class="signup__name" />' +
+                  '<input type="text"' +
+                  '       name="name"' +
+                  '       placeholder="fistname lastname"' +
+                  '       class="signup__name" />' +
                 '</div>' +
+
                 '<div class="signup__email-wrap">' +
-                  '<input type="text" name="email" placeholder="email" class="signup__email" />' +
+                  '<input type="text"' +
+                  '       name="email"' +
+                  '       placeholder="email"'+
+                  '       class="signup__email" />' +
                 '</div>' +
+
                 '<div class="signup__password-wrap">' +
-                  '<input type="password" name="password" placeholder="password" class="signup__password" />' +
+                  '<input type="password"' +
+                  '       name="password"' +
+                  '       placeholder="password"' +
+                  '       class="signup__password" />' +
                 '</div>' +
                 '<div>' +
                   '<button type="submit">Create user</button>' +
@@ -41,7 +50,7 @@ define([ 'lodash',
             name = this.$el.find('input[name="name"]').val(),
             password = this.$el.find('input[name="password"]').val();
 
-        if( !email || !name ) {
+        if( !email || !name || !password ) {
           this.$el.addClass('form--error');
           return rej();
         } else {
