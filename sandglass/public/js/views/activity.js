@@ -42,8 +42,12 @@ define([ 'lodash',
     },
 
     initialize: function() {
-      this.editable = ['duration', 'task', 'project',
-                       'description', 'parsedStarted', 'parsedEnded'];
+      /* editable elements in edit mode */
+      this.editable = [ 'task',
+                        'project',
+                        'description',
+                        'parsedStarted',
+                        'parsedEnded'];
 
       this.listenTo( this.model, 'sync', this.render );
     },
@@ -60,18 +64,17 @@ define([ 'lodash',
       };
 
       this.$el.html( this.template( _data ) );
+
+      /* add/remove tracking indicator class */
       this.$el[ ( _data.tracking ? 'add' : 'remove' ) + 'Class']( 'timeline__item--track' );
 
-      /* enables automatical updates of the duration */
-      if( _data.tracking ) {
-        this.setInterval();
-      } else {
-        this.clearInterval();
-      }
+      /* enable/disable automatical updates of the duration */
+      this[ ( _data.tracking ? 'set' : 'clear' ) + 'Interval' ]
 
       return this;
     },
 
+    /* start automatic updates */
     setInterval: function() {
       if( this.timer ) {
         return this;
@@ -82,10 +85,12 @@ define([ 'lodash',
       }.bind( this ), ( 1000 / 3 ) * 60);
     },
 
+    /* stop automatic updates */
     clearInterval: function() {
       clearInterval( this.timer );
     },
 
+    /* start editing */
     edit: function( e ) {
       e.preventDefault();
 
@@ -93,12 +98,15 @@ define([ 'lodash',
         return this.endEdit( e );
       }
 
+      this.$el.addClass('timeline__item--edit');
+      this.edit = true;
+
       _.forEach( this.editable, function( item ) {
         var $el = this.$el.find('.timeline__' + item );
 
         $el
           .prop( 'contenteditable', true )
-          .on('blur', function( e ) {
+          .on( 'blur.activity_edit', function( e ) {
             var _text = $(e.target).text(),
                 _currentText = this.model.get( item );
 
@@ -121,38 +129,38 @@ define([ 'lodash',
                caused by navigation with tab */
             this.model.set( item, _text, { silent: true } );
           }.bind( this ));
-
       }.bind( this ));
 
-      this.$el.addClass('timeline__item--edit');
-      this.edit = true;
-
-      /* TODO - remove that hack */
-      setTimeout(function() {
-        $( window )
-          .on('click.activity_edit', function( e ) {
-            if( !$(e.target).closest( this.$el ).length ) {
-              this.endEdit( e );
-            }
-          }.bind( this ));
-      }.bind( this ), 10);
+      /* when clicking somewhere outside of the element, bring the edit
+         mode to an edn */
+      $( window )
+        .on('click.activity_edit', function( e ) {
+          if( !$(e.target).closest( this.$el ).length ) {
+            this.endEdit( e );
+          }
+        }.bind( this ));
 
       return this;
     },
 
+    /* end the edit mode */
     endEdit: function( e ) {
       e.preventDefault();
 
-      $( window )
-        .off('.activity_edit');
+      /* save changes */
+      this.model
+        .update()
+        .then(function() {
+          this.$el.removeClass('timeline__item--edit');
+          this.edit = false;
 
-      _.forEach( this.editable, function( item ) {
-        this.$el.find('.timeline__' + item ).prop( 'contenteditable', false );
-      }.bind( this ));
+          /* remove clickhandler, for ending edit mode */
+          $( window ).off('.activity_edit');
 
-      this.model.update();
-      this.$el.removeClass('timeline__item--edit');
-      this.edit = false;
+          _.forEach( this.editable, function( item ) {
+            this.$el.find('.timeline__' + item ).prop( 'contenteditable', false );
+          }.bind( this ));
+        }.bind( this ));
 
       return this;
     },
