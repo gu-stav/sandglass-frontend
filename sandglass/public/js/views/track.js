@@ -137,25 +137,20 @@ define([ 'lodash',
 
                   /* apply datepicker */
                   _.forEach(['start', 'end'], function( item ) {
-                    var _prefill = moment().utc(),
-                        _uiDateFormat = defaults.dateFormat;
+                    var _uiDateFormat = defaults.dateFormat;
 
                     /* mapping for jquery ui dateformat */
                     _uiDateFormat = _uiDateFormat.replace('MM', 'mm');
                     _uiDateFormat = _uiDateFormat.replace('DD', 'dd');
                     _uiDateFormat = _uiDateFormat.replace('YYYY', 'yy');
 
-                    if( item === 'start' ) {
-                      _prefill = _prefill.subtract( 'months', 1 );
-                    }
-
                     this.$('.sandglass__search-' + item)
                       .datepicker({
                         dateFormat: _uiDateFormat,
                         maxDate: new Date()
                       })
-                      /* prefill */
-                      .val( _prefill.format( defaults.dateFormat ) );
+                      .datepicker( 'setDate',
+                                   item === 'start' ? '-1m' : new Date() );
                   }.bind( this ));
                 }.bind( this ));
     },
