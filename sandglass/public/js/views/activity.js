@@ -1,12 +1,10 @@
 define([ 'lodash',
          'backbone',
          'moment',
-         'defaults',
          'models/activity' ],
   function( _,
             Backbone,
             moment,
-            defaults,
             ActivityModel ) {
 
   var Activity = Backbone.View.extend({
@@ -54,19 +52,24 @@ define([ 'lodash',
 
     render: function() {
       var _data = {
-        task: Sandglass.collections.task.getNameById ( this.model.get('task_id') ),
-        project: Sandglass.collections.project.getNameById ( this.model.get('project_id') ),
+        task: Sandglass.collections.task
+                .getNameById ( this.model.get('task_id') ),
+        project: Sandglass.collections.project
+                  .getNameById ( this.model.get('project_id') ),
         parsedDescription: this.model.get('description'),
         duration: this.model.getDuration(),
-        parsedStarted: this.model.get('start').format( defaults.timeFormat ),
-        parsedEnded: this.model.get('end') ? this.model.get('end').format( defaults.timeFormat ) : undefined,
+        parsedStarted: this.model.getFormattedTime( 'start' ),
+        parsedEnded: this.model.get('end') ?
+                        this.model.getFormattedTime( 'end' ) : undefined,
         tracking: !this.model.get('end')
       };
 
       this.$el.html( this.template( _data ) );
 
       /* add/remove tracking indicator class */
-      this.$el[ ( _data.tracking ? 'add' : 'remove' ) + 'Class']( 'timeline__item--track' );
+      this
+        .$el[ ( _data.tracking ?
+                  'add' : 'remove' ) + 'Class']( 'timeline__item--track' );
 
       /* enable/disable automatical updates of the duration */
       this[ ( _data.tracking ? 'set' : 'clear' ) + 'Interval' ]();
@@ -158,7 +161,8 @@ define([ 'lodash',
           $( window ).off('.activity_edit');
 
           _.forEach( this.editable, function( item ) {
-            this.$el.find('.timeline__' + item ).prop( 'contenteditable', false );
+            this.$el.find('.timeline__' + item )
+              .prop( 'contenteditable', false );
           }.bind( this ));
         }.bind( this ));
 
@@ -174,8 +178,9 @@ define([ 'lodash',
         id: undefined
       };
 
-      return new ActivityModel( _.assign( {}, this.model.attributes, _overwrites ) )
-        .create();
+      return new ActivityModel( _.assign( {},
+                                          this.model.attributes,
+                                          _overwrites ) ).create();
     },
 
     delete: function( e ) {

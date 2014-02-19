@@ -1,10 +1,8 @@
 define([ 'lodash',
          'backbone',
-         'defaults',
          'views/activityGroup' ],
   function( _,
             Backbone,
-            defaults,
             ActivityGroup ) {
 
   var Timeline = Backbone.View.extend({
@@ -14,7 +12,7 @@ define([ 'lodash',
       this._activityGroups = [];
 
       this.attributes = {
-        sortBy: defaults.sortActivitiesBy
+        sortBy: 'start'
       };
 
       this.render();
@@ -23,6 +21,7 @@ define([ 'lodash',
     sort: function( index, keepBuild ) {
       this.attributes.sortBy = index;
 
+      /* do not delete existing groups - only reorder (no data was added) */
       if( !keepBuild ) {
         _.forEach( this._activityGroups, function( activityGroup ) {
           activityGroup.remove();
@@ -60,8 +59,7 @@ define([ 'lodash',
 
       if( this.attributes.sortBy === 'start' ) {
         _modelFindBy = _modelFindBy.format( 'YYYY-MM-DD' );
-        _groupLabel = model.get( this.attributes.sortBy )
-                        .format( defaults.dateFormat );
+        _groupLabel = model.getFormattedDate( this.attributes.sortBy );
       } else {
         _.each(['task', 'project'], function( item ) {
           if( this.attributes.sortBy === item + '_id' ) {

@@ -166,6 +166,18 @@ define([ 'lodash',
               .utc();
     },
 
+    /* return the user formatted date */
+    getFormattedDate: function( index ) {
+      return this.getDate( this.get( index ) )
+              .format( defaults.dateFormat );
+    },
+
+    /* return the user formatted time */
+    getFormattedTime: function( index ) {
+      return this.getDate( this.get( index ) )
+              .format( defaults.timeFormat );
+    },
+
     start: function() {
       return new Promise(function( res, rej ) {
         this.set( { 'start': this.getDate() } );
