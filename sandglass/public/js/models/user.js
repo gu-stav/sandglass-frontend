@@ -41,7 +41,8 @@ define([ 'lodash',
         .done(function( userData ) {
           var pick = [ 'first_name',
                        'last_name',
-                       'email_md5' ];
+                       'email_md5',
+                       'id' ];
 
           this.set( _.pick( userData, pick ) );
           this.set( 'basic_auth', btoa( userData.token + ':' +
@@ -49,6 +50,7 @@ define([ 'lodash',
 
           Sandglass.User = this;
 
+          /* setup auth for every following request */
           Backbone.$.ajaxSetup({
             headers: { 'Authorization': 'Basic ' + this.get('basic_auth') }
           });
