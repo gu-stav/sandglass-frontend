@@ -135,7 +135,7 @@
 
         /* check for localStorage support */
         hasLocalStorage: function() {
-          return localStorage in window;
+          return 'localStorage' in window;
         },
 
         /* Storage abstraction to support localStorage & cookieFallback */
