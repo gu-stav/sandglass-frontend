@@ -69,7 +69,7 @@ define([ 'lodash',
       this.$el[ ( _data.tracking ? 'add' : 'remove' ) + 'Class']( 'timeline__item--track' );
 
       /* enable/disable automatical updates of the duration */
-      this[ ( _data.tracking ? 'set' : 'clear' ) + 'Interval' ]
+      this[ ( _data.tracking ? 'set' : 'clear' ) + 'Interval' ]();
 
       return this;
     },
