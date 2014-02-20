@@ -91,6 +91,7 @@ define([ 'lodash',
 
       this.timer = setInterval(function() {
         this.render();
+        this.trigger('duration_change');
       }.bind( this ), ( 1000 / 3 ) * 60 );
 
       return this;

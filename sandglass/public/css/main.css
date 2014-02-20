@@ -316,6 +316,11 @@ input:-ms-input-placeholder {
   border-left: 3px solid #53B482;
 }
 
+.timeline__group-duration {
+  display: inline-block;
+  margin-left: .8em;
+}
+
 .timeline__button {
   position: absolute;
   top: 0;

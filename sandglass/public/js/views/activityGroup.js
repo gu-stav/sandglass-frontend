@@ -13,7 +13,8 @@ define([ 'lodash',
     template: _.template( '<% if ( modelCount ) { %>' +
                           '<li class="timeline__groupHeader">' +
                           '<strong><%= groupLabel %></strong>' +
-                          ' <%= duration %>' +
+                          '<span class="timeline__group-duration">' +
+                          '<%= duration %></span>' +
                           '</li>' +
                           '<% } %>' ),
 
@@ -27,6 +28,11 @@ define([ 'lodash',
       this.listenTo( model, 'destroy',
                      function() {
                       this.removeModel( model );
+                     }.bind( this ));
+
+      this.listenTo( model._view, 'duration_change',
+                     function() {
+                      this.renderUpdatedDuration();
                      }.bind( this ));
 
       return this;
@@ -54,6 +60,8 @@ define([ 'lodash',
     },
 
     getFormattedDuration: function() {
+      this.updateDuration();
+
       var _minutes = parseInt( this.duration, 10 );
 
       if( _minutes === 0 ) {
@@ -66,6 +74,15 @@ define([ 'lodash',
 
       return parseInt( _minutes / 60, 10 ) + 'h ' +
              ( _minutes - ( parseInt( _minutes / 60, 10 ) * 60 ) ) + 'min';
+    },
+
+    /* re-render duration of group */
+    renderUpdatedDuration: function() {
+      var $target = this.$el
+                      .children( '.timeline__groupHeader' )
+                      .children( 'span' );
+
+      $target.text( this.getFormattedDuration() );
     },
 
     sort: function () {
@@ -83,13 +100,17 @@ define([ 'lodash',
       return this;
     },
 
-    render: function() {
+    updateDuration: function() {
       this.duration = 0;
 
       _.forEach( this.activityCollection.models, function( activity ) {
         this.duration = this.duration + activity.getDuration( true );
       }.bind( this ));
 
+      return this.duration;
+    },
+
+    render: function() {
       var _data = {
         groupLabel: this.attributes.groupLabel,
         duration: this.getFormattedDuration(),
