@@ -187,6 +187,10 @@ define([ 'lodash',
     delete: function( e ) {
       e.preventDefault();
 
+      if( !confirm('Sure, you want to delete this?') ) {
+        return this;
+      }
+
       return new Promise(function( res, rej ) {
         this.model.delete()
           .then(function() {
