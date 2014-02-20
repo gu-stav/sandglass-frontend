@@ -135,8 +135,7 @@
           '':        'start',
           'login':   'login',
           'logout':  'logout',
-          'track':   'track',
-          'signup':  'signup'
+          'track':   'track'
         },
 
         _views: {},
@@ -254,16 +253,6 @@
             Sandglass.collections.activity
               .loadRecent();
           });
-        },
-
-        signup: function() {
-          if( !Sandglass.views.login ) {
-            Sandglass.views.login = new LoginView();
-          }
-
-          if( !Sandglass.views.signup ) {
-            Sandglass.views.signup = new SignupView();
-          }
         }
       });
 
