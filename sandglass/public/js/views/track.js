@@ -77,11 +77,6 @@ define([ 'lodash',
     },
 
     initialize: function() {
-      /* select default filter method */
-      this
-        .$('button[value="start"].sandglass__sortby-button')
-        .addClass('sandglass__sortby-button--active');
-
       this.render();
 
       /* add autocomplete & datepicker */
@@ -220,8 +215,18 @@ define([ 'lodash',
 
     sort: function( e ) {
       e.preventDefault();
+
+      var _val = this.$(e.target).val();
+
+      this
+        .$('button[value="'+ _val +'"].sandglass__sortby-button')
+          .addClass('sandglass__sortby-button--active')
+          .siblings()
+            .removeClass('sandglass__sortby-button--active');
+
       Sandglass.views.timeline
-        .sort( Backbone.$(e.target).val(), false ).render();
+        .sort( _val, false )
+        .render();
     },
 
     loadRecent: function( e ) {
@@ -254,7 +259,13 @@ define([ 'lodash',
 
     render: function() {
       this.$el.html( this.template() );
+
+      this
+        .$('button[value="start"].sandglass__sortby-button')
+        .addClass('sandglass__sortby-button--active');
+
       this.$el.appendTo( '.sandglass' );
+
       return this;
     }
   });
