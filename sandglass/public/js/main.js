@@ -229,14 +229,14 @@
             Sandglass.views.user = new UserView({ model: Sandglass.User });
           }
 
-          Sandglass.views.timeline = new TimelineView();
-          Sandglass.views.track = new TrackView();
-
           Sandglass.collections = {
             activity: new ActivityCollection(),
             project: new ProjectCollection(),
             task: new TaskCollection()
           };
+
+          Sandglass.views.track = new TrackView();
+          Sandglass.views.timeline = new TimelineView();
 
           /* load recent data */
           async.parallel([

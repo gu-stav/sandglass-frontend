@@ -13,9 +13,7 @@ define([ 'lodash',
 
       this.attributes = {
         sortBy: 'start'
-      };
-
-      this.render();
+      };;
     },
 
     sort: function( index, keepBuild ) {
@@ -29,14 +27,17 @@ define([ 'lodash',
 
         this._activityGroups = [];
 
-        _.forEach( Sandglass.collections.activity.models, function( activity ) {
-          this.createGroup( activity );
-        }.bind( this ));
+        if( Sandglass.collections.hasOwnProperty( 'activity' ) ) {
+          _.forEach( Sandglass.collections.activity.models, function( activity ) {
+            this.createGroup( activity );
+          }.bind( this ));
+        }
       }
 
       /* re-order all groups */
+      this._activityGroups =
       _.sortBy( this._activityGroups, function( activityGroup ) {
-        return activityGroup.groupName;
+        return activityGroup.attributes.groupName;
       });
 
       if( this.attributes.sortBy === 'start' ) {
@@ -47,9 +48,20 @@ define([ 'lodash',
     },
 
     add: function( model ) {
-      this.createGroup( model );
-      this.sort( this.attributes.sortBy, false );
-      this.render();
+      /* also accept an array of models */
+      if( _.isArray( model ) ) {
+        _.forEach( model, function( m ) {
+          this.createGroup( m );
+        }.bind( this ));
+
+        this
+          .sort( this.attributes.sortBy, false )
+          .render()
+      } else {
+        this.createGroup( model )
+            .sort( this.attributes.sortBy, false )
+            .render();
+      }
 
       return this;
     },
