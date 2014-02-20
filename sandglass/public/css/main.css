@@ -582,6 +582,7 @@ svg text {
   vertical-align: top;
   margin: .4em 0 0 4.96em;
   text-align: right;
+  float: right;
 }
 
 .login__text {
@@ -719,6 +720,7 @@ svg text {
   width: 30px;
   height: 30px;
   background-color: #e4e4e4;
+  background-image: linear-gradient( to bottom, #F7F7F7, #e4e4e4 );
   border: 1px solid #fff;
 }
 

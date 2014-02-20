@@ -41,6 +41,10 @@ define([ 'lodash',
                             this.model.attributes,
                             { gravatar_url: this.getGravatarUrl() } );
 
+      if( !window.navigator.onLine ) {
+        _data.gravatar_url = '';
+      }
+
       this.$el.html( this.template( _data ) );
       this.$el.appendTo( 'header' );
       return this;

@@ -127,7 +127,7 @@
             user.logout();
           });
       } else {
-        Backbone.history.navigate('signup', { trigger : true });
+        Backbone.history.navigate('login', { trigger : true });
       }
 
       var Workspace = Backbone.Router.extend({
