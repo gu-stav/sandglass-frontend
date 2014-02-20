@@ -69,14 +69,7 @@ define([ 'lodash',
     },
 
     logout: function() {
-      return new Promise(function( res, rej ) {
-
-        Sandglass.User = undefined;
-
-        Sandglass.deleteUserData();
-        Backbone.history.navigate('/', { trigger : true });
-
-      }.bind( this ));
+      return Sandglass.deleteUserData();
     }
   });
 

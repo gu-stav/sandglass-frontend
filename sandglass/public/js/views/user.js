@@ -48,7 +48,12 @@ define([ 'lodash',
 
     logout: function( e ) {
       e.preventDefault();
-      Sandglass.User.logout();
+
+      this.model
+        .logout()
+        .then(function() {
+          Backbone.history.navigate('/login', { trigger : true });
+        });
     }
   });
 

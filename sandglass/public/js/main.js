@@ -102,7 +102,15 @@
       };
 
       Sandglass.deleteUserData = function() {
-        $.removeCookie('user');
+        return new Promise(function( res, rej ) {
+
+          if( Sandglass.hasOwnProperty('User') ) {
+            Sandglass.User = undefined;
+          }
+
+          $.removeCookie('user');
+          res();
+        });
       };
 
       var userCookie = Sandglass.getUserData(),
@@ -194,6 +202,13 @@
           if( !Sandglass.views.signup ) {
             Sandglass.views.signup = new SignupView();
           }
+
+          _.forEach( ['timeline', 'track', 'user'], function( item ) {
+            if( Sandglass.views.hasOwnProperty( item ) ) {
+              Sandglass.views[ item ].remove();
+              delete Sandglass.views[ item ];
+            }
+          });
         },
 
         logout: function() {
@@ -205,8 +220,10 @@
             return Backbone.history.navigate('login', { trigger : true });
           }
 
-          Sandglass.views.login.remove();
-          Sandglass.views.signup.remove();
+          _.forEach( ['login', 'signup'], function( item ) {
+            Sandglass.views[ item ].remove();
+            delete Sandglass.views[ item ];
+          });
 
           if( !Sandglass.views.user ) {
             Sandglass.views.user = new UserView({ model: Sandglass.User });
