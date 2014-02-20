@@ -25,11 +25,13 @@ define([ 'lodash',
     },
 
     addModelListener: function( model ) {
+      /* in case no model is left, we have to remove the whole group */
       this.listenTo( model, 'destroy',
                      function() {
                       this.removeModel( model );
                      }.bind( this ));
 
+      /* update the duration of the group, when a model changes */
       this.listenTo( model._view, 'duration_change',
                      function() {
                       this.renderUpdatedDuration();
@@ -59,6 +61,7 @@ define([ 'lodash',
       return this;
     },
 
+    /* returns the formatted duration of the group */
     getFormattedDuration: function() {
       this.updateDuration();
 
@@ -72,6 +75,7 @@ define([ 'lodash',
         return  _minutes + 'min';
       }
 
+      /* returns hh:min format */
       return parseInt( _minutes / 60, 10 ) + 'h ' +
              ( _minutes - ( parseInt( _minutes / 60, 10 ) * 60 ) ) + 'min';
     },
@@ -80,7 +84,7 @@ define([ 'lodash',
     renderUpdatedDuration: function() {
       var $target = this.$el
                       .children( '.timeline__groupHeader' )
-                      .children( 'span' );
+                      .children( '.timeline__group-duration' );
 
       $target.text( this.getFormattedDuration() );
     },
@@ -100,6 +104,7 @@ define([ 'lodash',
       return this;
     },
 
+    /* calculate the sum of all activity durations */
     updateDuration: function() {
       this.duration = 0;
 
@@ -107,7 +112,7 @@ define([ 'lodash',
         this.duration = this.duration + activity.getDuration( true );
       }.bind( this ));
 
-      return this.duration;
+      return this;
     },
 
     render: function() {
