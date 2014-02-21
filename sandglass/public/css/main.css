@@ -3,7 +3,7 @@
 }
 
 html {
-  background-color: #f3f3f3;
+  background-color: #EBEBEB;
   font-family: Arial, sans-serif;
   font-size: 62.5%;
   color: #333;
@@ -11,7 +11,6 @@ html {
 
 body {
   font-size: 1.7em;
-  border-top: 3px solid #53B482;
 }
 
 a {
@@ -31,16 +30,16 @@ input,
 textarea,
 button {
   padding: .55em;
-  border: 1px solid #ccc;
   font-size: .95em;
   outline: none;
+  border: none;
 }
 
 button {
   background-color: #53B482;
   color: #fff;
   border-color: #438F68;
-  padding: .53em 1.26em;
+  padding: .6em 1.26em;
   margin: 0;
 }
 
@@ -107,31 +106,29 @@ input:-ms-input-placeholder {
 
 /* app */
 .sandglass {
-  width: 41em;
-  margin: .5em auto 2em auto;
+  width: 50em;
+  margin: 0 auto;
 }
 
 .sandglass__header {
-  padding: 0 0 .8em 0;
+  padding: .2em 1.6em .8em;
+  background-color: #53B482;
+  margin-left: -6.5em;
+  color: #fff;
 }
 
 .sandglass__search {
-  padding: .4em 1em;
+  padding: .5em .3em;
   text-align: right;
-  border-right: 1px solid #e4e4e4;
-  border-bottom: 1px solid #e4e4e4;
   font-size: .9em;
   font-weight: 200;
   font-family: 'Open Sans', sans-serif;
-  min-height: 3.2em;
-  background-color: #fff;
 }
 
 .sandglass__search-startend {
   display: inline-block;
   vertical-align: middle;
   padding: .07em 0;
-  float: right;
 }
 
 .sandglass__search-start,
@@ -141,7 +138,7 @@ input:-ms-input-placeholder {
   background-color: transparent;
   padding-left: 0;
   padding-right: 0;
-  color: #949494;
+  color: #333;
 }
 
 .sandglass__search-start {
@@ -151,7 +148,7 @@ input:-ms-input-placeholder {
 .sandglass__search-icon {
   display: inline-block;
   margin: 0 .5em 0 0;
-  color: #53B482;
+  color: #949494;
 }
 
 .sandglass__sortby {
@@ -166,7 +163,7 @@ input:-ms-input-placeholder {
 .sandglass__sortby-icon {
   margin: 0 .5em 0 0;
   display: inline-block;
-  color: #53B482;
+  color: #949494;
 }
 
 .sandglass__sortby-button {
@@ -192,13 +189,9 @@ input:-ms-input-placeholder {
   font-weight: 300;
   display: inline-block;
   vertical-align: middle;
+  padding: .3em 0 0 0;
   margin: 0;
-  padding: 0;
-}
-
-.sandglass__headline-icon {
-  margin: 0 .2em 0 0;
-  color: #53B482;
+  font-size: 1.6em;
 }
 
 .sandglass__timeline-filter {
@@ -217,8 +210,10 @@ input:-ms-input-placeholder {
 
 /* tracking */
 .track {
-  border-left: 3px solid #53B482;
-  border-top-left-radius: 4px;
+  background-color: #fff;
+  margin-left: -6.5em;
+  padding: 1em 1em 0 1em;
+  color: #333;
 }
 
 .track__field--inline {
@@ -226,43 +221,35 @@ input:-ms-input-placeholder {
   vertical-align: top;
 }
 
-.track__field--inline + .track__field--inline {
-  margin-left: -4px;
+.track__task,
+.track__project,
+.track__description {
+  color: #333;
+  background-color: #f8f8f8;
+  border: none;
+  border-left: 2px solid #53B482;
+  font-size: 1em;
 }
 
 .track__task {
-  width: 6.7em;
-  border-left: 0;
-  border-right: 0;
-  border-top-left-radius: 2px;
-  color: #333;
-  padding-left: 1em;
+  width: 8em;
 }
 
 .track__project {
-  width: 10.1em;
-  border-left: none;
-  border-right: 0
+  width: 11em;
 }
 
 .track__description {
-  border-left: none;
-  width: 19.25em;
-  border-right: 0;
+  width: 28em;
 }
 
 .track__button {
   border-left: 0;
-  border-top-right-radius: 4px;
   padding-left: 2.395em;
   padding-right: 2.395em;
 }
 
 /* timeline */
-.timeline {
-  background-color: #fff;
-}
-
 .timeline__group-ul {
   list-style: none;
   padding: 0;
@@ -276,29 +263,9 @@ input:-ms-input-placeholder {
 .timeline__item {
   position: relative;
   padding: 1em;
-  border-left: 3px solid #53B482;
-  border-bottom: 1px solid #e4e4e4;
-  border-right: 1px solid #e4e4e4;
+  border-bottom: 1px solid #f0f0f0;
   min-height: 4em;
-}
-
-.timeline__item:before {
-  content: '•';
-  position: absolute;
-  top: .3em;
-  left: -.23em;
-  font-size: 2em;
-  color: #53B482;
-  text-shadow: -1px 0 #fff, 0 1px #fff, 1px 0 #fff, 0 -1px #fff;
-}
-
-.timeline__item:hover {
-  background-color: #fff;
-}
-
-.timeline .timeline__item.timeline__item--track,
-.timeline .timeline__item.timeline__item--edit {
-  background-color: #FFF3D5;
+  background-color: #F8F8F8;
 }
 
 .timeline__item--hidden {
@@ -308,12 +275,16 @@ input:-ms-input-placeholder {
 .timeline__groupHeader {
   font-size: .9em;
   overflow: hidden;
-  color: #fff;
-  background-color: #53B482;
-  padding: .3em 0 .3em 1em;
+  padding: .3em 0 .3em 8.3em;
+  margin-left: -7.2em;
+  margin-top: .8em;
+  margin-bottom: .2em;
   font-family: 'Open Sans', sans-serif;
-  font-weight: 400;
-  border-left: 3px solid #53B482;
+  font-weight: 100;
+}
+
+.timeline__groupheader-label {
+  font-weight: 100;
 }
 
 .timeline__group-duration {
@@ -328,15 +299,8 @@ input:-ms-input-placeholder {
   display: none;
   height: 100%;
   padding: 0 .8em;
-  color: #fff;
-  background-color: #53B482;
-  opacity: .7;
-}
-
-.timeline__button:hover,
-.timeline__button:focus {
-  background-color: #63C994;
-  color: #fff;
+  color: #333;
+  background-color: transparent;
 }
 
 .timeline__item:hover .timeline__button,
@@ -398,29 +362,15 @@ input:-ms-input-placeholder {
   display: none !important;
 }
 
-.timeline .timeline__item.timeline__item--conflictWithPrevious {
-  border-top: 2px solid #E47A3E;
-}
-
-.timeline .timeline__item.timeline__item--conflictWithPrevious .timeline__item--conflictWithPrevious-icon {
-  display: inherit;
-}
-
-.timeline__item--conflictWithPrevious-icon {
-  display: none;
-  position: absolute;
-  top: -.4em;
-  left: 1em;
-  font-size: 1.4em;
-  color: #E47A3E;
-}
-
 .timeline__time {
   position: absolute;
   top: 0;
-  left: -6.8em;
+  left: -6.5em;
   width: 6.5em;
   height: 100%;
+  background-color: #fff;
+  color: #949494;
+  border-right: 1px solid #f0f0f0;
 }
 
 .timeline__duration {
@@ -471,7 +421,7 @@ input:-ms-input-placeholder {
   line-height: 1.6;
   display: inline-block;
   vertical-align: top;
-  width: 29em;
+  width: 38em;
   margin: 0;
 }
 
@@ -514,7 +464,6 @@ input:-ms-input-placeholder {
   position: absolute;
   top: 3.5em;
   right: 1em;
-  color: #949494;
   font-size: .75em;
 }
 
@@ -706,12 +655,16 @@ svg text {
   display: inline-block;
   font-size: .8em;
   float: right;
-  margin: .7em 0 0 0;
+  margin: .8em 0 0 0;
 }
 
 .user__userinfo {
   display: inline-block;
   margin: 0 0 0 .5em;
+}
+
+.user__logout {
+  color: #fff;
 }
 
 .user__image {
