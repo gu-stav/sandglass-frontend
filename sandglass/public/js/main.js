@@ -113,6 +113,14 @@
         });
       };
 
+      /* check if the browser supports all the stuff we need */
+      if( !'localStorage' in window || !'Promise' in window ) {
+        alert('Your browser is not supported. For details see console.');
+        new Error('No support for Promises or localStorage found.');
+
+        return;
+      }
+
       var userCookie = Sandglass.getUserData(),
           user;
 
