@@ -15,9 +15,23 @@ To start the application run:
 
 ``node app``
 
-## Todos ##
-- Implement API calls
-- Implement window.online && window.offline
-- DRY code
-- Support more browsers than Chrome Canary
-- write a print.css
+## Roadmap ##
+0.0.2
+ - Tag Managment
+ - Add activities to other days
+ - Error handling for editing activities
+
+0.0.3
+ - Code cleanup
+ - Tests, travis integration
+
+0.0.4
+ - User settings (dateformat, timeformat, ...)
+ - Chart (view hours per project or task on daily base)
+
+0.0.5
+  - Responsive views
+  - Styling enhancements
+
+0.0.6
+  - Offline usage (localStorage)
