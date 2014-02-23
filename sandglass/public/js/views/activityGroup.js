@@ -32,7 +32,7 @@ define([ 'lodash',
                      }.bind( this ));
 
       /* update the duration of the group, when a model changes */
-      this.listenTo( model._view, 'duration_change',
+      this.listenTo( model, 'duration_change',
                      function() {
                       this.renderUpdatedDuration();
                      }.bind( this ));

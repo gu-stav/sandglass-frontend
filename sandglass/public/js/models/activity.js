@@ -19,6 +19,11 @@ define([ 'lodash',
     initialize: function() {
       this.set( 'user_id',  Sandglass.User.get('id') );
       this.set( 'start', this.getDate( this.get('start') || undefined ) );
+
+      this.on( 'change:start change:end', function() {
+        this.trigger( 'duration_change' );
+      }.bind( this ));
+
       return this;
     },
 
