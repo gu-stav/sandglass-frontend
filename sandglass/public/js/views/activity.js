@@ -12,8 +12,11 @@ define([ 'lodash',
                           '<button class="timeline__item-delete timeline__button ' +
                                          'button button--link"></button>' +
                           '<% } %>' +
-                          '<button class="timeline__item-end timeline__button '+
+
+                          '<% if( tracking ) { %>' +
+                          '<button class="timeline__item-end timeline__button ' +
                                           'button button--link"></button>' +
+                          '<% } %>' +
 
                           '<% if (!tracking) { %>' +
                           '<button class="timeline__item-edit timeline__button ' +
@@ -67,7 +70,7 @@ define([ 'lodash',
         parsedStarted: this.model.getFormattedTime( 'start' ),
         parsedEnded: this.model.get('end') ?
                         this.model.getFormattedTime( 'end' ) : undefined,
-        tracking: !this.model.get('end')
+        tracking: this.model.get('end') ? false : true
       };
 
       this.$el.html( this.template( _data ) );
