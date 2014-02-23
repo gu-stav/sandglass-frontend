@@ -13,7 +13,7 @@ Get all required dependencies with:
 
 To start the application run:
 
-``node app``
+``npm start``
 
 ## Roadmap ##
 Changes will be done in the master branch.
