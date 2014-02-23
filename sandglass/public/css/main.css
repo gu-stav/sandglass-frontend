@@ -327,6 +327,12 @@ input:-ms-input-placeholder {
   display: inline-block;
 }
 
+.timeline__item-end:hover,
+.timeline__item-end:focus {
+  background-color: #63C994;
+  color: #fff;
+}
+
 .timeline__item-end:before {
   content: '\f04c';
   font-family: FontAwesome;
