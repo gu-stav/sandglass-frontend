@@ -32,12 +32,6 @@ define([ 'lodash',
                       this.removeModel( model );
                      }.bind( this ));
 
-      /* update the duration of the group, when a model changes */
-      this.listenTo( model, 'duration_change',
-                     function() {
-                      this.renderUpdatedDuration();
-                     }.bind( this ));
-
       this.listenTo( model, 'change:start change:end',
                      function() {
                       this.render();
@@ -84,15 +78,6 @@ define([ 'lodash',
       /* returns hh:min format */
       return parseInt( _minutes / 60, 10 ) + 'h ' +
              ( _minutes - ( parseInt( _minutes / 60, 10 ) * 60 ) ) + 'min';
-    },
-
-    /* re-render duration of group */
-    renderUpdatedDuration: function() {
-      var $target = this.$el
-                      .children( '.timeline__groupHeader' )
-                      .children( '.timeline__group-duration' );
-
-      $target.text( this.getFormattedDuration() );
     },
 
     sort: function () {
