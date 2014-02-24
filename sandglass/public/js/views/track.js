@@ -48,7 +48,8 @@ define([ 'lodash',
 
                           '  <div class="track__row track__row--date">' +
                           '    <div class="track__field track__field--inline">' +
-                          '    <input type="checkbox" name="track_now" checked /> Now' +
+                          '    <label><input type="checkbox" name="track_now" checked />' +
+                          '    Now</label>' +
                           '    </div>' +
                           '  </div>' +
 
@@ -87,7 +88,8 @@ define([ 'lodash',
                           '    </div>' +
 
                           '    <div class="track__field track__field--inline">' +
-                          '      <input type="checkbox" name="track_progress" checked /> In progress' +
+                          '      <label><input type="checkbox" name="track_progress" checked />' +
+                          '      In progress</label>' +
                           '    </div>' +
 
                           '  </div>' +
