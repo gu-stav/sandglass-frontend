@@ -319,7 +319,7 @@ input:-ms-input-placeholder {
 }
 
 .timeline__item-end {
-  right: -1px;
+  right: 0;
   background-color: #53B482;
   color: #fff;
   text-shadow: 1px 1px #35855B;

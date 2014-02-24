@@ -46,8 +46,11 @@ define([ 'lodash',
       new User({
         email: email,
         password: password
-      }).login( { history: true } )
-        .then( function() {},
+      }).login()
+        .then( function() {
+                 console.log('redirect')
+                 Backbone.history.navigate( 'track', { trigger : true } );
+               },
                function() {
                  this.$el.addClass('form--error');
                }.bind( this ));
@@ -56,7 +59,6 @@ define([ 'lodash',
     render: function() {
       this.$el.html( this.template() );
       this.$el.appendTo( 'header' );
-      this.$el.find('input:first-child').focus();
     }
   });
 

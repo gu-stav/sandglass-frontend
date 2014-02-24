@@ -194,12 +194,12 @@
         },
 
         login: function() {
-          if( !Sandglass.views.signup ) {
-            Sandglass.views.signup = new SignupView();
-          }
-
           if( !Sandglass.views.login ) {
             Sandglass.views.login = new LoginView();
+          }
+
+          if( !Sandglass.views.signup ) {
+            Sandglass.views.signup = new SignupView();
           }
 
           _.forEach( [ 'timeline',
@@ -218,9 +218,11 @@
 
         track: function() {
           return new Promise(function( res, rej ) {
+            user = Sandglass.User;
+
             if( !user ) {
-              rej();
-              return Backbone.history.navigate('login', { trigger : true });
+              Backbone.history.navigate( 'login', { trigger : true } );
+              return res();
             }
 
             user.login()
@@ -235,7 +237,7 @@
                 });
 
                 if( !Sandglass.views.user ) {
-                  Sandglass.views.user = new UserView({ model: Sandglass.User });
+                  Sandglass.views.user = new UserView({ model: user });
                 }
 
                 Sandglass.collections = {
@@ -265,8 +267,8 @@
                     .then( res, rej );
                 });
               },
-                     function() {
-                       user.logout();
+              function() {
+                user.logout();
               });
           });
         },

@@ -29,16 +29,8 @@ define([ 'lodash',
       }.bind( this ));
     },
 
-    login: function( data ) {
+    login: function() {
       return new Promise(function( res, rej ) {
-        if( Sandglass.User ) {
-          if( data && data.history ) {
-            Backbone.history.navigate( 'track', { trigger : true } );
-          }
-
-          return res( this );
-        }
-
         $.ajax({
           type: "POST",
           url: this.url + '?signin',
@@ -63,10 +55,6 @@ define([ 'lodash',
           Backbone.$.ajaxSetup({
             headers: { 'Authorization': 'Basic ' + this.get('basic_auth') }
           });
-
-          if( data && data.history ) {
-            Backbone.history.navigate( '/track', { trigger : true } );
-          }
 
           return res( this );
         }.bind( this ))

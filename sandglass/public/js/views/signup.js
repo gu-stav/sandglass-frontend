@@ -63,8 +63,10 @@ define([ 'lodash',
           password: password
         }).create()
           .then(function( user ) {
-            user.login( { history: true } )
-              .then( res, rej );
+            user.login()
+              .then( function() {
+                Backbone.history.navigate( 'track', { trigger : true } );
+              }, rej );
           });
       }.bind( this ));
     },
