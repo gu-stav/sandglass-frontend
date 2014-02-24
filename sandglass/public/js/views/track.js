@@ -155,10 +155,6 @@ define([ 'lodash',
     start: function( e ) {
       e.preventDefault();
 
-      if( this.tracking ) {
-        return this.stop( e );
-      }
-
       var $task = this.$('input[name="task"]'),
           task = $task.val() || '',
           $project = this.$('input[name="project"]'),
@@ -174,6 +170,13 @@ define([ 'lodash',
         this.$el.removeClass('form-error');
       }
 
+      /* end tracking for all running activities */
+      _.forEach( Sandglass.collections.activity.models, function( activity ) {
+        if( !activity.get('end') ) {
+          activity.end();
+        }
+      });
+
       new Activity({
         task: task,
         task_id: $task.data('selectedId'),
@@ -183,37 +186,14 @@ define([ 'lodash',
       })
         .create()
         .then(function( activity ) {
-          this.activity = activity;
-          this.tracking = true;
-
           _.each(['task', 'project', 'description'], function( item ) {
-            this.$( 'input[name="' + item + '"]' ).prop( 'disabled', true );
+            this.$( 'input[name="' + item + '"]' ).val( '' );
           }.bind( this ));
 
-          this.$('.track__button-text')
-            .text('Stop');
+          this.$('input[name="task"]').focus();
         }.bind( this ));
-    },
 
-    stop: function( e ) {
-      e.preventDefault();
-
-      _.each(['task', 'project', 'description'], function( item ) {
-        this.$( 'input[name="' + item + '"]' )
-          .val('')
-          .prop( 'disabled', false );
-      }.bind( this ));
-
-      this.$('input[name="task"]').focus();
-      this.$('.track__button-text').text('Start');
-
-      if( this.activity ) {
-        this.activity.end()
-          .then(function() {
-            this.stopListening( this.activity );
-            this.tracking = false;
-          }.bind( this ));
-      }
+        return this;
     },
 
     sort: function( e ) {
