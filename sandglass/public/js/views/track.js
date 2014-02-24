@@ -70,7 +70,7 @@ define([ 'lodash',
                           '             placeholder="" />' +
                           '    </div>' +
 
-                          '    <div class="track__field track__field--inline">' +
+                          '    <div class="track__field track__field--inline track__field-end track__field--hidden">' +
                           '      <input type="text"' +
                           '             name="date_end"' +
                           '             class="track__date-end"' +
@@ -78,12 +78,16 @@ define([ 'lodash',
                           '             placeholder="<%= dateFormat %>" />' +
                           '    </div>' +
 
-                          '    <div class="track__field track__field--inline">' +
+                          '    <div class="track__field track__field--inline track__field-end track__field--hidden">' +
                           '      <input type="text"' +
                           '             name="time_end"' +
                           '             class="track__time-end"' +
                           '             id="track__time-end"' +
                           '             placeholder="<%= timeFormat %>" />' +
+                          '    </div>' +
+
+                          '    <div class="track__field track__field--inline">' +
+                          '      <input type="checkbox" name="track_progress" checked /> In progress' +
                           '    </div>' +
 
                           '  </div>' +
@@ -118,7 +122,8 @@ define([ 'lodash',
       'submit form': 'start',
       'click .sandglass__sortby-button': 'sort',
       'change .sandglass__search-startend > input': 'loadRecent',
-      'change input[name="track_now"]': 'toggleDateView'
+      'change input[name="track_now"]': 'toggleDateView',
+      'change input[name="track_progress"]': 'toggleDateEndView'
     },
 
     initialize: function() {
@@ -225,13 +230,14 @@ define([ 'lodash',
             _start_time_val = this.$( 'input[name="time_start"]' ).val(),
             _end_date_val = this.$('input[name="date_end"]').val(),
             _end_time_val = this.$( 'input[name="time_end"]' ).val(),
+            _in_progress = this.$( 'input[name="track_progress"]' ).prop( 'checked' ),
             _timeRegExp = /^(\d{2}):(\d{2})$/;
 
         if( _start_date_val || _start_time_val ) {
           start = moment().utc().zone( new Date().getTimezoneOffset() );
         }
 
-        if( _end_date_val || _end_time_val ) {
+        if( !_in_progress ) {
           end = moment().utc().zone( new Date().getTimezoneOffset() );
         }
 
@@ -331,11 +337,26 @@ define([ 'lodash',
         this.$('input[name="date_start"]')
             .datepicker( 'setDate', new Date() );
 
+        this.$('input[name="date_end"]')
+            .datepicker( 'setDate', new Date() );
+
         this.$('input[name="time_start"]')
             .val( moment().utc()
               .zone( new Date().getTimezoneOffset() )
               .format( 'HH:mm' ) );
+
+        this.$('input[name="time_end"]')
+            .val( moment().utc()
+              .zone( new Date().getTimezoneOffset() )
+              .format( 'HH:mm' ) );
       }
+    },
+
+    toggleDateEndView: function( e ) {
+      var $cb = Backbone.$(e.target),
+          $targets = $cb.closest('.track__field').prevAll( '.track__field-end' );
+
+      $targets[ ( $cb.prop( 'checked' ) ? 'add' : 'remove' ) + 'Class' ]( 'track__field--hidden' );
     },
 
     loadRecent: function( e ) {

@@ -238,7 +238,11 @@ input:-ms-input-placeholder {
 
 .track__field--inline {
   display: inline-block;
-  vertical-align: top;
+  vertical-align: middle;
+}
+
+.track__field--hidden {
+  display: none;
 }
 
 .track__task,
