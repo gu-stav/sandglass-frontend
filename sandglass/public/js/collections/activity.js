@@ -37,7 +37,11 @@ define([ 'lodash',
 
         /* use now as end date */
         if( !to ) {
-          to = moment().utc().format();
+          to = moment().utc()
+                .hour( 23 )
+                .minute( 59 )
+                .second( 59 )
+                .format();
         }
 
         /* always empty the whole collection, so we call it later with

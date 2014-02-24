@@ -18,7 +18,11 @@ define([ 'lodash',
 
     initialize: function() {
       this.set( 'user_id',  Sandglass.User.get('id') );
-      this.set( 'start', this.getDate( this.get('start') || undefined ) );
+      this.set( 'start', this.getDate( this.get('start') ) );
+
+      if( this.get('end') ) {
+        this.set( 'end', this.getDate( this.get('end') ) );
+      }
 
       this.on( 'change:start change:end', function() {
         this.trigger( 'duration_change' );
@@ -166,9 +170,11 @@ define([ 'lodash',
     },
 
     getDate: function( date, format ) {
-      return moment( date || undefined, format || undefined )
-              .zone( this.getTimezoneOffset() )
-              .utc();
+      var _newDate = moment( date || undefined, format || undefined ).utc();
+
+      _newDate.zone( this.getTimezoneOffset() );
+
+      return _newDate;
     },
 
     /* return the user formatted date */

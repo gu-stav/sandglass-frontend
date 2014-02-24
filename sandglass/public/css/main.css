@@ -221,6 +221,21 @@ input:-ms-input-placeholder {
   border-top: 3px solid #438F68;
 }
 
+.track__row--hidden {
+  display: none;
+}
+
+.track__row--date {
+  margin-top: 1em;
+  color: #fff;
+  font-size: .8em;
+  padding-left: .7em;
+}
+
+.track__row--date .track__field:first-child {
+  margin-left: -.7em;
+}
+
 .track__field--inline {
   display: inline-block;
   vertical-align: top;
@@ -228,7 +243,11 @@ input:-ms-input-placeholder {
 
 .track__task,
 .track__project,
-.track__description {
+.track__description,
+.track__date-start,
+.track__date-end,
+.track__time-start,
+.track__time-end {
   color: #fff;
   background-color: #47976E;
   border: none;
@@ -236,10 +255,20 @@ input:-ms-input-placeholder {
   font-weight: 100;
 }
 
+.track__date-label {
+  margin: 0;
+  padding: .4em 0;
+}
+
 .track__task::-webkit-input-placeholder,
 .track__project::-webkit-input-placeholder,
 .track__description::-webkit-input-placeholder {
   color: #E2F8ED;
+}
+
+.track__date-end::-webkit-input-placeholder,
+.track__time-end::-webkit-input-placeholder {
+  color: #63B48C;
 }
 
 .track__task:focus,
@@ -249,11 +278,21 @@ input:-ms-input-placeholder {
 }
 
 .track__task {
-  width: 10em;
+  width: 10.5em;
+}
+
+.track__date-start,
+.track__date-end {
+  width: 7.3em;
+}
+
+.track__time-start,
+.track__time-end {
+  width: 5.5em;
 }
 
 .track__project {
-  width: 11em;
+  width: 10.5em;
 }
 
 .track__description {

@@ -45,6 +45,48 @@ define([ 'lodash',
                                  '<span class="track__button-text">Start</span></button>' +
                           '    </div>' +
                           '  </div>' +
+
+                          '  <div class="track__row track__row--date">' +
+                          '    <div class="track__field track__field--inline">' +
+                          '    <input type="checkbox" name="track_now" checked /> Now' +
+                          '    </div>' +
+                          '  </div>' +
+
+                          '  <div class="track__row track__row--date track__row--hidden">' +
+
+                          '    <div class="track__field track__field--inline">' +
+                          '      <input type="text"' +
+                          '             name="date_start"' +
+                          '             class="track__date-start"' +
+                          '             id="track__date-start"' +
+                          '             placeholder="" />' +
+                          '    </div>' +
+
+                          '    <div class="track__field track__field--inline">' +
+                          '      <input type="text"' +
+                          '             name="time_start"' +
+                          '             class="track__time-start"' +
+                          '             id="track__time-start"' +
+                          '             placeholder="" />' +
+                          '    </div>' +
+
+                          '    <div class="track__field track__field--inline">' +
+                          '      <input type="text"' +
+                          '             name="date_end"' +
+                          '             class="track__date-end"' +
+                          '             id="track__date-end"' +
+                          '             placeholder="<%= dateFormat %>" />' +
+                          '    </div>' +
+
+                          '    <div class="track__field track__field--inline">' +
+                          '      <input type="text"' +
+                          '             name="time_end"' +
+                          '             class="track__time-end"' +
+                          '             id="track__time-end"' +
+                          '             placeholder="<%= timeFormat %>" />' +
+                          '    </div>' +
+
+                          '  </div>' +
                           '</form>' +
 
                           '<form class="sandglass__search">' +
@@ -75,10 +117,20 @@ define([ 'lodash',
     events: {
       'submit form': 'start',
       'click .sandglass__sortby-button': 'sort',
-      'change .sandglass__search-startend > input': 'loadRecent'
+      'change .sandglass__search-startend > input': 'loadRecent',
+      'change input[name="track_now"]': 'toggleDateView'
     },
 
     initialize: function() {
+      var _uiDateFormat = defaults.dateFormat;
+
+      /* mapping for jquery ui dateformat */
+      _uiDateFormat = _uiDateFormat.replace('MM', 'mm');
+      _uiDateFormat = _uiDateFormat.replace('DD', 'dd');
+      _uiDateFormat = _uiDateFormat.replace('YYYY', 'yy');
+
+      this._uiDateFormat = _uiDateFormat;
+
       this.render();
 
       /* add autocomplete & datepicker */
@@ -132,18 +184,19 @@ define([ 'lodash',
                       });
                   }.bind( this ));
 
+                  _.forEach( [ 'start', 'end' ], function( item ) {
+                    this.$('input[name="date_' + item + '"]')
+                      .datepicker({
+                        dateFormat: this._uiDateFormat,
+                        maxDate: new Date()
+                      });
+                  }.bind( this ));
+
                   /* apply datepicker */
                   _.forEach(['start', 'end'], function( item ) {
-                    var _uiDateFormat = defaults.dateFormat;
-
-                    /* mapping for jquery ui dateformat */
-                    _uiDateFormat = _uiDateFormat.replace('MM', 'mm');
-                    _uiDateFormat = _uiDateFormat.replace('DD', 'dd');
-                    _uiDateFormat = _uiDateFormat.replace('YYYY', 'yy');
-
                     this.$('.sandglass__search-' + item)
                       .datepicker({
-                        dateFormat: _uiDateFormat,
+                        dateFormat: this._uiDateFormat,
                         maxDate: new Date()
                       })
                       .datepicker( 'setDate',
@@ -159,7 +212,60 @@ define([ 'lodash',
           task = $task.val() || '',
           $project = this.$('input[name="project"]'),
           project = $project.val() || '',
-          description = this.$('input[name="description"]').val() || '';
+          description = this.$('input[name="description"]').val() || '',
+          start,
+          parsedStart,
+          parsedStartTime,
+          end,
+          parsedEnd,
+          parsedEndTime;
+
+      if( !this.$('input[name="track_now"]').prop( 'checked' ) ) {
+        var _start_date_val = this.$( 'input[name="date_start"]' ).val(),
+            _start_time_val = this.$( 'input[name="time_start"]' ).val(),
+            _end_date_val = this.$('input[name="date_end"]').val(),
+            _end_time_val = this.$( 'input[name="time_end"]' ).val(),
+            _timeRegExp = /^(\d{2}):(\d{2})$/;
+
+        if( _start_date_val || _start_time_val ) {
+          start = moment().utc().zone( new Date().getTimezoneOffset() );
+        }
+
+        if( _end_date_val || _end_time_val ) {
+          end = moment().utc().zone( new Date().getTimezoneOffset() );
+        }
+
+        if( _start_time_val ) {
+          parsedStartTime = _timeRegExp.exec( _start_time_val );
+          start = start.hours( parsedStartTime[ 1 ] )
+                       .minutes( parsedStartTime[ 2 ] );
+        }
+
+        if( _end_time_val ) {
+          parsedEndTime = _timeRegExp.exec( _end_time_val );
+          end = end.hours( parsedEndTime[ 1 ] )
+                   .minutes( parsedEndTime[ 2 ] );
+        }
+
+        if( _start_date_val ) {
+          parsedStart = moment( _start_date_val, defaults.dateFormat );
+          start = start.day( parsedStart.days() )
+                       .month( parsedStart.month() )
+                       .years( parsedStart.year() );
+        }
+
+        if( _end_date_val ) {
+          parsedEnd = moment( _end_date_val, defaults.dateFormat );
+          end = end.day( parsedEnd.days() )
+                   .month( parsedEnd.month() )
+                   .years( parsedEnd.year() );
+        }
+      }
+
+      /* reset default state */
+      this.$('input[name="track_now"]')
+        .prop( 'checked', true )
+        .trigger( 'change' );
 
       if( task.length <= 2 ||
           project.length <= 2 ||
@@ -182,7 +288,9 @@ define([ 'lodash',
         task_id: $task.data('selectedId'),
         project: project,
         project_id: $project.data('selectedId'),
-        description: description
+        description: description,
+        start: start,
+        end: end
       })
         .create()
         .then(function( activity ) {
@@ -210,6 +318,24 @@ define([ 'lodash',
       Sandglass.views.timeline
         .sort( _val, false )
         .render();
+    },
+
+    toggleDateView: function( e ) {
+      var $cb = Backbone.$(e.target),
+          $target = $cb.closest('.track__row').next();
+
+      $target[ ( $cb.prop('checked') ? 'add' : 'remove' ) + 'Class' ]('track__row--hidden');
+
+      if( !$cb.prop('checked') ) {
+        /* update date field always to the current date */
+        this.$('input[name="date_start"]')
+            .datepicker( 'setDate', new Date() );
+
+        this.$('input[name="time_start"]')
+            .val( moment().utc()
+              .zone( new Date().getTimezoneOffset() )
+              .format( 'HH:mm' ) );
+      }
     },
 
     loadRecent: function( e ) {
@@ -241,7 +367,12 @@ define([ 'lodash',
     },
 
     render: function() {
-      this.$el.html( this.template() );
+      var _data = {
+        dateFormat: defaults.dateFormat,
+        timeFormat: defaults.timeFormat
+      };
+
+      this.$el.html( this.template( _data ) );
 
       this
         .$('button[value="start"].sandglass__sortby-button')
