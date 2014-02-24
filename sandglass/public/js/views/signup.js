@@ -63,7 +63,7 @@ define([ 'lodash',
           password: password
         }).create()
           .then(function( user ) {
-            user.login()
+            user.login( { history: true } )
               .then( res, rej );
           });
       }.bind( this ));

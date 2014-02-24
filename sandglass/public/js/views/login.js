@@ -46,11 +46,8 @@ define([ 'lodash',
       new User({
         email: email,
         password: password
-      }).login()
-        .then( function() {
-                 Sandglass.User = user;
-                 Backbone.history.navigate('track', { trigger : true });
-               },
+      }).login( { history: true } )
+        .then( function() {},
                function() {
                  this.$el.addClass('form--error');
                }.bind( this ));

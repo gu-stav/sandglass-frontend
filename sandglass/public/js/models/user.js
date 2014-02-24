@@ -29,8 +29,16 @@ define([ 'lodash',
       }.bind( this ));
     },
 
-    login: function() {
+    login: function( data ) {
       return new Promise(function( res, rej ) {
+        if( Sandglass.User ) {
+          if( data && data.history ) {
+            Backbone.history.navigate( 'track', { trigger : true } );
+          }
+
+          return res( this );
+        }
+
         $.ajax({
           type: "POST",
           url: this.url + '?signin',
@@ -49,18 +57,16 @@ define([ 'lodash',
                                         userData.key ) );
 
           Sandglass.User = this;
+          Sandglass.setUserData( this.attributes );
 
           /* setup auth for every following request */
           Backbone.$.ajaxSetup({
             headers: { 'Authorization': 'Basic ' + this.get('basic_auth') }
           });
 
-          if( !Sandglass.getUserData() ) {
-            /* TODO: save user to localstorage */
-            Sandglass.setUserData( this.attributes );
+          if( data && data.history ) {
+            Backbone.history.navigate( '/track', { trigger : true } );
           }
-
-          Backbone.history.navigate('/track', { trigger : true });
 
           return res( this );
         }.bind( this ))

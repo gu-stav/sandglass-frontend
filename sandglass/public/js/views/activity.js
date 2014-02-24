@@ -109,11 +109,15 @@ define([ 'lodash',
 
     /* start editing */
     edit: function( e ) {
-      e.preventDefault();
+      if( e ) {
+        e.preventDefault();
+      }
 
       if( this.edit === true ) {
         return this.endEdit( e );
       }
+
+      Backbone.history.navigate( '/track/' + this.model.get('id') + '/edit' );
 
       this.clearInterval();
 
@@ -174,6 +178,8 @@ define([ 'lodash',
           this.edit = false;
 
           this.setInterval();
+
+          Backbone.history.navigate( '/track' );
 
           /* remove clickhandler, for ending edit mode */
           $( window ).off('.activity_edit');

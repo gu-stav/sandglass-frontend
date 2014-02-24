@@ -116,7 +116,7 @@
       /* check if the browser supports all the stuff we need */
       if( !'localStorage' in window || !'Promise' in window ) {
         alert('Your browser is not supported. For details see console.');
-        new Error('No support for Promises or localStorage found.');
+        throw new Error('No support for Promises or localStorage found.');
 
         return;
       }
@@ -126,16 +126,6 @@
 
       if( userCookie ) {
         user = new User( JSON.parse( userCookie ) );
-
-        user.login()
-          .then(function() {
-            Sandglass.User = user;
-            Backbone.history.navigate('track', { trigger : true });
-          }, function() {
-            user.logout();
-          });
-      } else {
-        Backbone.history.navigate('login', { trigger : true });
       }
 
       var Workspace = Backbone.Router.extend({
@@ -143,7 +133,9 @@
           '':        'start',
           'login':   'login',
           'logout':  'logout',
-          'track':   'track'
+          'track':   'track',
+
+          'track/:id/edit': 'activity_edit'
         },
 
         _views: {},
@@ -202,15 +194,17 @@
         },
 
         login: function() {
-          if( !Sandglass.views.login ) {
-            Sandglass.views.login = new LoginView();
-          }
-
           if( !Sandglass.views.signup ) {
             Sandglass.views.signup = new SignupView();
           }
 
-          _.forEach( ['timeline', 'track', 'user'], function( item ) {
+          if( !Sandglass.views.login ) {
+            Sandglass.views.login = new LoginView();
+          }
+
+          _.forEach( [ 'timeline',
+                       'track',
+                       'user' ], function( item ) {
             if( Sandglass.views.hasOwnProperty( item ) ) {
               Sandglass.views[ item ].remove();
               delete Sandglass.views[ item ];
@@ -223,44 +217,68 @@
         },
 
         track: function() {
-          if( !Sandglass.User ) {
-            return Backbone.history.navigate('login', { trigger : true });
-          }
-
-          _.forEach( ['login', 'signup'], function( item ) {
-            Sandglass.views[ item ].remove();
-            delete Sandglass.views[ item ];
-          });
-
-          if( !Sandglass.views.user ) {
-            Sandglass.views.user = new UserView({ model: Sandglass.User });
-          }
-
-          Sandglass.collections = {
-            activity: new ActivityCollection(),
-            project: new ProjectCollection(),
-            task: new TaskCollection()
-          };
-
-          Sandglass.views.track = new TrackView();
-          Sandglass.views.timeline = new TimelineView();
-
-          /* load recent data */
-          async.parallel([
-            function( cb ) {
-              Sandglass.collections.project
-                .loadAll()
-                .then( cb );
-            },
-            function( cb ) {
-              Sandglass.collections.task
-                .loadAll()
-                .then( cb );
+          return new Promise(function( res, rej ) {
+            if( !user ) {
+              rej();
+              return Backbone.history.navigate('login', { trigger : true });
             }
-          ], function( err, data ) {
-            Sandglass.collections.activity
-              .loadRecent();
+
+            user.login()
+              .then( function() {
+                _.forEach( [ 'login',
+                             'signup',
+                             'track' ], function( item ) {
+                  if( Sandglass.views.hasOwnProperty( item ) ) {
+                    Sandglass.views[ item ].remove();
+                    delete Sandglass.views[ item ];
+                  }
+                });
+
+                if( !Sandglass.views.user ) {
+                  Sandglass.views.user = new UserView({ model: Sandglass.User });
+                }
+
+                Sandglass.collections = {
+                  activity: new ActivityCollection(),
+                  project: new ProjectCollection(),
+                  task: new TaskCollection()
+                };
+
+                Sandglass.views.track = new TrackView();
+                Sandglass.views.timeline = new TimelineView();
+
+                /* load recent data */
+                async.parallel([
+                  function( cb ) {
+                    Sandglass.collections.project
+                      .loadAll()
+                      .then( cb );
+                  },
+                  function( cb ) {
+                    Sandglass.collections.task
+                      .loadAll()
+                      .then( cb );
+                  }
+                ], function( err, data ) {
+                  Sandglass.collections.activity
+                    .loadRecent()
+                    .then( res, rej );
+                });
+              },
+                     function() {
+                       user.logout();
+              });
           });
+        },
+
+        activity_edit: function( id ) {
+          this.track()
+            .then(function() {
+              Sandglass.collections.activity
+                .get( id )
+                  ._view
+                  .edit();
+            });
         }
       });
 
