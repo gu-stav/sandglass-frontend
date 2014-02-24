@@ -35,6 +35,11 @@ button {
   border: none;
 }
 
+label {
+  font-weight: 100;
+  font-family: 'Open Sans', sans-serif;
+}
+
 button {
   background-color: #53B482;
   color: #fff;
@@ -232,7 +237,7 @@ input:-ms-input-placeholder {
   padding-left: .7em;
 }
 
-.track__row--date .track__field:first-child {
+.track__row--date-start-end > .track__field:first-child {
   margin-left: -.7em;
 }
 

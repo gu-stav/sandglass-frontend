@@ -53,7 +53,7 @@ define([ 'lodash',
                           '    </div>' +
                           '  </div>' +
 
-                          '  <div class="track__row track__row--date track__row--hidden">' +
+                          '  <div class="track__row track__row--date track__row--date-start-end track__row--hidden">' +
 
                           '    <div class="track__field track__field--inline">' +
                           '      <input type="text"' +
