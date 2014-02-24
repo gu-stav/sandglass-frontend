@@ -20,7 +20,7 @@ define([ 'lodash',
           first_name: firstName,
           last_name: lastName
         }, {
-          url: this.url + '?signup'
+          url: this.url + '@signup'
         })
           .done(function() {
             Sandglass.User = this;
@@ -33,7 +33,7 @@ define([ 'lodash',
       return new Promise(function( res, rej ) {
         $.ajax({
           type: "POST",
-          url: this.url + '?signin',
+          url: this.url + '@signin',
           data: JSON.stringify( this.attributes ),
           processData: false,
           contentType: 'application/json'

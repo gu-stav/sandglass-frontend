@@ -51,8 +51,8 @@ define([ 'lodash',
           url: defaults.urlRoot + 'users/' +
                Sandglass.User.get('id') +
                '/' +
-               '?action=activities' +
-               '&from=' + encodeURIComponent( from ) +
+               '@activities' +
+               '?from=' + encodeURIComponent( from ) +
                '&to=' + encodeURIComponent( to ) +
                '/'
         }).done(function() {
