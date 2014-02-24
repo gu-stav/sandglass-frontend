@@ -40,7 +40,9 @@ define([ 'lodash',
 
                           '    <div class="track__field track__field--inline">' +
                           '      <button type="submit"' +
-                          '              class="track__button js-track__submit">Start</button>' +
+                          '              class="track__button js-track__submit">' +
+                                 '<i class="fa fa-clock-o"></i> ' +
+                                 '<span class="track__button-text">Start</span></button>' +
                           '    </div>' +
                           '  </div>' +
                           '</form>' +
@@ -188,7 +190,8 @@ define([ 'lodash',
             this.$( 'input[name="' + item + '"]' ).prop( 'disabled', true );
           }.bind( this ));
 
-          this.$('.js-track__submit').text('Stop');
+          this.$('.track__button-text')
+            .text('Stop');
         }.bind( this ));
     },
 
@@ -202,7 +205,7 @@ define([ 'lodash',
       }.bind( this ));
 
       this.$('input[name="task"]').focus();
-      this.$('.js-track__submit').text('Start');
+      this.$('.track__button-text').text('Start');
 
       if( this.activity ) {
         this.activity.end()
