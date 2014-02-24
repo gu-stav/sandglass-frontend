@@ -1,5 +1,5 @@
 # Sandglass #
-A frontend for the [Sandglass API https://bitbucket.org/sandglass/sandglass.time/]
+A frontend for the [Sandglass API](https://bitbucket.org/sandglass/sandglass.time/)
 based on python, supporting offline usage.
 
 ## Installation ##
