@@ -6,6 +6,7 @@
     paths: {
       'moment':                 BOWER_PATH + 'momentjs/min/moment-with-langs',
       'lodash':                 BOWER_PATH + 'lodash/dist/lodash.min',
+      'underscore':             BOWER_PATH + 'underscore/underscore',
       'hogan':                  BOWER_PATH + 'hogan/web/builds/2.0.0/hogan-2.0.0.amd',
       'jquery':                 BOWER_PATH + 'jquery/jquery',
       'jquery.ui.autocomplete': BOWER_PATH + 'jquery-ui/ui/jquery.ui.autocomplete',
@@ -17,8 +18,6 @@
       'template.track':        '../templates/track',
       'template.grain':        '../templates/grain',
       'defaults':              'defaults',
-      'nvd3':                  BOWER_PATH + 'nvd3/nv.d3',
-      'd3':                    BOWER_PATH + 'd3/d3',
       'backbone':              BOWER_PATH + 'backbone/backbone',
       'async':                 BOWER_PATH + 'async/lib/async'
     },
@@ -35,17 +34,8 @@
 
         'backbone': {
           exports: 'Backbone',
-          deps: [ 'lodash',
+          deps: [ 'underscore',
                   'jquery' ]
-        },
-
-        'd3': {
-          exports: 'd3'
-        },
-
-        'nvd3': {
-          exports: 'nv',
-          deps: [ 'd3' ]
         },
 
         'jquery.ui.autocomplete': [ 'jquery',
