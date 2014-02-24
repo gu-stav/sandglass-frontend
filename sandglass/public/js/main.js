@@ -218,14 +218,19 @@
 
         track: function() {
           return new Promise(function( res, rej ) {
-            user = Sandglass.User;
-
-            if( !user ) {
+            /* no valid session exists */
+            if( !user && !Sandglass.User ) {
               Backbone.history.navigate( 'login', { trigger : true } );
               return res();
             }
 
-            user.login()
+            /* login occured in the meantime */
+            if( !user && Sandglass.User ) {
+              user = Sandglass.User;
+            }
+
+            user
+              .login()
               .then( function() {
                 _.forEach( [ 'login',
                              'signup',
