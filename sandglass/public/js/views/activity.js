@@ -48,6 +48,8 @@ define([ 'lodash',
       'click .timeline__item-end':    'end'
     },
 
+    inConflict: false,
+
     /* editable elements in edit mode */
     editable: [ 'task',
                 'project',
@@ -59,7 +61,7 @@ define([ 'lodash',
       this.listenTo( this.model, 'sync', this.render );
     },
 
-    render: function() {
+    render: function( extraData ) {
       var _data = {
         task: Sandglass.collections.task
                 .getNameById ( this.model.get('task_id') ),
@@ -73,12 +75,24 @@ define([ 'lodash',
         tracking: this.model.get('end') ? false : true
       };
 
+      _data = _.assign( _data, extraData );
+
       this.$el.html( this.template( _data ) );
 
       /* add/remove tracking indicator class */
       this
         .$el[ ( _data.tracking ?
                   'add' : 'remove' ) + 'Class']( 'timeline__item--track' );
+
+      /* add/ remove conflict indicator class */
+      if( !_data.hasOwnProperty( 'conflict' ) ) {
+        _data.conflict = this.inConflict;
+      } else {
+        this.inConflict = _data.conflict;
+      }
+
+      this
+        .$el[ ( _data.conflict ? 'add' : 'remove' ) + 'Class']( 'timeline__item--conflict' );
 
       /* enable/disable automatical updates of the duration */
       this[ ( _data.tracking ? 'set' : 'clear' ) + 'Interval' ]();

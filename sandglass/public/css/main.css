@@ -380,6 +380,10 @@ input:-ms-input-placeholder {
   display: inherit;
 }
 
+.timeline__item--conflict {
+  border-top: 3px solid #FF9A3D;
+}
+
 .timeline__time {
   position: absolute;
   top: 0;

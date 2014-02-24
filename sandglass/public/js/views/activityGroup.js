@@ -38,6 +38,11 @@ define([ 'lodash',
                       this.renderUpdatedDuration();
                      }.bind( this ));
 
+      this.listenTo( model, 'change:start change:end',
+                     function() {
+                      this.render();
+                     }.bind( this ) );
+
       return this;
     },
 
@@ -127,8 +132,17 @@ define([ 'lodash',
 
       this.$el.html( this.template( _data ) );
 
-      _.forEach( this.activityCollection.models, function( activity ) {
-        this.$el.append( activity._view.render().$el );
+      _.forEach( this.activityCollection.models, function( activity, index ) {
+        var _conflict = false;
+
+        /* check if activities do overlap */
+        if( index > 0 &&
+            activity.get('start')
+              .isBefore( this.activityCollection.models[ index - 1 ].get('end') ) ) {
+          _conflict = true;
+        }
+
+        this.$el.append( activity._view.render( { conflict: _conflict } ).$el );
       }.bind( this ));
 
       return this;
