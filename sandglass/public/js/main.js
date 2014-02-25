@@ -78,10 +78,6 @@
               TaskCollection,
               async ) {
 
-      Backbone.collections = {};
-      Backbone.views = {};
-      Backbone.user = {};
-
       /* check if the browser supports all the stuff we need */
       if( !'localStorage' in window || !'Promise' in window ) {
         alert('Your browser is not supported. For details see console.');
@@ -90,12 +86,11 @@
         return;
       }
 
-      var userCookie = $.cookie( 'user' ),
-          user;
-
-      if( userCookie ) {
-        user = new User( JSON.parse( userCookie ) );
-      }
+      Backbone.collections = {};
+      Backbone.views = {};
+      Backbone.user = $.cookie( 'user' ) ?
+                        new User( JSON.parse( $.cookie( 'user' ) ) ) :
+                        undefined;
 
       var Workspace = Backbone.Router.extend({
         routes: {
@@ -137,17 +132,12 @@
         track: function() {
           return new Promise(function( res, rej ) {
             /* no valid session exists */
-            if( !user && !Backbone.user ) {
+            if( !Backbone.user ) {
               Backbone.history.navigate( 'login', { trigger : true } );
               return res();
             }
 
-            /* login occured in the meantime */
-            if( !user && Backbone.user ) {
-              user = Backbone.user;
-            }
-
-            user
+            Backbone.user
               .login()
               .then( function() {
                 _.forEach( [ 'login',
@@ -160,7 +150,7 @@
                 });
 
                 if( !Backbone.views.user ) {
-                  Backbone.views.user = new UserView({ model: user });
+                  Backbone.views.user = new UserView({ model: Backbone.user });
                 }
 
                 Backbone.collections = {
