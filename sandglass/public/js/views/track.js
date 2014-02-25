@@ -386,7 +386,7 @@ define([ 'lodash',
               .second( 59 );
       }
 
-      Sandglass.collections.activity.loadRecent( from, to );
+      this.collection.loadRecent( from, to );
     },
 
     render: function() {

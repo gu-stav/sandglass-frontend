@@ -171,7 +171,10 @@
                   task: new TaskCollection()
                 };
 
-                Sandglass.views.track = new TrackView();
+                Sandglass.views.track = new TrackView({
+                  collection: Sandglass.collections.activity
+                });
+
                 Sandglass.views.timeline = new TimelineView({
                   collection: Sandglass.collections.activity
                 });

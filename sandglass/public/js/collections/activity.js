@@ -21,7 +21,9 @@ define([ 'lodash',
       /* fetch of a whole new set - complete rerender */
       this.on('reset', function() {
         Sandglass.views.timeline.remove();
-        Sandglass.views.timeline = new TimelineView();
+        Sandglass.views.timeline = new TimelineView({
+          collection: this
+        });
       });
     },
 
