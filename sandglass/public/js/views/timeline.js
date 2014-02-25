@@ -13,7 +13,18 @@ define([ 'lodash',
 
       this.attributes = {
         sortBy: 'start'
-      };;
+      };
+
+      /* fetch of a whole new set - complete rerender */
+      this.collection.on('reset', function() {
+        this.reset();
+      }.bind( this ));
+    },
+
+    reset: function() {
+      this.$el.empty().detach();
+      this.sort( 'start', true );
+      this.render();
     },
 
     sort: function( index, keepBuild ) {

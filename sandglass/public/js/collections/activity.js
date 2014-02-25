@@ -15,18 +15,6 @@ define([ 'lodash',
     url: defaults.urlRoot + 'activities/',
     model: Activity,
 
-    initialize: function() {
-      this._views = [];
-
-      /* fetch of a whole new set - complete rerender */
-      this.on('reset', function() {
-        Backbone.views.timeline.remove();
-        Backbone.views.timeline = new TimelineView({
-          collection: this
-        });
-      });
-    },
-
     /* load activities for a given timerange (default this - 1month) */
     loadRecent: function( from, to ) {
       this.off('add');
