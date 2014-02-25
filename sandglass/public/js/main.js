@@ -82,27 +82,6 @@
         views: {}
       };
 
-      /* TODO: Sandglass = new Workspace() */
-      Sandglass.getUserData = function() {
-        return $.cookie( 'user' );
-      };
-
-      Sandglass.setUserData = function( data ) {
-        $.cookie('user', JSON.stringify( data ) );
-      };
-
-      Sandglass.deleteUserData = function() {
-        return new Promise(function( res, rej ) {
-
-          if( Sandglass.hasOwnProperty('User') ) {
-            Sandglass.User = undefined;
-          }
-
-          $.removeCookie('user');
-          res();
-        });
-      };
-
       /* check if the browser supports all the stuff we need */
       if( !'localStorage' in window || !'Promise' in window ) {
         alert('Your browser is not supported. For details see console.');
@@ -111,7 +90,7 @@
         return;
       }
 
-      var userCookie = Sandglass.getUserData(),
+      var userCookie = $.cookie( 'user' ),
           user;
 
       if( userCookie ) {
@@ -129,55 +108,6 @@
         },
 
         _views: {},
-
-        /* check for localStorage support */
-        hasLocalStorage: function() {
-          return 'localStorage' in window;
-        },
-
-        /* Storage abstraction to support localStorage & cookieFallback */
-        storageSet: function( index, data ) {
-          /* when data is undefined, delete key */
-          if( typeof( data ) === 'undefined' ) {
-            localStorage.removeItem( index );
-          }
-
-          /* make sure we always use (json)strings */
-          if( typeof( data ) !== 'string' ) {
-            data = JSON.stringify( data );
-          }
-
-          if( this.hasLocalStorage() ) {
-            return localStorage.setItem( index, data );
-          } else {
-            return $.cookie( index, data );
-          }
-        },
-
-        /* Storage abstraction to support localStorage & cookieFallback */
-        storageGet: function( index ) {
-          var _return;
-
-          if( this.hasLocalStorage() ) {
-            _return = localStorage.getItem( index );
-          } else {
-            _return = $.cookie( index );
-          }
-
-          return JSON.parse( _return );
-        },
-
-        getUserData: function() {
-          return this.storageGet( 'user' );
-        },
-
-        setUserData: function( data ) {
-          return this.storageSet( 'user', data );
-        },
-
-        deleteUserData: function() {
-          $.storageSet( 'user', undefined );
-        },
 
         start: function() {
           Backbone.history.navigate('track', { trigger : true });

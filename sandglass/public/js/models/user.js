@@ -49,7 +49,7 @@ define([ 'lodash',
                                         userData.key ) );
 
           Sandglass.User = this;
-          Sandglass.setUserData( this.attributes );
+          $.cookie('user', JSON.stringify( this.attributes ) );
 
           /* setup auth for every following request */
           Backbone.$.ajaxSetup({
@@ -63,7 +63,14 @@ define([ 'lodash',
     },
 
     logout: function() {
-      return Sandglass.deleteUserData();
+      return new Promise(function( res, rej ) {
+        if( Sandglass.hasOwnProperty('User') ) {
+          Sandglass.User = undefined;
+        }
+
+        $.removeCookie('user');
+        res();
+      });
     }
   });
 
