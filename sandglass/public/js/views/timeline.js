@@ -27,11 +27,9 @@ define([ 'lodash',
 
         this._activityGroups = [];
 
-        if( Sandglass.collections.hasOwnProperty( 'activity' ) ) {
-          _.forEach( Sandglass.collections.activity.models, function( activity ) {
-            this.createGroup( activity );
-          }.bind( this ));
-        }
+        _.forEach( this.collection.models, function( activity ) {
+          this.createGroup( activity );
+        }.bind( this ));
       }
 
       /* re-order all groups */

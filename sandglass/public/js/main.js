@@ -172,7 +172,9 @@
                 };
 
                 Sandglass.views.track = new TrackView();
-                Sandglass.views.timeline = new TimelineView();
+                Sandglass.views.timeline = new TimelineView({
+                  collection: Sandglass.collections.activity
+                });
 
                 /* load recent data */
                 async.parallel([
