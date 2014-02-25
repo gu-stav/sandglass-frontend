@@ -20,8 +20,8 @@ define([ 'lodash',
 
       /* fetch of a whole new set - complete rerender */
       this.on('reset', function() {
-        Sandglass.views.timeline.remove();
-        Sandglass.views.timeline = new TimelineView({
+        Backbone.views.timeline.remove();
+        Backbone.views.timeline = new TimelineView({
           collection: this
         });
       });
@@ -55,7 +55,7 @@ define([ 'lodash',
         this.fetch({
           /* see #1 */
           url: defaults.urlRoot + 'users/' +
-               Sandglass.User.get('id') +
+               Backbone.user.get('id') +
                '/' +
                '@activities' +
                '?from=' + encodeURIComponent( from ) +
@@ -64,13 +64,13 @@ define([ 'lodash',
         }).done(function() {
 
           /* initially push the whole collection, to avoid repaints */
-          Sandglass.views.timeline
+          Backbone.views.timeline
             .add( this.models );
 
           /* when adding a new model, rerender the timeline */
           this
             .on('add', function( model ) {
-              Sandglass.views.timeline.add( model );
+              Backbone.views.timeline.add( model );
             }.bind( this ));
 
           res();

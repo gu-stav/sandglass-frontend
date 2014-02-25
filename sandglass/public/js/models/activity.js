@@ -17,7 +17,7 @@ define([ 'lodash',
     url: defaults.urlRoot + 'activities/',
 
     initialize: function() {
-      this.set( 'user_id',  Sandglass.User.get('id') );
+      this.set( 'user_id',  Backbone.user.get('id') );
       this.set( 'start', this.getDate( this.get('start') ) );
 
       if( this.get('end') ) {
@@ -110,7 +110,7 @@ define([ 'lodash',
     },
 
     toCollection: function() {
-      Sandglass.collections.activity.add( this );
+      Backbone.collections.activity.add( this );
     },
 
     setProjectId: function() {
@@ -120,7 +120,7 @@ define([ 'lodash',
         }
 
         var foundInCollection =
-          Sandglass.collections.project
+          Backbone.collections.project
             .findWhere({ name: this.get('project') });
 
         if( foundInCollection ) {
@@ -130,7 +130,7 @@ define([ 'lodash',
 
         return new Project({
           name: this.get('project'),
-          user_id: Sandglass.User.get('id')
+          user_id: Backbone.user.get('id')
         }).create().then( function( project ) {
           this.set( 'project_id', project.get('id') );
           res();
@@ -146,7 +146,7 @@ define([ 'lodash',
         }
 
         var foundInCollection =
-          Sandglass.collections.task
+          Backbone.collections.task
             .findWhere({ name: this.get('task') });
 
         if( foundInCollection ) {
@@ -156,7 +156,7 @@ define([ 'lodash',
 
         return new Task({
           name: this.get('task'),
-          user_id: Sandglass.User.get('id')
+          user_id: Backbone.user.get('id')
         }).create().then( function( task ) {
           this.set( 'task_id', task.get('id') );
           res();

@@ -76,7 +76,7 @@ define([ 'lodash',
       } else {
         _.each(['task', 'project'], function( item ) {
           if( this.attributes.sortBy === item + '_id' ) {
-            _modelFindBy = Sandglass.collections[ item ]
+            _modelFindBy = Backbone.collections[ item ]
                             .getNameById( model.get( item + '_id' ) );
 
             return false;

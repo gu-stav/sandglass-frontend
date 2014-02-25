@@ -78,9 +78,9 @@
               TaskCollection,
               async ) {
 
-      Sandglass = {
-        views: {}
-      };
+      Backbone.collections = {};
+      Backbone.views = {};
+      Backbone.user = {};
 
       /* check if the browser supports all the stuff we need */
       if( !'localStorage' in window || !'Promise' in window ) {
@@ -107,46 +107,44 @@
           'track/:id/edit': 'activity_edit'
         },
 
-        _views: {},
-
         start: function() {
           Backbone.history.navigate('track', { trigger : true });
         },
 
         login: function() {
-          if( !Sandglass.views.login ) {
-            Sandglass.views.login = new LoginView();
+          if( !Backbone.views.login ) {
+            Backbone.views.login = new LoginView();
           }
 
-          if( !Sandglass.views.signup ) {
-            Sandglass.views.signup = new SignupView();
+          if( !Backbone.views.signup ) {
+            Backbone.views.signup = new SignupView();
           }
 
           _.forEach( [ 'timeline',
                        'track',
                        'user' ], function( item ) {
-            if( Sandglass.views.hasOwnProperty( item ) ) {
-              Sandglass.views[ item ].remove();
-              delete Sandglass.views[ item ];
+            if( Backbone.views.hasOwnProperty( item ) ) {
+              Backbone.views[ item ].remove();
+              delete Backbone.views[ item ];
             }
           });
         },
 
         logout: function() {
-          Sandglass.User.logout();
+          Backbone.user.logout();
         },
 
         track: function() {
           return new Promise(function( res, rej ) {
             /* no valid session exists */
-            if( !user && !Sandglass.User ) {
+            if( !user && !Backbone.user ) {
               Backbone.history.navigate( 'login', { trigger : true } );
               return res();
             }
 
             /* login occured in the meantime */
-            if( !user && Sandglass.User ) {
-              user = Sandglass.User;
+            if( !user && Backbone.user ) {
+              user = Backbone.user;
             }
 
             user
@@ -155,44 +153,44 @@
                 _.forEach( [ 'login',
                              'signup',
                              'track' ], function( item ) {
-                  if( Sandglass.views.hasOwnProperty( item ) ) {
-                    Sandglass.views[ item ].remove();
-                    delete Sandglass.views[ item ];
+                  if( Backbone.views.hasOwnProperty( item ) ) {
+                    Backbone.views[ item ].remove();
+                    delete Backbone.views[ item ];
                   }
                 });
 
-                if( !Sandglass.views.user ) {
-                  Sandglass.views.user = new UserView({ model: user });
+                if( !Backbone.views.user ) {
+                  Backbone.views.user = new UserView({ model: user });
                 }
 
-                Sandglass.collections = {
+                Backbone.collections = {
                   activity: new ActivityCollection(),
                   project: new ProjectCollection(),
                   task: new TaskCollection()
                 };
 
-                Sandglass.views.track = new TrackView({
-                  collection: Sandglass.collections.activity
+                Backbone.views.track = new TrackView({
+                  collection: Backbone.collections.activity
                 });
 
-                Sandglass.views.timeline = new TimelineView({
-                  collection: Sandglass.collections.activity
+                Backbone.views.timeline = new TimelineView({
+                  collection: Backbone.collections.activity
                 });
 
                 /* load recent data */
                 async.parallel([
                   function( cb ) {
-                    Sandglass.collections.project
+                    Backbone.collections.project
                       .loadAll()
                       .then( cb );
                   },
                   function( cb ) {
-                    Sandglass.collections.task
+                    Backbone.collections.task
                       .loadAll()
                       .then( cb );
                   }
                 ], function( err, data ) {
-                  Sandglass.collections.activity
+                  Backbone.collections.activity
                     .loadRecent()
                     .then( res, rej );
                 });
@@ -206,7 +204,7 @@
         activity_edit: function( id ) {
           this.track()
             .then(function() {
-              Sandglass.collections.activity
+              Backbone.collections.activity
                 .get( id )
                   ._view
                   .edit();

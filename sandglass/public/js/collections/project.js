@@ -15,7 +15,7 @@ define([ 'lodash',
       return new Promise(function( res, rej ) {
         this.fetch({
           url: defaults.urlRoot + 'users/' +
-               Sandglass.User.get('id') +
+               Backbone.user.get('id') +
                '/projects/'
         }).done( res )
           .fail( rej );

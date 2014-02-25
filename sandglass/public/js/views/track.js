@@ -154,7 +154,7 @@ define([ 'lodash',
 
                           /* filter elements */
                           filtered =
-                            _.map( Sandglass.collections[ item ].getAutocompleteList(),
+                            _.map( Backbone.collections[ item ].getAutocompleteList(),
                                    function( el ) {
                                      if( el.label.indexOf( term ) !== -1 ) {
                                        return el;
@@ -323,7 +323,7 @@ define([ 'lodash',
           .siblings()
             .removeClass('sandglass__sortby-button--active');
 
-      Sandglass.views.timeline
+      Backbone.views.timeline
         .sort( _val, false )
         .render();
     },

@@ -63,9 +63,9 @@ define([ 'lodash',
 
     render: function( extraData ) {
       var _data = {
-        task: Sandglass.collections.task
+        task: Backbone.collections.task
                 .getNameById ( this.model.get('task_id') ),
-        project: Sandglass.collections.project
+        project: Backbone.collections.project
                   .getNameById ( this.model.get('project_id') ),
         parsedDescription: this.model.get('description'),
         duration: this.model.getDuration(),

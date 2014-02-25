@@ -29,7 +29,7 @@ define([ 'lodash',
           return res( this );
         }
 
-        var inCollection = Sandglass.collections.task.get( id );
+        var inCollection = Backbone.collections.task.get( id );
         if( inCollection ) {
           return res( inCollection );
         }
@@ -39,7 +39,7 @@ define([ 'lodash',
     },
 
     toCollection: function() {
-      Sandglass.collections.task.add( this );
+      Backbone.collections.task.add( this );
     }
   });
 

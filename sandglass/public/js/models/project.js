@@ -25,7 +25,7 @@ define([ 'lodash',
           return res( this );
         }
 
-        var inCollection = Sandglass.collections.project.get( id );
+        var inCollection = Backbone.collections.project.get( id );
 
         if( inCollection ) {
           return res( inCollection );
@@ -36,7 +36,7 @@ define([ 'lodash',
     },
 
     toCollection: function() {
-      Sandglass.collections.project.add( this );
+      Backbone.collections.project.add( this );
     }
   });
 

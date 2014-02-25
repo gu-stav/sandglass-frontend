@@ -23,7 +23,7 @@ define([ 'lodash',
           url: this.url + '@signup'
         })
           .done(function() {
-            Sandglass.User = this;
+            Backbone.user = this;
             return res( this );
           }.bind( this ));
       }.bind( this ));
@@ -48,7 +48,7 @@ define([ 'lodash',
           this.set( 'basic_auth', btoa( userData.token + ':' +
                                         userData.key ) );
 
-          Sandglass.User = this;
+          Backbone.user = this;
           $.cookie('user', JSON.stringify( this.attributes ) );
 
           /* setup auth for every following request */
@@ -64,8 +64,8 @@ define([ 'lodash',
 
     logout: function() {
       return new Promise(function( res, rej ) {
-        if( Sandglass.hasOwnProperty('User') ) {
-          Sandglass.User = undefined;
+        if( Backbone.hasOwnProperty('user') ) {
+          Backbone.user = undefined;
         }
 
         $.removeCookie('user');
