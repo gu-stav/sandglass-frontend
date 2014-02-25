@@ -285,7 +285,7 @@ define([ 'lodash',
       }
 
       /* end tracking for all running activities */
-      _.forEach( Sandglass.collections.activity.models, function( activity ) {
+      _.forEach( this.collection.models, function( activity ) {
         if( !activity.get('end') ) {
           activity.end();
         }
