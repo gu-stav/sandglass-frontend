@@ -17,8 +17,6 @@ define([ 'lodash',
 
     /* load activities for a given timerange (default this - 1month) */
     loadRecent: function( from, to ) {
-      this.off('add');
-
       return new Promise(function( res, rej ) {
         /* default today minus 1 month */
         if( !from ) {
@@ -53,13 +51,8 @@ define([ 'lodash',
 
           /* initially push the whole collection, to avoid repaints */
           Backbone.views.timeline
-            .add( this.models );
-
-          /* when adding a new model, rerender the timeline */
-          this
-            .on('add', function( model ) {
-              Backbone.views.timeline.add( model );
-            }.bind( this ));
+            .add( this.models )
+            .initListener();
 
           res();
 

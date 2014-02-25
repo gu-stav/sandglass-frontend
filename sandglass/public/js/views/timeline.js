@@ -14,11 +14,19 @@ define([ 'lodash',
       this.attributes = {
         sortBy: 'start'
       };
+    },
 
+    initListener: function() {
       /* fetch of a whole new set - complete rerender */
       this.collection.on('reset', function() {
         this.reset();
       }.bind( this ));
+
+      /* when adding a new model, rerender the timeline */
+      this.collection
+        .on('add', function( model ) {
+          this.add( model );
+        }.bind( this ) );
     },
 
     reset: function() {
@@ -128,8 +136,7 @@ define([ 'lodash',
 
     render: function() {
       _.forEach( this._activityGroups, function( activityGroup ) {
-        this.$el
-          .append( activityGroup.render().$el );
+        this.$el.append( activityGroup.render().$el );
       }.bind( this ));
 
       this.$el.appendTo('.sandglass');
