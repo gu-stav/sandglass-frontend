@@ -53,30 +53,16 @@
   require(
     [ 'lodash',
       'backbone',
+      'routes',
       'jquery.cookie',
-      'views/login',
-      'views/track',
-      'views/signup',
-      'views/timeline',
       'views/user',
-      'views/userSettings',
-      'models/user',
-      'collections/activity',
-      'collections/project',
-      'collections/task' ],
+      'models/user' ],
     function( _,
               Backbone,
+              ROUTES,
               __cookie,
-              LoginView,
-              TrackView,
-              SignupView,
-              TimelineView,
               UserView,
-              UserSettings,
-              User,
-              ActivityCollection,
-              ProjectCollection,
-              TaskCollection ) {
+              User ) {
 
       /* check if the browser supports all the stuff we need */
       if( !'localStorage' in window || !'Promise' in window ) {
@@ -92,133 +78,93 @@
                         undefined;
 
       var Workspace = Backbone.Router.extend({
-        routes: {
-          '':        'start',
-          'login':   'login',
-          'logout':  'logout',
-          'track':   'track',
-          'user-settings': 'userSettings',
-          'track/:id/edit': 'activity_edit'
-        },
-
+        _currentRoute: undefined,
         _views: {},
 
-        start: function() {
-          Backbone.history.navigate('track', { trigger : true });
-        },
+        /* create all routes & setup their methods */
+        initialize: function() {
+          _.forEach( ROUTES, function( data, route ) {
+            this.route( data.route, route, function() {
+              var ARGUMENTS = arguments;
 
-        userSettings: function() {
-          return new Promise(function( res, rej ) {
-            if( !Backbone.user ) {
-              Backbone.history.navigate( 'login', { trigger : true } );
-              return res();
+              var callback = function( router ) {
+                if( data.hasOwnProperty( 'mapTo' ) ) {
+                  ROUTES[ data.mapTo ]
+                    .initialize( router, ARGUMENTS )
+                    .then(function() {
+                      if( data.hasOwnProperty( 'initialize' ) ) {
+                        data.initialize( router, ARGUMENTS );
+                      }
+                    });
+                } else {
+                  if( data.hasOwnProperty( 'initialize' ) ) {
+                    data.initialize( router, ARGUMENTS );
+                  }
+                }
+              };
+
+              /* if the login property is set, make sure the user logs in
+                 before */
+              if( data.hasOwnProperty( 'login' ) && data.login === true ) {
+                if( !Backbone.user ) {
+                  return Backbone.history.navigate( 'login', { trigger : true } );
+                }
+
+                Backbone.user
+                  .login()
+                  .then(function() {
+                    if( !this._views.user ) {
+                      this._views.user = new UserView({ model: Backbone.user });
+                    }
+
+                    callback( this );
+                  }.bind( this ));
+              } else {
+                callback( this );
+              }
+            });
+          }.bind( this ));
+
+          /* provide "teardown" functionality */
+          this.on( 'route', function( route ) {
+
+            /* call destroy method of the last active route */
+            if( this._currentRoute ) {
+              if( ROUTES[ this._currentRoute ].hasOwnProperty( 'destroy' ) ) {
+                ROUTES[ this._currentRoute ].destroy( this );
+              } else {
+                this.destroyViews();
+              }
             }
 
-            Backbone.user
-              .login()
-              .then(function() {
-                _.forEach( [ 'timeline',
-                             'track' ], function( item ) {
-                  if( this._views.hasOwnProperty( item ) ) {
-                    this._views[ item ].remove();
-                    delete this._views[ item ];
-                  }
-                }.bind( this ));
+            /* when switching from a login to a non-login view, destroy
+               the user explicitly */
+            if( ROUTES.hasOwnProperty( route ) ) {
+              if( !ROUTES[ route ].hasOwnProperty( 'login' ) ||
+                  ( ROUTES[ route ].hasOwnProperty( 'login' ) &&
+                    ROUTES[ route ].login !== true ) ) {
+                this.destroyViews( ['user'] );
+              }
+            }
 
-                if( !this._views.user ) {
-                  this._views
-                    .user = new UserView({ model: Backbone.user });
-                }
-
-                /* render user settings */
-                if( !this._views.userSettings ) {
-                  this._views
-                    .userSettings = new UserSettings({ model: Backbone.user });
-                }
-
-              }.bind( this ))
+            /* save the current route */
+            this._currentRoute = route;
           }.bind( this ));
         },
 
-        login: function() {
-          if( !this._views.login ) {
-            this._views.login = new LoginView();
-          }
+        /* destroys a set of given views or all */
+        destroyViews: function( names ) {
+          var _views = names || _.keys( this._views );
 
-          if( !this._views.signup ) {
-            this._views.signup = new SignupView();
-          }
-
-          _.forEach( [ 'timeline',
-                       'track',
-                       'user' ], function( item ) {
+          _.forEach( _views, function( item ) {
             if( this._views.hasOwnProperty( item ) ) {
               this._views[ item ].remove();
               delete this._views[ item ];
             }
           }.bind( this ));
-        },
-
-        logout: function() {
-          Backbone.user.logout();
-        },
-
-        track: function() {
-          return new Promise(function( res, rej ) {
-            /* no valid session exists */
-            if( !Backbone.user ) {
-              Backbone.history.navigate( 'login', { trigger : true } );
-              return res();
-            }
-
-            Backbone.user
-              .login()
-              .then( function() {
-                _.forEach( [ 'login',
-                             'signup',
-                             'track' ], function( item ) {
-                  if( this._views.hasOwnProperty( item ) ) {
-                    this._views[ item ].remove();
-                    delete this._views[ item ];
-                  }
-                }.bind( this ));
-
-                if( !this._views.user ) {
-                  this._views.user = new UserView({ model: Backbone.user });
-                }
-
-                Backbone.collections = {
-                  activity: new ActivityCollection(),
-                  project: new ProjectCollection(),
-                  task: new TaskCollection()
-                };
-
-                this._views.track = new TrackView({
-                  collection: Backbone.collections.activity
-                });
-
-                this._views.timeline = new TimelineView({
-                  collection: Backbone.collections.activity
-                });
-              }.bind( this ),
-              function() {
-                user.logout();
-              });
-          }.bind( this ));
-        },
-
-        activity_edit: function( id ) {
-          this.track()
-            .then(function() {
-              Backbone.collections.activity
-                .get( id )
-                  ._view
-                  .edit();
-            });
         }
       });
 
-      /* handle login/logout on route change */
       new Workspace();
 
       Backbone.history

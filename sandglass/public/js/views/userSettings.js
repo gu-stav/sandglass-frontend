@@ -24,7 +24,6 @@ define([ 'lodash',
     },
 
     initialize: function() {
-      console.log('init')
       this.render();
       return this;
     },

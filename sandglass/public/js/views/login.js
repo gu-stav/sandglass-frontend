@@ -48,7 +48,6 @@ define([ 'lodash',
         password: password
       }).login()
         .then( function() {
-                 console.log('redirect')
                  Backbone.history.navigate( 'track', { trigger : true } );
                },
                function() {
