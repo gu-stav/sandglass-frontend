@@ -100,27 +100,29 @@
           'track/:id/edit': 'activity_edit'
         },
 
+        _views: {},
+
         start: function() {
           Backbone.history.navigate('track', { trigger : true });
         },
 
         login: function() {
-          if( !Backbone.views.login ) {
-            Backbone.views.login = new LoginView();
+          if( !this._views.login ) {
+            this._views.login = new LoginView();
           }
 
-          if( !Backbone.views.signup ) {
-            Backbone.views.signup = new SignupView();
+          if( !this._views.signup ) {
+            this._views.signup = new SignupView();
           }
 
           _.forEach( [ 'timeline',
                        'track',
                        'user' ], function( item ) {
-            if( Backbone.views.hasOwnProperty( item ) ) {
-              Backbone.views[ item ].remove();
-              delete Backbone.views[ item ];
+            if( this._views.hasOwnProperty( item ) ) {
+              this._views[ item ].remove();
+              delete this._views[ item ];
             }
-          });
+          }.bind( this ));
         },
 
         logout: function() {
@@ -141,14 +143,14 @@
                 _.forEach( [ 'login',
                              'signup',
                              'track' ], function( item ) {
-                  if( Backbone.views.hasOwnProperty( item ) ) {
-                    Backbone.views[ item ].remove();
-                    delete Backbone.views[ item ];
+                  if( this._views.hasOwnProperty( item ) ) {
+                    this._views[ item ].remove();
+                    delete this._views[ item ];
                   }
-                });
+                }.bind( this ));
 
-                if( !Backbone.views.user ) {
-                  Backbone.views.user = new UserView({ model: Backbone.user });
+                if( !this._views.user ) {
+                  this._views.user = new UserView({ model: Backbone.user });
                 }
 
                 Backbone.collections = {
@@ -161,14 +163,15 @@
                   collection: Backbone.collections.activity
                 });
 
+                /* todo - remove the global binding */
                 Backbone.views.timeline = new TimelineView({
                   collection: Backbone.collections.activity
                 });
-              },
+              }.bind( this ),
               function() {
                 user.logout();
               });
-          });
+          }.bind( this ));
         },
 
         activity_edit: function( id ) {
