@@ -48,15 +48,8 @@ define([ 'lodash',
                '&to=' + encodeURIComponent( to ) +
                '/'
         }).done(function() {
-
-          /* initially push the whole collection, to avoid repaints */
-          Backbone.views.timeline
-            .add( this.models )
-            .initListener();
-
-          res();
-
-        }.bind(this))
+          res( this.models );
+        }.bind( this ))
           .fail( rej );
       }.bind( this ));
     }

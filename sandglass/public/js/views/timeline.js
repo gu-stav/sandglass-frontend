@@ -1,9 +1,11 @@
 define([ 'lodash',
          'backbone',
-         'views/activityGroup' ],
+         'views/activityGroup',
+         'async' ],
   function( _,
             Backbone,
-            ActivityGroup ) {
+            ActivityGroup,
+            async ) {
 
   var Timeline = Backbone.View.extend({
     className: 'timeline',
@@ -14,6 +16,31 @@ define([ 'lodash',
       this.attributes = {
         sortBy: 'start'
       };
+
+      /* load recent data */
+      async.parallel([
+        function( cb ) {
+          Backbone.collections.project
+            .loadAll()
+            .then( cb );
+        },
+        function( cb ) {
+          Backbone.collections.task
+            .loadAll()
+            .then( cb );
+        }
+      ], function( err, data ) {
+        this.collection
+          .loadRecent()
+          /* requires a bit of extra work to not rerender the timeline
+             with every model on startup - instead pass in the whole set and
+             apply event listener afterwards */
+          .then( function( models ) {
+            this
+              .add( models )
+              .initListener();
+          }.bind( this ) );
+      }.bind( this ));
     },
 
     initListener: function() {

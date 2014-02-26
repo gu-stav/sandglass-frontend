@@ -62,8 +62,7 @@
       'models/user',
       'collections/activity',
       'collections/project',
-      'collections/task',
-      'async' ],
+      'collections/task' ],
     function( _,
               Backbone,
               __cookie,
@@ -75,8 +74,7 @@
               User,
               ActivityCollection,
               ProjectCollection,
-              TaskCollection,
-              async ) {
+              TaskCollection ) {
 
       /* check if the browser supports all the stuff we need */
       if( !'localStorage' in window || !'Promise' in window ) {
@@ -165,24 +163,6 @@
 
                 Backbone.views.timeline = new TimelineView({
                   collection: Backbone.collections.activity
-                });
-
-                /* load recent data */
-                async.parallel([
-                  function( cb ) {
-                    Backbone.collections.project
-                      .loadAll()
-                      .then( cb );
-                  },
-                  function( cb ) {
-                    Backbone.collections.task
-                      .loadAll()
-                      .then( cb );
-                  }
-                ], function( err, data ) {
-                  Backbone.collections.activity
-                    .loadRecent()
-                    .then( res, rej );
                 });
               },
               function() {
