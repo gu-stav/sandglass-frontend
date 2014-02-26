@@ -66,9 +66,7 @@
 
       /* check if the browser supports all the stuff we need */
       if( !'localStorage' in window || !'Promise' in window ) {
-        alert('Your browser is not supported. For details see console.');
         throw new Error('No support for Promises or localStorage found.');
-
         return;
       }
 
@@ -127,7 +125,6 @@
 
           /* provide "teardown" functionality */
           this.on( 'route', function( route ) {
-
             /* call destroy method of the last active route */
             if( this._currentRoute ) {
               if( ROUTES[ this._currentRoute ].hasOwnProperty( 'destroy' ) ) {
