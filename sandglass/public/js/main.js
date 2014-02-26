@@ -59,6 +59,7 @@
       'views/signup',
       'views/timeline',
       'views/user',
+      'views/userSettings',
       'models/user',
       'collections/activity',
       'collections/project',
@@ -71,6 +72,7 @@
               SignupView,
               TimelineView,
               UserView,
+              UserSettings,
               User,
               ActivityCollection,
               ProjectCollection,
@@ -95,7 +97,7 @@
           'login':   'login',
           'logout':  'logout',
           'track':   'track',
-
+          'user-settings': 'userSettings',
           'track/:id/edit': 'activity_edit'
         },
 
@@ -103,6 +105,39 @@
 
         start: function() {
           Backbone.history.navigate('track', { trigger : true });
+        },
+
+        userSettings: function() {
+          return new Promise(function( res, rej ) {
+            if( !Backbone.user ) {
+              Backbone.history.navigate( 'login', { trigger : true } );
+              return res();
+            }
+
+            Backbone.user
+              .login()
+              .then(function() {
+                _.forEach( [ 'timeline',
+                             'track' ], function( item ) {
+                  if( this._views.hasOwnProperty( item ) ) {
+                    this._views[ item ].remove();
+                    delete this._views[ item ];
+                  }
+                }.bind( this ));
+
+                if( !this._views.user ) {
+                  this._views
+                    .user = new UserView({ model: Backbone.user });
+                }
+
+                /* render user settings */
+                if( !this._views.userSettings ) {
+                  this._views
+                    .userSettings = new UserSettings({ model: Backbone.user });
+                }
+
+              }.bind( this ))
+          }.bind( this ));
         },
 
         login: function() {

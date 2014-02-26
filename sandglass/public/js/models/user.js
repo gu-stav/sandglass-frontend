@@ -20,7 +20,8 @@ define([ 'lodash',
           first_name: firstName,
           last_name: lastName
         }, {
-          url: this.url + '@signup'
+          url: this.url + '@signup',
+          silent: true
         })
           .done(function() {
             Backbone.user = this;
@@ -44,7 +45,7 @@ define([ 'lodash',
                        'email_md5',
                        'id' ];
 
-          this.set( _.pick( userData, pick ) );
+          this.set( _.pick( userData, pick ), { silent: true } );
           this.set( 'basic_auth', btoa( userData.token + ':' +
                                         userData.key ) );
 
@@ -55,6 +56,25 @@ define([ 'lodash',
           Backbone.$.ajaxSetup({
             headers: { 'Authorization': 'Basic ' + this.get('basic_auth') }
           });
+
+          /* from now on listen to changes and save them */
+          this.on( 'change', function() {
+            this.save( {
+              /* TODO: find a better solution than this */
+              password: undefined,
+              key: undefined,
+              email_md5: undefined,
+              basic_auth: undefined,
+              token: undefined,
+              modified: undefined
+            }, {
+              url: this.url + this.get('id') + '/',
+              silent: true
+            })
+              .then(function() {
+                this.trigger( 'updated' );
+              }.bind( this ));
+          }.bind( this ));
 
           return res( this );
         }.bind( this ))
