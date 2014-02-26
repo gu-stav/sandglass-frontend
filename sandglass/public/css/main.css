@@ -729,6 +729,12 @@ svg text {
   position: relative;
 }
 
+.user__settings-link,
+.user__logout {
+  text-decoration: none;
+  margin-right: .5em;
+}
+
 .user__settings {
   background-color: #fff;
   padding: 1em;
