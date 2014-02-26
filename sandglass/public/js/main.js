@@ -8,7 +8,7 @@
       'lodash':                 BOWER_PATH + 'lodash/dist/lodash.min',
       'underscore':             BOWER_PATH + 'underscore/underscore',
       'hogan':                  BOWER_PATH + 'hogan/web/builds/2.0.0/hogan-2.0.0.amd',
-      'jquery':                 BOWER_PATH + 'jquery/jquery',
+      'jquery':                 BOWER_PATH + 'jquery/dist/jquery',
       'jquery.ui.autocomplete': BOWER_PATH + 'jquery-ui/ui/jquery.ui.autocomplete',
       'jquery.ui.datepicker'  : BOWER_PATH + 'jquery-ui/ui/jquery.ui.datepicker',
       'jquery.ui.core':         BOWER_PATH + 'jquery-ui/ui/jquery.ui.core',
