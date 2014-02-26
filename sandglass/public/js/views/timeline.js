@@ -1,10 +1,12 @@
 define([ 'lodash',
          'backbone',
          'views/activityGroup',
+         'views/filter',
          'async' ],
   function( _,
             Backbone,
             ActivityGroup,
+            FilterView,
             async ) {
 
   var Timeline = Backbone.View.extend({
@@ -36,6 +38,8 @@ define([ 'lodash',
              with every model on startup - instead pass in the whole set and
              apply event listener afterwards */
           .then( function( models ) {
+            this.filterView = new FilterView();
+
             this
               .add( models )
               .initListener();
@@ -44,16 +48,33 @@ define([ 'lodash',
     },
 
     initListener: function() {
-      /* fetch of a whole new set - complete rerender */
-      this.collection.on('reset', function() {
-        this.reset();
-      }.bind( this ));
-
-      /* when adding a new model, rerender the timeline */
       this.collection
+
+        /* fetch of a whole new set - complete rerender */
+        .on('reset', function() {
+          this.reset();
+        }.bind( this ))
+
+        /* when adding a new model, rerender the timeline */
         .on('add', function( model ) {
           this.add( model );
         }.bind( this ) );
+
+      this.filterView
+
+        /* sort whole timeline */
+        .on('sort', function( data ) {
+          this
+            .sort( data.value, false )
+            .render()
+        }.bind( this ))
+
+        /* load recent activities */
+        .on( 'load_recent', function( data ) {
+          this.collection.loadRecent( data.from, data.to );
+        }.bind( this ));
+
+      return this;
     },
 
     reset: function() {

@@ -85,7 +85,6 @@
       }
 
       Backbone.collections = {};
-      Backbone.views = {};
       Backbone.user = $.cookie( 'user' ) ?
                         new User( JSON.parse( $.cookie( 'user' ) ) ) :
                         undefined;
@@ -159,12 +158,11 @@
                   task: new TaskCollection()
                 };
 
-                Backbone.views.track = new TrackView({
+                this._views.track = new TrackView({
                   collection: Backbone.collections.activity
                 });
 
-                /* todo - remove the global binding */
-                Backbone.views.timeline = new TimelineView({
+                this._views.timeline = new TimelineView({
                   collection: Backbone.collections.activity
                 });
               }.bind( this ),
