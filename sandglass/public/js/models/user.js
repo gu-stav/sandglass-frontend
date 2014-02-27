@@ -9,6 +9,11 @@ define([ 'lodash',
     url: defaults.urlRoot + 'users/',
 
     create: function() {
+      if( this.get('id') ) {
+        throw new Error('there is already a user. Please reload the page.');
+        return this.logout();
+      }
+
       return new Promise(function( res, rej ) {
         var rawName = this.get('name').split(' '),
           firstName = rawName[0],
@@ -18,15 +23,106 @@ define([ 'lodash',
         this.save( {
           email: this.get('email'),
           first_name: firstName,
-          last_name: lastName
+          last_name: lastName,
+          password: password
         }, {
           url: this.url + '@signup',
           silent: true
         })
           .done(function() {
+
+            this.unset( 'password' );
             Backbone.user = this;
+
             return res( this );
           }.bind( this ));
+      }.bind( this ));
+    },
+
+    load: function() {
+      return new Promise(function( res, rej ) {
+        var basicAuth,
+            _user = Backbone.user,
+            token = _user.get('token'),
+            key = _user.get('key');
+
+        /* no credentials found - login first */
+        if( !_user ) {
+          Backbone.history.navigate( 'login', { trigger : true } );
+          return res();
+        }
+
+        /* user and token, key found */
+        if( _user && token && key ) {
+          basicAuth = _user.get( 'basic_auth' ) || this.getAuthHeader( token, key );
+        } else {
+          /* invalid or non existent login data */
+          Backbone.history.navigate( 'login', { trigger : true } );
+          return res( _user );
+        }
+
+        /* in this case the user at least logged in */
+        if( basicAuth ) {
+          this.setupAuthentication( basicAuth );
+
+          /* user data was already loaded */
+          if( _user.get('id') ) {
+            this.addListener();
+            return res( _user );
+          } else {
+            Backbone.$.getJSON( this.url + '@search?token=' +
+                                token + '&key=' + key )
+              .done(function( userData ) {
+
+                this.set( userData );
+                this.addListener();
+
+                return res( this );
+
+              }.bind( this ))
+          }
+        }
+      }.bind( this ));
+    },
+
+    saveAuthHeader: function( token, key ) {
+      this.set( 'basic_auth', this.getAuthHeader( token, key ) );
+
+      return this;
+    },
+
+    /* setup auth for every following request */
+    setupAuthentication: function( hash ) {
+      Backbone.$.ajaxSetup({
+        headers: { 'Authorization': 'Basic ' + hash }
+      });
+
+      return this;
+    },
+
+    getAuthHeader: function( token, key ) {
+      return btoa( token + ':' + key );
+    },
+
+    addListener: function() {
+      this
+        .off( 'change' )
+        .on( 'change', function() {
+          this.save( {
+            /* TODO: find a better solution than this */
+            password: undefined,
+            key: undefined,
+            email_md5: undefined,
+            basic_auth: undefined,
+            token: undefined,
+            modified: undefined
+          }, {
+            url: this.url + this.get('id') + '/',
+            silent: true
+          })
+            .then(function() {
+              this.trigger( 'updated' );
+            }.bind( this ));
       }.bind( this ));
     },
 
@@ -40,41 +136,22 @@ define([ 'lodash',
           contentType: 'application/json'
         })
         .done(function( userData ) {
-          var pick = [ 'first_name',
-                       'last_name',
-                       'email_md5',
-                       'id' ];
+          var cookieAttributes = [ 'token',
+                                   'key' ];
 
-          this.set( _.pick( userData, pick ), { silent: true } );
-          this.set( 'basic_auth', btoa( userData.token + ':' +
-                                        userData.key ) );
+          this.saveAuthHeader( userData.token, userData.key );
+          this.set( userData );
+          this.unset( 'password' );
 
           Backbone.user = this;
-          $.cookie('user', JSON.stringify( this.attributes ) );
 
-          /* setup auth for every following request */
-          Backbone.$.ajaxSetup({
-            headers: { 'Authorization': 'Basic ' + this.get('basic_auth') }
-          });
+          /* only save basic auth informations to cookie */
+          $.cookie( 'user',
+                    JSON.stringify( _.pick( this.attributes,
+                                            cookieAttributes ) ) );
 
-          /* from now on listen to changes and save them */
-          this.on( 'change', function() {
-            this.save( {
-              /* TODO: find a better solution than this */
-              password: undefined,
-              key: undefined,
-              email_md5: undefined,
-              basic_auth: undefined,
-              token: undefined,
-              modified: undefined
-            }, {
-              url: this.url + this.get('id') + '/',
-              silent: true
-            })
-              .then(function() {
-                this.trigger( 'updated' );
-              }.bind( this ));
-          }.bind( this ));
+          this.setupAuthentication( this.get('basic_auth') );
+          this.addListener();
 
           return res( this );
         }.bind( this ))

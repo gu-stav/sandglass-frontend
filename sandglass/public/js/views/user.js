@@ -42,11 +42,11 @@ define([ 'lodash',
     },
 
     render: function() {
-      var _data = _.assign( {},
-                            this.model.attributes,
-                            { gravatar_url: this.getGravatarUrl() } );
+      var _data = _.cloneDeep( this.model.attributes );
 
-      if( !window.navigator.onLine ) {
+      if( window.navigator.onLine ) {
+        _data.gravatar_url = this.getGravatarUrl();
+      } else {
         _data.gravatar_url = '';
       }
 

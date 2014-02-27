@@ -109,10 +109,10 @@
                 }
 
                 Backbone.user
-                  .login()
-                  .then(function() {
+                  .load()
+                  .then(function( _user ) {
                     if( !this._views.user ) {
-                      this._views.user = new UserView({ model: Backbone.user });
+                      this._views.user = new UserView({ model: _user });
                     }
 
                     callback( this );
