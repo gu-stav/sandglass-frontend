@@ -24,10 +24,6 @@ define([ 'lodash',
         this.set( 'end', this.getDate( this.get('end') ) );
       }
 
-      this.on( 'change:start change:end', function() {
-        this.trigger( 'duration_change' );
-      }.bind( this ));
-
       return this;
     },
 
@@ -60,52 +56,47 @@ define([ 'lodash',
 
     update: function() {
       return new Promise(function( res, rej ) {
-        async.parallel([
-          function( cb ) {
-            this.setProjectId()
-              .then( cb )
-          }.bind( this ),
 
-          function( cb ) {
-            this.setTaskId()
-              .then( cb );
-          }.bind( this )
-        ], function() {
-          this.save( undefined , {
-            url: this.url + this.get('id') + '/'
-          })
-          .done(function() {
-             res();
-          })
-          .fail( rej )
-        }.bind( this ));
+        /* TODO - broken because of #11 */
+        if( !this.get('id') ) {
+          return res();
+        }
+
+        this.create( { update: true } )
+          .then( res, rej );
       }.bind( this ));
     },
 
-    create: function() {
+    create: function( data ) {
+      if( !data ) {
+        data = {};
+      }
+
       return new Promise(function( res, rej ) {
-        async.parallel([
-          function( cb ) {
-            this.setProjectId()
-              .then( cb )
-          }.bind( this ),
+        this.setProjectId()
+          .then( this.setTaskId() )
+          .then( function( cb ) {
+            var _saveData;
 
-          function( cb ) {
-            this.setTaskId()
-              .then( cb );
-          }.bind( this )
-        ], function() {
-          if( !this.isNew() ) {
-            return res( this );
-          }
+            /* update the activity */
+            if( data.hasOwnProperty('update') && data.update === true ) {
+              _saveData = {
+               url: this.url + this.get('id') + '/'
+              };
+            }
 
-          this.save()
-            .done(function() {
-              this.toCollection();
-              return res( this );
-            }.bind( this ))
-            .fail( rej );
-        }.bind( this ));
+            if( _saveData ) {
+              this.save( undefined, _saveData )
+                .then( cb );
+            } else {
+              this.save()
+                .then( cb );
+            }
+          }.bind( this ))
+          .then( function() {
+            this.toCollection();
+            res();
+          }.bind( this ));
       }.bind( this ));
     },
 
@@ -115,6 +106,8 @@ define([ 'lodash',
 
     setProjectId: function() {
       return new Promise(function( res, rej ) {
+
+        /* TODO: change to rej() */
         if( !this.get('project') ) {
           return res();
         }
@@ -124,44 +117,56 @@ define([ 'lodash',
             .findWhere({ name: this.get('project') });
 
         if( foundInCollection ) {
-          this.set('project_id', foundInCollection.id);
+          this.set( 'project_id', foundInCollection.id );
           return res();
         }
 
-        return new Project({
+        new Project({
           name: this.get('project'),
           user_id: Backbone.user.get('id')
-        }).create().then( function( project ) {
-          this.set( 'project_id', project.get('id') );
-          res();
-        }.bind( this ), rej );
+        }).create()
+          .then( function( project ) {
+            this.set( 'project_id', project.get('id') );
+            res();
+          }.bind( this ), rej );
 
       }.bind( this ));
     },
 
     setTaskId: function() {
       return new Promise(function( res, rej ) {
+
+        /* TODO: change to rej() */
         if( !this.get('task') ) {
           return res();
         }
 
-        var foundInCollection =
-          Backbone.collections.task
-            .findWhere({ name: this.get('task') });
+        var foundInCollection,
+            _searchBy = { name: this.get('task') },
+            _projectId = this.get('project_id');
 
-        if( foundInCollection ) {
-          this.set('task_id', foundInCollection.id);
-          return res()
+        /* if the activity has a project_id, search only by tasks of this
+           project */
+        if( _projectId ) {
+          _searchBy.project_id = _projectId;
         }
 
-        return new Task({
-          name: this.get('task'),
-          user_id: Backbone.user.get('id')
-        }).create().then( function( task ) {
-          this.set( 'task_id', task.get('id') );
-          res();
-        }.bind( this ), rej );
+        foundInCollection = Backbone.collections.task.findWhere( _searchBy );
 
+        if( foundInCollection ) {
+          this.set( 'task_id', foundInCollection.id );
+          return res();
+        }
+
+        new Task({
+          name: this.get('task'),
+          user_id: Backbone.user.get('id'),
+          project_id: _projectId
+        }).create()
+          .then( function( task ) {
+            this.set( 'task_id', task.get('id') );
+            res();
+        }.bind( this ), rej );
       }.bind( this ));
     },
 
@@ -191,16 +196,14 @@ define([ 'lodash',
 
     start: function() {
       return new Promise(function( res, rej ) {
-        this.set( { 'start': this.getDate() } );
+        this.set( 'start', this.getDate() );
       }.bind( this ));
     },
 
     end: function() {
       return new Promise(function( res, rej ) {
-        this.set( { 'end': this.getDate() } );
-        this.save( undefined , {
-          url: this.url + this.get('id') + '/'
-        })
+        this.set( 'end', this.getDate() );
+        this.update()
           .done( res )
           .fail( rej );
       }.bind( this ));

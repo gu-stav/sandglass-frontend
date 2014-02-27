@@ -10,14 +10,22 @@ define([ 'lodash',
 
     create: function() {
       return new Promise(function( res, rej ) {
-        if( !this.isNew() ) {
-          return res();
+        if( !this.get('name') ) {
+          throw new Error('No task_name given');
+          rej();
         }
 
         this.save()
           .done(function() {
+            /* TODO: workaround till #11 is fixed */
+            var _attr = _.clone( this.attributes['0'] );
+
+            this
+              .clear()
+              .set( _attr );
+
             this.toCollection();
-            return res( this );
+            res( this );
           }.bind( this ))
           .fail( rej );
       }.bind( this ));

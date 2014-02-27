@@ -30,11 +30,8 @@ define([ 'lodash',
           silent: true
         })
           .done(function() {
-
-            this.unset( 'password' );
-            Backbone.user = this;
-
-            return res( this );
+            this.login()
+              .then( res );
           }.bind( this ));
       }.bind( this ));
     },
@@ -86,6 +83,10 @@ define([ 'lodash',
               return res( this );
 
             }.bind( this ))
+            .fail(function() {
+              Backbone.history.navigate( 'login', { trigger : true } );
+              return rej();
+            })
         }
       }.bind( this ));
     },

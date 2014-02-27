@@ -14,13 +14,6 @@ define([ 'lodash',
 
     template: _.template( '<form>' +
                           '  <div class="track__row">' +
-                          '    <div class="track__field track__field--inline">' +
-                          '      <input type="text"' +
-                          '             name="task"' +
-                          '             class="track__task"' +
-                          '             id="track__task"' +
-                          '             placeholder="Task" />' +
-                          '    </div>' +
 
                           '    <div class="track__field track__field--inline">' +
                           '      <input type="text"' +
@@ -28,6 +21,15 @@ define([ 'lodash',
                           '             class="track__project"' +
                           '             id="track__activity"' +
                           '             placeholder="Project" />' +
+                          '    </div>' +
+
+
+                          '    <div class="track__field track__field--inline">' +
+                          '      <input type="text"' +
+                          '             name="task"' +
+                          '             class="track__task"' +
+                          '             id="track__task"' +
+                          '             placeholder="Task" />' +
                           '    </div>' +
 
                           '    <div class="track__field track__field--inline">' +
@@ -129,6 +131,7 @@ define([ 'lodash',
           parsedEnd,
           parsedEndTime;
 
+      /* logic for adding activity to another date */
       if( !this.$('input[name="track_now"]').prop( 'checked' ) ) {
         var _start_date_val = this.$( 'input[name="date_start"]' ).val(),
             _start_time_val = this.$( 'input[name="time_start"]' ).val(),
@@ -208,7 +211,7 @@ define([ 'lodash',
             this.$( 'input[name="' + item + '"]' ).val( '' );
           }.bind( this ));
 
-          this.$('input[name="task"]').focus();
+          this.$('input[name="project"]').focus();
         }.bind( this ));
 
         return this;
