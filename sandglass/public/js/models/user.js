@@ -54,7 +54,13 @@ define([ 'lodash',
 
         /* user and token, key found */
         if( _user && token && key ) {
-          basicAuth = _user.get( 'basic_auth' ) || this.getAuthHeader( token, key );
+          /* if this.saveAuthHeader() was already called, there is no
+             need to reparse the information */
+          basicAuth = _user.get( 'basic_auth' );
+
+          if( !basicAuth ) {
+            basicAuth = this.getAuthHeader( token, key );
+          }
         } else {
           /* invalid or non existent login data */
           Backbone.history.navigate( 'login', { trigger : true } );
@@ -62,31 +68,33 @@ define([ 'lodash',
         }
 
         /* in this case the user at least logged in */
-        if( basicAuth ) {
-          this.setupAuthentication( basicAuth );
+        this.setupAuthentication( basicAuth );
+        this.saveAuthHeader( token, key );
 
-          /* user data was already loaded */
-          if( _user.get('id') ) {
-            this.addListener();
-            return res( _user );
-          } else {
-            Backbone.$.getJSON( this.url + '@search?token=' +
-                                token + '&key=' + key )
-              .done(function( userData ) {
+        /* user data was already loaded */
+        if( _user.get('id') ) {
+          this.addListener();
+          return res( _user );
+        } else {
+          Backbone.$.getJSON( this.url + '@search?token=' +
+                              token + '&key=' + key )
+            .done(function( userData ) {
 
-                this.set( userData );
-                this.addListener();
+              this.set( userData );
+              this.addListener();
 
-                return res( this );
+              return res( this );
 
-              }.bind( this ))
-          }
+            }.bind( this ))
         }
       }.bind( this ));
     },
 
+    /* set basic_auth property of user, for reuse */
     saveAuthHeader: function( token, key ) {
-      this.set( 'basic_auth', this.getAuthHeader( token, key ) );
+      this.set( 'basic_auth',
+                 this.getAuthHeader( token, key ),
+                 { silent: true } );
 
       return this;
     },
