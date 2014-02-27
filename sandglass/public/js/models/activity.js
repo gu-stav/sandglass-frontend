@@ -204,8 +204,7 @@ define([ 'lodash',
       return new Promise(function( res, rej ) {
         this.set( 'end', this.getDate() );
         this.update()
-          .done( res )
-          .fail( rej );
+          .then( res, rej );
       }.bind( this ));
     },
 
