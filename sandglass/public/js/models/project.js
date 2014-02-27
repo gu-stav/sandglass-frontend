@@ -8,6 +8,15 @@ define([ 'lodash',
   var Project = Backbone.Model.extend({
     url: defaults.urlRoot + 'projects/',
 
+    /* #11 */
+    parse: function ( data ) {
+      if( data.hasOwnProperty( '0' ) ) {
+        return data['0'];
+      } else {
+        return data;
+      }
+    },
+
     create: function() {
       return new Promise(function( res, rej ) {
 
@@ -18,13 +27,6 @@ define([ 'lodash',
 
         this.save()
           .done(function() {
-            /* TODO: workaround till #11 is fixed */
-            var _attr = _.clone( this.attributes['0'] );
-
-            this
-              .clear()
-              .set( _attr );
-
             this.toCollection();
             res( this );
           }.bind( this ))

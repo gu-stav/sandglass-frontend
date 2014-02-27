@@ -16,6 +16,14 @@ define([ 'lodash',
   var Activity = Backbone.Model.extend({
     url: defaults.urlRoot + 'activities/',
 
+    parse: function ( data ) {
+      if( data.hasOwnProperty( '0' ) ) {
+        return data['0'];
+      } else {
+        return data;
+      }
+    },
+
     initialize: function() {
       this.set( 'user_id',  Backbone.user.get('id') );
       this.set( 'start', this.getDate( this.get('start') ) );
@@ -56,12 +64,6 @@ define([ 'lodash',
 
     update: function() {
       return new Promise(function( res, rej ) {
-
-        /* TODO - broken because of #11 */
-        if( !this.get('id') ) {
-          return res();
-        }
-
         this.create( { update: true } )
           .then( res, rej );
       }.bind( this ));
@@ -74,24 +76,21 @@ define([ 'lodash',
 
       return new Promise(function( res, rej ) {
         this.setProjectId()
-          .then( this.setTaskId() )
-          .then( function( cb ) {
-            var _saveData;
-
-            /* update the activity */
-            if( data.hasOwnProperty('update') && data.update === true ) {
-              _saveData = {
-               url: this.url + this.get('id') + '/'
-              };
-            }
-
-            if( _saveData ) {
-              this.save( undefined, _saveData )
-                .then( cb );
-            } else {
-              this.save()
-                .then( cb );
-            }
+          .then(function() {
+            return this.setTaskId();
+          }.bind(this))
+          .then( function() {
+            return new Promise(function( res, rej ) {
+              if( data.hasOwnProperty('update') && data.update === true ) {
+                this.save( undefined, {
+                 url: this.url + this.get('id') + '/'
+                } )
+                  .then( res );
+              } else {
+                this.save()
+                  .then( res );
+              }
+            }.bind( this ));
           }.bind( this ))
           .then( function() {
             this.toCollection();
@@ -128,7 +127,7 @@ define([ 'lodash',
           .then( function( project ) {
             this.set( 'project_id', project.get('id') );
             res();
-          }.bind( this ), rej );
+          }.bind( this ), res );
 
       }.bind( this ));
     },
@@ -164,9 +163,10 @@ define([ 'lodash',
           project_id: _projectId
         }).create()
           .then( function( task ) {
+            console.log('set task_id', task.get('id'), this)
             this.set( 'task_id', task.get('id') );
             res();
-        }.bind( this ), rej );
+        }.bind( this ), res );
       }.bind( this ));
     },
 
