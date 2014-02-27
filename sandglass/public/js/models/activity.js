@@ -163,7 +163,6 @@ define([ 'lodash',
           project_id: _projectId
         }).create()
           .then( function( task ) {
-            console.log('set task_id', task.get('id'), this)
             this.set( 'task_id', task.get('id') );
             res();
         }.bind( this ), res );
