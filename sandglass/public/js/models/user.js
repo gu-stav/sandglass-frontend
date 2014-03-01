@@ -93,7 +93,7 @@ define([ 'lodash',
             }.bind( this ))
             .fail(function() {
               Backbone.history.navigate( 'login', { trigger : true } );
-              return rej();
+              return res();
             })
         }
       }.bind( this ));
