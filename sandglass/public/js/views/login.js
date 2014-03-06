@@ -6,20 +6,25 @@ define([ 'lodash',
             User ) {
 
   var LoginView = Backbone.View.extend({
-    className: 'login form',
+    className: 'form form--login',
     tagName: 'form',
 
-    template: _.template( '<input class="login__email"' +
-                          '       type="text"' +
-                          '       name="email"' +
-                          '       placeholder="email" />' +
+    template: _.template( '<h2 class="form__headline">Login</h2>' +
+                            '<div class="form__group">' +
+                            '<input class="form__control"' +
+                            '       type="text"' +
+                            '       name="email"' +
+                            '       placeholder="email" />' +
+                          '</div>' +
 
-                          '<input class="login__password"' +
-                          '       type="password"' +
-                          '       name="password"' +
-                          '       placeholder="password" />' +
+                          '<div class="form__group">' +
+                            '<input class="form__control"' +
+                            '       type="password"' +
+                            '       name="password"' +
+                            '       placeholder="password" />' +
+                          '</div>' +
 
-                          '<button class="button login__submit"' +
+                          '<button class="button button--submit"' +
                           '        type="submit">Login</button>' ),
 
     events: {
@@ -57,7 +62,7 @@ define([ 'lodash',
 
     render: function() {
       this.$el.html( this.template() );
-      this.$el.appendTo( 'header' );
+      this.$el.insertAfter( 'header' );
     }
   });
 

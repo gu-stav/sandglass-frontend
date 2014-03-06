@@ -10,24 +10,24 @@ define([ 'lodash',
     className: 'timeline__item',
     template: _.template( '<% if (!tracking) { %>' +
                           '<button class="timeline__item-delete timeline__button ' +
-                                         'button button--link"></button>' +
+                                         'button button--link">delete</button>' +
                           '<% } %>' +
 
                           '<% if( tracking ) { %>' +
                           '<button class="timeline__item-end timeline__button ' +
-                                          'button button--link"></button>' +
+                                          'button button--link">end</button>' +
                           '<% } %>' +
 
                           '<% if (!tracking) { %>' +
                           '<button class="timeline__item-edit timeline__button ' +
-                                         'button button--link"></button>' +
+                                         'button button--link">edit</button>' +
                           '<% } %>' +
 
                           /* activity & project */
-                          '<h2 class="timeline__headline">' +
+                          '<h3 class="timeline__headline">' +
                              '<span class="timeline__task">${ task }</span> - ' +
                              '<span class="timeline__project">${ project }</span>' +
-                          '</h2>' +
+                          '</h3>' +
 
                           /* description */
                           '<p class="timeline__description">' +

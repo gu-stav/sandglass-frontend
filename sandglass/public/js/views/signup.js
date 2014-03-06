@@ -7,32 +7,33 @@ define([ 'lodash',
 
   var SignupView = Backbone.View.extend({
     tagName: 'form',
-    className: 'signup form form--centered',
+    className: 'form form--signup',
 
-    template: _.template('<h2 class="signup__headline">Signup</h2>' +
-                '<div class="signup__name-wrap">' +
+    template: _.template('<h2 class="form__headline">Signup</h2>' +
+                '<div class="form__group">' +
                   '<input type="text"' +
                   '       name="name"' +
                   '       placeholder="fistname lastname"' +
-                  '       class="signup__name" />' +
+                  '       class="form__control" />' +
                 '</div>' +
 
-                '<div class="signup__email-wrap">' +
+                '<div class="form__group">' +
                   '<input type="text"' +
                   '       name="email"' +
                   '       placeholder="email"'+
-                  '       class="signup__email" />' +
+                  '       class="form__control" />' +
                 '</div>' +
 
-                '<div class="signup__password-wrap">' +
+                '<div class="form__group">' +
                   '<input type="password"' +
                   '       name="password"' +
                   '       placeholder="password"' +
-                  '       class="signup__password" />' +
+                  '       class="form__control" />' +
                 '</div>' +
 
                 '<div>' +
-                  '<button type="submit">Create user</button>' +
+                  '<button class="button button--submit"' +
+                  '        type="submit">Create user</button>' +
                 '</div>'),
 
     events: {

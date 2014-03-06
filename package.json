@@ -8,5 +8,9 @@
   },
   "dependencies": {
     "express": "3.4.8"
+  },
+  "devDependencies": {
+    "gulp": "^3.5.5",
+    "gulp-less": "^1.2.2"
   }
 }

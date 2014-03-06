@@ -37,12 +37,12 @@ var ROUTES = {
         route: 'login',
         initialize: function( router ) {
           return new Promise(function() {
-            if( !router._views.login ) {
-              router._views.login = new LoginView();
-            }
-
             if( !router._views.signup ) {
               router._views.signup = new SignupView();
+            }
+
+            if( !router._views.login ) {
+              router._views.login = new LoginView();
             }
 
             res();

@@ -1,0 +1,41 @@
+@import "variables";
+
+.form {
+  padding: 1em;
+}
+
+.form--error .form__control {
+  border-color: #843534;
+}
+
+.form__group {
+  padding: .5em 0;
+}
+
+.form__group--hidden {
+  display: none;
+}
+
+.form__control {
+  padding: .5em 1em;
+  border-radius: 2px;
+  border: 1px solid @border-color;
+  width: 100%;
+  outline: none;
+}
+
+label > .form__control {
+  margin-top: .5em;
+}
+
+.form__control:focus {
+  border-color: darken( @border-color, 20% );
+}
+
+.button {
+  border: 1px solid @border-color;
+  margin-top: 1em;
+  padding: .5em 1.5em;
+  border-radius: 2px;
+  background-color: lighten( @border-color, 10% );
+}

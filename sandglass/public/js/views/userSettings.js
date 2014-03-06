@@ -5,15 +5,13 @@ define([ 'lodash',
 
   var userSettings = Backbone.View.extend({
     tagName: 'form',
-    className: 'user__settings',
+    className: 'form form--user-settings',
 
     template: _.template( '<div>' +
                           '<% _.forEach( attributes, function( value, key ) { %>' +
-                            '<div class="user__settings-row">' +
-                             '<label class="user__settings-label"><%= key %>' +
-                              '<div class="user__settings-control">' +
-                                '<input type="text" name="<%= key %>" value="<%= value %>" />' +
-                              '</div>' +
+                            '<div class="form__group">' +
+                             '<label><%= key %>' +
+                             '<input type="text" name="<%= key %>" value="<%= value %>" class="form__control" />' +
                             '</label>' +
                             '</div>' +
                           '<% }); %>' +

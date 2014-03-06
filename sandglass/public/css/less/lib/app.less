@@ -1,0 +1,83 @@
+@import "variables";
+
+body {
+  background-color: @background-color;
+  color: @font-color;
+}
+
+a {
+  text-decoration: none;
+  color: @hightlight-color;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  padding: 0;
+  margin: 0 0 .3em 0;
+  font-family: 'Open sans', sans-serif;
+  font-weight: 200;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.sandglass {
+  margin: 0 auto 2em auto;
+  width: 50em;
+}
+
+.sandglass__header {
+  padding: .5em;
+  position: relative;
+}
+
+.sandglass__headline-icon {
+  color: @hightlight-color;
+}
+
+/* user */
+.user {
+  position: absolute;
+  top: .5em;
+  right: .5em;
+}
+
+.user__image {
+  margin-right: .5em;
+}
+
+.user__image,
+.user__userinfo {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.user__name {
+  display: block;
+}
+
+/* form specific */
+
+.form--login {
+  margin-right: 1em;
+}
+
+.form--login,
+.form--signup,
+.form--user-settings {
+  display: inline-block;
+  vertical-align: top;
+  width: 24.5em;
+  background-color: @app-background-color;
+  box-shadow: 0 0 3px @border-color;
+  border-top: 3px solid @hightlight-color;
+}
+
+.form--user-settings {
+  width: 100%;
+}

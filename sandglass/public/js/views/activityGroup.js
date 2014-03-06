@@ -12,8 +12,8 @@ define([ 'lodash',
 
     template: _.template( '<% if ( modelCount ) { %>' +
                           '<li class="timeline__groupHeader">' +
-                          '<strong id="group-<%= groupLabel%>"' +
-                          'class="timeline__groupheader-label"><%= groupLabel %></strong>' +
+                          '<h2 id="group-<%= groupLabel%>"' +
+                          'class="timeline__groupheader-label"><%= groupLabel %></h2>' +
                           '<span class="timeline__group-duration">' +
                           '<%= duration %></span>' +
                           '</li>' +

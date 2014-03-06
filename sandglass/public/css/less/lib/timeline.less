@@ -1,0 +1,54 @@
+@import "variables";
+
+.timeline__group-ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.form--track {
+  background-color: @app-background-color;
+  box-shadow: 0 0 3px @border-color;
+  border-top: 3px solid @hightlight-color;
+}
+
+.timeline__item {
+  background-color: @app-background-color;
+  border-bottom: 1px solid @border-color;
+  padding: 1em .5em 1.5em 7em;
+  position: relative;
+}
+
+.timeline__button {
+  position: absolute;
+  right: .5em;
+  top: .5em;
+}
+
+.timeline__time {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 6em;
+  background-color: darken( @app-background-color, 3% );
+  border-right: 1px solid lighten( @border-color, 10% );
+  height: 100%;
+  padding: 1.1em .5em;
+  text-align: right;
+}
+
+.timeline__duration {
+  display: block;
+}
+
+.timeline__headline {
+  display: inline-block;
+  width: 15em;
+}
+
+.timeline__description {
+  padding: 0;
+  margin: 0;
+  display: inline-block;
+  width: 24.5em;
+}

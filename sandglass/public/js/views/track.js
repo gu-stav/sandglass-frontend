@@ -10,52 +10,50 @@ define([ 'lodash',
             Activity ) {
 
   var Track = Backbone.View.extend({
-    className: 'track',
-
-    template: _.template( '<form>' +
+    template: _.template( '<form class="form form--track">' +
                           '  <div class="track__row">' +
 
-                          '    <div class="track__field track__field--inline">' +
+                          '    <div class="form__group">' +
                           '      <input type="text"' +
                           '             name="project"' +
-                          '             class="track__project"' +
+                          '             class="form__control"' +
                           '             id="track__activity"' +
                           '             placeholder="Project" />' +
                           '    </div>' +
 
 
-                          '    <div class="track__field track__field--inline">' +
+                          '    <div class="form__group">' +
                           '      <input type="text"' +
                           '             name="task"' +
-                          '             class="track__task"' +
+                          '             class="form__control"' +
                           '             id="track__task"' +
                           '             placeholder="Task" />' +
                           '    </div>' +
 
-                          '    <div class="track__field track__field--inline">' +
+                          '    <div class="form__group">' +
                           '      <input type="text"' +
                           '             name="description"' +
-                          '             class="track__description"' +
+                          '             class="form__control"' +
                           '             id="track__activity"' +
                           '             placeholder="Description" />' +
                           '    </div>' +
 
-                          '    <div class="track__field track__field--inline">' +
+                          '    <div class="form__group">' +
                           '      <button type="submit"' +
-                          '              class="track__button js-track__submit">' +
+                          '              class="button button--submit">' +
                                  '<i class="fa fa-clock-o"></i> ' +
                                  '<span class="track__button-text">Start</span></button>' +
                           '    </div>' +
                           '  </div>' +
 
-                          '  <div class="track__row track__row--date">' +
+                          '  <div class="form__group form__group--date">' +
                           '    <div class="track__field track__field--inline">' +
                           '    <label><input type="checkbox" name="track_now" checked />' +
                           '    Now</label>' +
                           '    </div>' +
                           '  </div>' +
 
-                          '  <div class="track__row track__row--date track__row--date-start-end track__row--hidden">' +
+                          '  <div class="form__group form__group--hidden">' +
 
                           '    <div class="track__field track__field--inline">' +
                           '      <input type="text"' +
