@@ -102,7 +102,12 @@ define([ 'lodash',
     /* setup auth for every following request */
     setupAuthentication: function( hash ) {
       Backbone.$.ajaxSetup({
-        headers: { 'Authorization': 'Basic ' + hash }
+        headers: {
+          'Authorization': 'Basic ' + hash,
+
+          /* add the ajax header, since headers overwrites the full object */
+          'X-Requested-With': 'XMLHttpRequest'
+        }
       });
 
       return this;
