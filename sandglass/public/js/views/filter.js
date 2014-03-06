@@ -42,7 +42,7 @@ define([ 'lodash',
     },
 
     initialize: function() {
-      var _uiDateFormat = defaults.dateFormat;
+      var _uiDateFormat = Backbone.user.get('data').dateFormat;
 
       /* mapping for jquery ui dateformat */
       _uiDateFormat = _uiDateFormat.replace('MM', 'mm');
@@ -154,11 +154,11 @@ define([ 'lodash',
       }
 
       if( from ) {
-        from = moment( from, defaults.dateFormat );
+        from = moment( from, Backbone.user.get('data').dateFormat );
       }
 
       if( to ) {
-        to = moment( to, defaults.dateFormat )
+        to = moment( to, Backbone.user.get('data').dateFormat )
               .hour( 23 )
               .minute( 59 )
               .second( 59 );
@@ -169,8 +169,8 @@ define([ 'lodash',
 
     render: function() {
       var _data = {
-        dateFormat: defaults.dateFormat,
-        timeFormat: defaults.timeFormat
+        dateFormat: Backbone.user.get('data').dateFormat,
+        timeFormat: Backbone.user.get('data').timeFormat
       };
 
       this.$el.html( this.template( _data ) );

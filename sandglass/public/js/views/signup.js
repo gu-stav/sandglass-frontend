@@ -30,6 +30,7 @@ define([ 'lodash',
                   '       placeholder="password"' +
                   '       class="signup__password" />' +
                 '</div>' +
+
                 '<div>' +
                   '<button type="submit">Create user</button>' +
                 '</div>'),
@@ -48,7 +49,11 @@ define([ 'lodash',
       return new Promise(function( res, rej ) {
         var email = this.$el.find('input[name="email"]').val(),
             name = this.$el.find('input[name="name"]').val(),
-            password = this.$el.find('input[name="password"]').val();
+            password = this.$el.find('input[name="password"]').val(),
+
+            /* TODO: define in the template */
+            dateFormat = 'DD.MM.YYYY',
+            timeFormat = 'HH:mm';
 
         if( !email || !name || !password ) {
           this.$el.addClass('form--error');
@@ -60,7 +65,11 @@ define([ 'lodash',
         new User({
           email: email,
           name: name,
-          password: password
+          password: password,
+          data: {
+            dateFormat: dateFormat,
+            timeFormat: timeFormat
+          }
         }).create()
           .then(function( user ) {
             Backbone.history.navigate( 'track', { trigger : true } );

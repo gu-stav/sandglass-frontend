@@ -164,28 +164,10 @@
         }
       });
 
-      /* do an api ping before, to make it it runs and is accessible */
-      $.get( defaults.urlRoot )
-        .done(function pingSuccess() {
-          new Workspace();
+      new Workspace();
 
-          Backbone.history
-            .start( { pushState: true,
-                      start: '/' } );
-        })
-        .fail(function pingFail() {
-          /* if there is no CORS support, the only valid reasons are a wrong
-             url in defaults.js or a non running api server */
-          if( !'withCredentials' in new XMLHttpRequest() ) {
-            throw new Error('No API access. Check if the server is running and' +
-                             ' defaults.js knows about the url');
-            return;
-          }
-
-          throw new Error('No API access. Check the API-URL, if the sandglass' +
-                          'server is running and the correct CORS headers.' +
-                          'In case you develop make sure, you run your browser' +
-                          'with the --disable-web-security flag.');
-        });
+      Backbone.history
+        .start( { pushState: true,
+                  start: '/' } );
   });
 })();

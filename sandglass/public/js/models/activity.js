@@ -184,13 +184,13 @@ define([ 'lodash',
     /* return the user formatted date */
     getFormattedDate: function( index ) {
       return this.getDate( this.get( index ) )
-              .format( defaults.dateFormat );
+              .format( Backbone.user.get('data').dateFormat );
     },
 
     /* return the user formatted time */
     getFormattedTime: function( index ) {
       return this.getDate( this.get( index ) )
-              .format( defaults.timeFormat );
+              .format( Backbone.user.get('data').timeFormat );
     },
 
     start: function() {

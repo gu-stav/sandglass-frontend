@@ -21,18 +21,9 @@ define([ 'lodash',
           password = this.get('password');
 
         this.save( {
-          email: this.get('email'),
           first_name: firstName,
           last_name: lastName,
-          password: password,
-
-          /* these field we need later for parsing dates - they are
-             mandatory for the frontend, since there is data to output */
-          /* todo: #12
-          data: {
-            dateFormat: defaults.dateFormat,
-            timeFormat: defaults.timeFormat
-          }*/
+          name: undefined
         }, {
           url: this.url + '@signup',
           silent: true
