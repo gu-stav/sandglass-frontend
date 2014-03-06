@@ -12,38 +12,42 @@ define([ 'lodash',
   var Timeline = Backbone.View.extend({
     className: 'timeline',
 
-    initialize: function() {
-      this._activityGroups = [];
+    setup: function() {
+      return new Promise(function( res, rej ) {
+        this._activityGroups = [];
 
-      this.attributes = {
-        sortBy: 'start'
-      };
+        this.attributes = {
+          sortBy: 'start'
+        };
 
-      /* load recent data */
-      async.parallel([
-        function( cb ) {
-          Backbone.collections.project
-            .loadAll()
-            .then( cb );
-        },
-        function( cb ) {
-          Backbone.collections.task
-            .loadAll()
-            .then( cb );
-        }
-      ], function( err, data ) {
-        this.collection
-          .loadRecent()
-          /* requires a bit of extra work to not rerender the timeline
-             with every model on startup - instead pass in the whole set and
-             apply event listener afterwards */
-          .then( function( models ) {
-            this.filterView = new FilterView();
+        /* load recent data */
+        async.parallel([
+          function( cb ) {
+            Backbone.collections.project
+              .loadAll()
+              .then( cb );
+          },
+          function( cb ) {
+            Backbone.collections.task
+              .loadAll()
+              .then( cb );
+          }
+        ], function( err, data ) {
+          this.collection
+            .loadRecent()
+            /* requires a bit of extra work to not rerender the timeline
+               with every model on startup - instead pass in the whole set and
+               apply event listener afterwards */
+            .then( function( models ) {
+              this.filterView = new FilterView();
 
-            this
-              .add( models )
-              .initListener();
-          }.bind( this ) );
+              this
+                .add( models )
+                .initListener();
+
+              res();
+            }.bind( this ) );
+        }.bind( this ));
       }.bind( this ));
     },
 

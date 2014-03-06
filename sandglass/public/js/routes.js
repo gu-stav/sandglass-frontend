@@ -59,6 +59,23 @@ var ROUTES = {
         login: false
       },
 
+      'activity_edit': {
+        route: 'track/:id/edit',
+        login: true,
+        mapTo: 'track',
+        initialize: function( router, args ) {
+          return new Promise(function( res, rej ) {
+
+            Backbone.collections.activity
+              .get( args[0] )
+                ._view
+                .edit();
+
+            res();
+          });
+        }
+      },
+
       'track': {
         route: 'track',
         login: true,
@@ -77,6 +94,12 @@ var ROUTES = {
             router._views.timeline = new TimelineView({
               collection: Backbone.collections.activity
             });
+
+            router._views.timeline
+              .setup()
+              .then(function() {
+                res();
+              });
           });
         },
 
@@ -98,20 +121,6 @@ var ROUTES = {
 
         destroy: function( router ) {
           router.destroyViews( [ 'userSettings' ] );
-        }
-      },
-
-      'activity_edit': {
-        route: 'track/:id/edit',
-        login: true,
-        mapTo: 'track',
-        initialize: function( router, arguments ) {
-          return new Promise(function( res, rej ) {
-            Backbone.collections.activity
-              .get( arguments[0] )
-                ._view
-                .edit();
-          });
         }
       }
   };
