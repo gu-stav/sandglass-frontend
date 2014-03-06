@@ -10,7 +10,7 @@ define([ 'lodash',
             Activity ) {
 
   var Track = Backbone.View.extend({
-    template: _.template( '<form class="form form--track">' +
+    template: _.template( '<form class="form form--inline form--track">' +
                           '  <div class="track__row">' +
 
                           '    <div class="form__group">' +
@@ -55,39 +55,39 @@ define([ 'lodash',
 
                           '  <div class="form__group form__group--hidden">' +
 
-                          '    <div class="track__field track__field--inline">' +
+                          '    <div class="form__group">' +
                           '      <input type="text"' +
                           '             name="date_start"' +
-                          '             class="track__date-start"' +
+                          '             class="form__control"' +
                           '             id="track__date-start"' +
                           '             placeholder="" />' +
                           '    </div>' +
 
-                          '    <div class="track__field track__field--inline">' +
+                          '    <div class="form__group">' +
                           '      <input type="text"' +
                           '             name="time_start"' +
-                          '             class="track__time-start"' +
+                          '             class="form__control"' +
                           '             id="track__time-start"' +
                           '             placeholder="" />' +
                           '    </div>' +
 
-                          '    <div class="track__field track__field--inline track__field-end track__field--hidden">' +
+                          '    <div class="form__group form__group--end form__group--hidden">' +
                           '      <input type="text"' +
                           '             name="date_end"' +
-                          '             class="track__date-end"' +
+                          '             class="form__control"' +
                           '             id="track__date-end"' +
                           '             placeholder="<%= dateFormat %>" />' +
                           '    </div>' +
 
-                          '    <div class="track__field track__field--inline track__field-end track__field--hidden">' +
+                          '    <div class="form__group form__group--end form__group--hidden">' +
                           '      <input type="text"' +
                           '             name="time_end"' +
-                          '             class="track__time-end"' +
+                          '             class="form__control"' +
                           '             id="track__time-end"' +
                           '             placeholder="<%= timeFormat %>" />' +
                           '    </div>' +
 
-                          '    <div class="track__field track__field--inline">' +
+                          '    <div class="form__group">' +
                           '      <label><input type="checkbox" name="track_progress" checked />' +
                           '      In progress</label>' +
                           '    </div>' +
@@ -217,9 +217,9 @@ define([ 'lodash',
 
     toggleDateView: function( e ) {
       var $cb = Backbone.$(e.target),
-          $target = $cb.closest('.track__row').next();
+          $target = $cb.closest('.form__group').next();
 
-      $target[ ( $cb.prop('checked') ? 'add' : 'remove' ) + 'Class' ]('track__row--hidden');
+      $target[ ( $cb.prop('checked') ? 'add' : 'remove' ) + 'Class' ]('form__group--hidden');
 
       if( !$cb.prop('checked') ) {
         /* update date field always to the current date */
@@ -243,9 +243,9 @@ define([ 'lodash',
 
     toggleDateEndView: function( e ) {
       var $cb = Backbone.$(e.target),
-          $targets = $cb.closest('.track__field').prevAll( '.track__field-end' );
+          $targets = $cb.closest('.form__group').prevAll( '.form__group--end' );
 
-      $targets[ ( $cb.prop( 'checked' ) ? 'add' : 'remove' ) + 'Class' ]( 'track__field--hidden' );
+      $targets[ ( $cb.prop( 'checked' ) ? 'add' : 'remove' ) + 'Class' ]( 'form__group--hidden' );
     },
 
     loadRecent: function( e ) {

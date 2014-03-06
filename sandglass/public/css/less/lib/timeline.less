@@ -14,15 +14,30 @@
 
 .timeline__item {
   background-color: @app-background-color;
-  border-bottom: 1px solid @border-color;
+  border-bottom: 1px solid lighten( @border-color, 10% );
   padding: 1em .5em 1.5em 7em;
   position: relative;
 }
 
 .timeline__button {
   position: absolute;
-  right: .5em;
-  top: .5em;
+  top: 0;
+  right: 0;
+  background-color: @app-background-color;
+  border-color: @app-background-color;
+  height: 100%;
+  width: 2em;
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
+}
+
+.timeline__button--delete {
+  right: -2.05em;
+}
+
+.timeline__button--edit {
+  right: -4.1em;
 }
 
 .timeline__time {
@@ -35,10 +50,14 @@
   height: 100%;
   padding: 1.1em .5em;
   text-align: right;
+  color: lighten( @font-color, 40% );
+  font-family: @highlight-font;
 }
 
 .timeline__duration {
   display: block;
+  color: @hightlight-color;
+  font-weight: 600;
 }
 
 .timeline__headline {
@@ -46,9 +65,14 @@
   width: 15em;
 }
 
+.timeline__task:before {
+  content: ' - ';
+}
+
 .timeline__description {
   padding: 0;
   margin: 0;
   display: inline-block;
   width: 24.5em;
+  vertical-align: top;
 }

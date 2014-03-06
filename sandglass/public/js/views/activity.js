@@ -9,24 +9,24 @@ define([ 'lodash',
     tagName: 'li',
     className: 'timeline__item',
     template: _.template( '<% if (!tracking) { %>' +
-                          '<button class="timeline__item-delete timeline__button ' +
+                          '<button class="timeline__button--delete timeline__button ' +
                                          'button button--link">delete</button>' +
                           '<% } %>' +
 
                           '<% if( tracking ) { %>' +
-                          '<button class="timeline__item-end timeline__button ' +
+                          '<button class="timeline__button--end timeline__button ' +
                                           'button button--link">end</button>' +
                           '<% } %>' +
 
                           '<% if (!tracking) { %>' +
-                          '<button class="timeline__item-edit timeline__button ' +
+                          '<button class="timeline__button--edit timeline__button ' +
                                          'button button--link">edit</button>' +
                           '<% } %>' +
 
                           /* activity & project */
                           '<h3 class="timeline__headline">' +
-                             '<span class="timeline__task">${ task }</span> - ' +
                              '<span class="timeline__project">${ project }</span>' +
+                             '<span class="timeline__task">${ task }</span>' +
                           '</h3>' +
 
                           /* description */
@@ -43,9 +43,9 @@ define([ 'lodash',
                           '</div>'),
 
     events: {
-      'click .timeline__item-edit':   'edit',
-      'click .timeline__item-delete': 'delete',
-      'click .timeline__item-end':    'end'
+      'click .timeline__button--edit':   'edit',
+      'click .timeline__button--delete': 'delete',
+      'click .timeline__button--end':    'end'
     },
 
     inConflict: false,
