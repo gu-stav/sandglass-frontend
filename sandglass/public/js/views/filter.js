@@ -1,13 +1,14 @@
+/*global define,require*/
+
 define([ 'lodash',
          'backbone',
          'defaults',
-         'moment',
-         'models/activity' ],
+         'moment' ],
   function( _,
             Backbone,
             defaults,
-            moment,
-            Activity ) {
+            moment ) {
+  'use strict';
 
   var Track = Backbone.View.extend({
     tagName: 'form',
@@ -69,10 +70,10 @@ define([ 'lodash',
                           filtered =
                             _.map( Backbone.collections[ item ].getAutocompleteList(),
                                    function( el ) {
-                                     if( el.label.indexOf( term ) !== -1 ) {
-                                       return el;
-                                     }
-                                   });
+                                      if( el.label.indexOf( term ) !== -1 ) {
+                                        return el;
+                                      }
+                                    });
 
                           res( _.compact( filtered ) );
                         },
@@ -83,7 +84,7 @@ define([ 'lodash',
                         },
 
                         select: function( e, ui ) {
-                          var $target = $(e.target);
+                          var $target = Backbone.$(e.target);
 
                           /* fill with label & save the id */
                           $target
@@ -142,8 +143,8 @@ define([ 'lodash',
     loadRecent: function( e ) {
       var from,
           to,
-          $target = $(e.target),
-          $other = $target.siblings('input');
+          $target = Backbone.$(e.target),
+          $other = Backbone.$target.siblings('input');
 
       if( $target.attr('name') === 'filter_start' ) {
         from = $target.val();

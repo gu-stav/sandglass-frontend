@@ -1,8 +1,10 @@
+/*global define,window*/
+
 define([ 'lodash',
          'backbone' ],
   function( _,
-            Backbone,
-            UserSettings ) {
+            Backbone ) {
+  'use strict';
 
   var User = Backbone.View.extend({
     tagName: 'div',

@@ -1,9 +1,12 @@
+/*global define*/
+
 define([ 'lodash',
          'backbone',
          'defaults' ],
   function( _,
             Backbone,
             defaults ) {
+  'use strict';
 
   var Project = Backbone.Model.extend({
     url: defaults.urlRoot + 'projects/',
@@ -21,8 +24,8 @@ define([ 'lodash',
       return Backbone.promiseGenerator(function( res, rej ) {
 
         if( !this.get('name') ) {
-          throw new Error('No task_name given');
           rej();
+          throw new Error('No task_name given');
         }
 
         this.save()
@@ -30,7 +33,7 @@ define([ 'lodash',
             this.toCollection();
             res( this );
           }.bind( this ))
-           .fail( rej )
+           .fail( rej );
       }.bind( this ));
     },
 

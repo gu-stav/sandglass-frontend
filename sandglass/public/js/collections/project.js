@@ -1,3 +1,5 @@
+/*global define*/
+
 define([ 'lodash',
          'backbone',
          'defaults',
@@ -6,6 +8,7 @@ define([ 'lodash',
             Backbone,
             defaults,
             Project ) {
+  'use strict';
 
   var ProjectCollection = Backbone.Collection.extend({
     url: defaults.urlRoot + 'projects/',
@@ -28,8 +31,8 @@ define([ 'lodash',
         return {
           value: model.get('id'),
           label: model.get('name')
-        }
-      })
+        };
+      });
     },
 
     /* return the name of a project by the given id */

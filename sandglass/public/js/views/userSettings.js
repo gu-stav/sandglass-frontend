@@ -1,7 +1,10 @@
+/*global define*/
+
 define([ 'lodash',
          'backbone' ],
        function( _,
                  Backbone ) {
+  'use strict';
 
   var userSettings = Backbone.View.extend({
     tagName: 'form',
@@ -27,7 +30,7 @@ define([ 'lodash',
     },
 
     update: function( e ) {
-      var $inp = $(e.target),
+      var $inp = Backbone.$(e.target),
           val = $inp.val(),
           key = $inp.attr('name');
 

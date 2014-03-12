@@ -1,4 +1,8 @@
+/*global require,window,$,Promise*/
+
 (function() {
+  'use strict';
+
   var BOWER_PATH = '../../bower_components/';
 
   require.config({
@@ -45,8 +49,8 @@
         'jquery.ui.datepicker': [ 'jquery',
                                   'jquery.ui.position',
                                   'jquery.ui.core' ]
-    }
-  });
+      }
+    });
 
   require(
     [ 'lodash',
@@ -54,20 +58,17 @@
       'routes',
       'jquery.cookie',
       'views/user',
-      'models/user',
-      'defaults' ],
+      'models/user' ],
     function( _,
               Backbone,
               ROUTES,
               __cookie,
               UserView,
-              User,
-              defaults ) {
+              User ) {
 
       /* check if the browser supports all the stuff we need */
-      if( !'localStorage' in window || !'Promise' in window ) {
+      if( !('localStorage' in window) || !('Promise' in window) ) {
         throw new Error('No support for Promises or localStorage found.');
-        return;
       }
 
       Backbone.collections = {};
@@ -172,5 +173,5 @@
       Backbone.history
         .start( { pushState: true,
                   start: '/' } );
-  });
+    });
 })();

@@ -1,3 +1,5 @@
+/*global define*/
+
 define([ 'lodash',
          'backbone',
          'views/activityGroup',
@@ -8,12 +10,13 @@ define([ 'lodash',
             ActivityGroup,
             FilterView,
             async ) {
+  'use strict';
 
   var Timeline = Backbone.View.extend({
     className: 'timeline',
 
     setup: function() {
-      return Backbone.promiseGenerator(function( res, rej ) {
+      return Backbone.promiseGenerator(function( res ) {
         this._activityGroups = [];
 
         this.attributes = {
@@ -32,7 +35,7 @@ define([ 'lodash',
               .loadAll()
               .then( cb );
           }
-        ], function( err, data ) {
+        ], function() {
           this.collection
             .loadRecent()
             /* requires a bit of extra work to not rerender the timeline
@@ -70,7 +73,7 @@ define([ 'lodash',
         .on('sort', function( data ) {
           this
             .sort( data.value, false )
-            .render()
+            .render();
         }.bind( this ))
 
         /* load recent activities */
@@ -125,7 +128,7 @@ define([ 'lodash',
 
         this
           .sort( this.attributes.sortBy, false )
-          .render()
+          .render();
       } else {
         this.createGroup( model )
             .sort( this.attributes.sortBy, false )
@@ -161,10 +164,10 @@ define([ 'lodash',
           _added = true;
 
           groupView.listenTo( model,
-                             'destroy',
-                             function() {
-                              groupView.removeModel( model );
-                             });
+                              'destroy',
+                              function() {
+                                groupView.removeModel( model );
+                              });
 
           return false;
         }
@@ -174,13 +177,15 @@ define([ 'lodash',
         return this;
       }
 
+      var _attrs = {
+        sortBy: this.attributes.sortBy,
+        groupName: _modelFindBy,
+        groupLabel: _groupLabel ? _groupLabel : _modelFindBy
+      };
+
       _view = new ActivityGroup( { model: model,
-                                   attributes: {
-                                     sortBy: this.attributes.sortBy,
-                                     groupName: _modelFindBy,
-                                     groupLabel: _groupLabel ? _groupLabel :
-                                                               _modelFindBy }
-                                  } );
+                                   attributes: _attrs
+                                 } );
 
       this._activityGroups.push( _view );
       return this;

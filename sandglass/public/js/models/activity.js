@@ -1,17 +1,18 @@
+/*global define*/
+
 define([ 'lodash',
          'backbone',
          'moment',
          'defaults',
          'models/project',
-         'models/task',
-         'async' ],
+         'models/task' ],
   function( _,
             Backbone,
             moment,
             defaults,
             Project,
-            Task,
-            async ) {
+            Task ) {
+  'use strict';
 
   var Activity = Backbone.Model.extend({
     url: defaults.urlRoot + 'activities/',
@@ -42,7 +43,7 @@ define([ 'lodash',
           case 'start':
           case 'end':
             opts = this.getDate( opts );
-          break;
+            break;
         }
       } else if( typeof attr === 'object' ) {
         _.forEach( attr, function( val, index ) {
@@ -54,7 +55,7 @@ define([ 'lodash',
             case 'start':
             case 'end':
               attr[index] = this.getDate( val );
-            break;
+              break;
           }
         }.bind( this ));
       }
@@ -74,16 +75,16 @@ define([ 'lodash',
         data = {};
       }
 
-      return Backbone.promiseGenerator(function( res, rej ) {
+      return Backbone.promiseGenerator(function( res ) {
         this.setProjectId()
           .then(function() {
             return this.setTaskId();
           }.bind(this))
           .then( function() {
-            return Backbone.promiseGenerator(function( res, rej ) {
+            return Backbone.promiseGenerator(function( res ) {
               if( data.hasOwnProperty('update') && data.update === true ) {
                 this.save( undefined, {
-                 url: this.url + this.get('id') + '/'
+                  url: this.url + this.get('id') + '/'
                 } )
                   .then( res );
               } else {
@@ -104,7 +105,7 @@ define([ 'lodash',
     },
 
     setProjectId: function() {
-      return Backbone.promiseGenerator(function( res, rej ) {
+      return Backbone.promiseGenerator(function( res ) {
 
         /* TODO: change to rej() */
         if( !this.get('project') ) {
@@ -133,7 +134,7 @@ define([ 'lodash',
     },
 
     setTaskId: function() {
-      return Backbone.promiseGenerator(function( res, rej ) {
+      return Backbone.promiseGenerator(function( res ) {
 
         /* TODO: change to rej() */
         if( !this.get('task') ) {
@@ -165,7 +166,7 @@ define([ 'lodash',
           .then( function( task ) {
             this.set( 'task_id', task.get('id') );
             res();
-        }.bind( this ), res );
+          }.bind( this ), res );
       }.bind( this ));
     },
 
@@ -194,8 +195,9 @@ define([ 'lodash',
     },
 
     start: function() {
-      return Backbone.promiseGenerator(function( res, rej ) {
+      return Backbone.promiseGenerator(function( res ) {
         this.set( 'start', this.getDate() );
+        res();
       }.bind( this ));
     },
 
@@ -213,7 +215,7 @@ define([ 'lodash',
           url: this.url + this.get('id') + '/'
         })
           .done( res )
-          .fail( rej )
+          .fail( rej );
       }.bind( this ));
     },
 

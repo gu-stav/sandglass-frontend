@@ -1,3 +1,5 @@
+/*global define*/
+
 define( [ 'backbone',
           'lodash',
           'views/login',
@@ -20,13 +22,14 @@ define( [ 'backbone',
                   ActivityCollection,
                   ProjectCollection,
                   TaskCollection ) {
+  'use strict';
 
-var ROUTES = {
+  var ROUTES = {
       'start': {
         route: '',
         login: false,
         initialize: function() {
-          return Backbone.promiseGenerator(function( res, rej ) {
+          return Backbone.promiseGenerator(function( res ) {
             Backbone.history.navigate( 'track', { trigger : true } );
             res();
           });
@@ -36,7 +39,7 @@ var ROUTES = {
       'login': {
         route: 'login',
         initialize: function( router ) {
-          return Backbone.promiseGenerator(function( res, rej ) {
+          return Backbone.promiseGenerator(function( res ) {
             if( !router._views.login ) {
               router._views.login = new LoginView();
             }
@@ -68,7 +71,7 @@ var ROUTES = {
         login: true,
         mapTo: 'track',
         initialize: function( router, args ) {
-          return Backbone.promiseGenerator(function( res, rej ) {
+          return Backbone.promiseGenerator(function( res ) {
 
             Backbone.collections.activity
               .get( args[0] )
@@ -84,7 +87,7 @@ var ROUTES = {
         route: 'track',
         login: true,
         initialize: function( router ) {
-          return Backbone.promiseGenerator(function( res, rej ) {
+          return Backbone.promiseGenerator(function( res ) {
             Backbone.collections = {
               activity: new ActivityCollection(),
               project: new ProjectCollection(),
@@ -116,10 +119,12 @@ var ROUTES = {
         route: 'user-settings',
         login: true,
         initialize: function( router ) {
-          return Backbone.promiseGenerator(function( res, rej ) {
+          return Backbone.promiseGenerator(function( res ) {
             router._views.userSettings = new UserSettings({
               model: Backbone.user
             });
+
+            res();
           });
         },
 
@@ -127,7 +132,7 @@ var ROUTES = {
           router.destroyViews( [ 'userSettings' ] );
         }
       }
-  };
+    };
 
   return ROUTES;
 });

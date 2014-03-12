@@ -1,9 +1,12 @@
+/*global define*/
+
 define([ 'lodash',
          'backbone',
          'models/user' ],
   function( _,
             Backbone,
             User ) {
+  'use strict';
 
   var SignupView = Backbone.View.extend({
     tagName: 'form',
@@ -72,7 +75,7 @@ define([ 'lodash',
             timeFormat: timeFormat
           }
         }).create()
-          .then(function( user ) {
+          .then(function() {
             Backbone.history.navigate( 'track', { trigger : true } );
           });
       }.bind( this ));

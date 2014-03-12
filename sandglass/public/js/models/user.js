@@ -1,20 +1,23 @@
+/*global define,btoa*/
+
 define([ 'lodash',
          'backbone',
          'defaults' ],
   function( _,
             Backbone,
             defaults ) {
+  'use strict';
 
   var User = Backbone.Model.extend({
     url: defaults.urlRoot + 'users/',
 
     create: function() {
       if( this.get('id') ) {
+        this.logout();
         throw new Error('there is already a user. Please reload the page.');
-        return this.logout();
       }
 
-      return Backbone.promiseGenerator(function( res, rej ) {
+      return Backbone.promiseGenerator(function( res ) {
         var rawName = this.get('name').split(' '),
           firstName = rawName[0],
           lastName = rawName[1],
@@ -23,7 +26,8 @@ define([ 'lodash',
         this.save( {
           first_name: firstName,
           last_name: lastName,
-          name: undefined
+          name: undefined,
+          password: password
         }, {
           url: this.url + '@signup',
           silent: true
@@ -36,7 +40,7 @@ define([ 'lodash',
     },
 
     load: function() {
-      return Backbone.promiseGenerator(function( res, rej ) {
+      return Backbone.promiseGenerator(function( res ) {
         var basicAuth,
             _user = Backbone.user,
             token = _user.get('token'),
@@ -85,7 +89,7 @@ define([ 'lodash',
             .fail(function() {
               Backbone.history.navigate( 'login', { trigger : true } );
               return res();
-            })
+            });
         }
       }.bind( this ));
     },
@@ -136,13 +140,13 @@ define([ 'lodash',
             .then(function() {
               this.trigger( 'updated' );
             }.bind( this ));
-      }.bind( this ));
+        }.bind( this ));
     },
 
     login: function() {
       return Backbone.promiseGenerator(function( res, rej ) {
-        $.ajax({
-          type: "POST",
+        Backbone.$.ajax({
+          type: 'POST',
           url: this.url + '@signin',
           data: JSON.stringify( this.attributes ),
           processData: false,
@@ -159,7 +163,7 @@ define([ 'lodash',
           Backbone.user = this;
 
           /* only save basic auth informations to cookie */
-          $.cookie( 'user',
+          Backbone.$.cookie( 'user',
                     JSON.stringify( _.pick( this.attributes,
                                             cookieAttributes ) ) );
 
@@ -173,12 +177,12 @@ define([ 'lodash',
     },
 
     logout: function() {
-      return Backbone.promiseGenerator(function( res, rej ) {
+      return Backbone.promiseGenerator(function( res ) {
         if( Backbone.hasOwnProperty('user') ) {
           Backbone.user = undefined;
         }
 
-        $.removeCookie('user');
+        Backbone.$.removeCookie('user');
         res();
       });
     }

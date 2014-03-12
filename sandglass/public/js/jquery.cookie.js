@@ -1,3 +1,6 @@
+/*jshint plusplus:false, strict:false*/
+/*global define,jQuery,document*/
+
 /*!
  * jQuery Cookie Plugin v1.4.0
  * https://github.com/carhartl/jquery-cookie

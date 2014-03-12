@@ -1,3 +1,5 @@
+/*global define*/
+
 define([ 'lodash',
          'backbone',
          'defaults',
@@ -6,6 +8,7 @@ define([ 'lodash',
             Backbone,
             defaults,
             Task ) {
+  'use strict';
 
   var TaskCollection = Backbone.Collection.extend({
     url: defaults.urlRoot + 'tasks/',
@@ -18,7 +21,7 @@ define([ 'lodash',
                Backbone.user.get('id') +
                '/tasks/'
         }).done( res )
-          .fail( rej )
+          .fail( rej );
       }.bind( this ));
     },
 
@@ -28,8 +31,8 @@ define([ 'lodash',
         return {
           value: model.get('id'),
           label: model.get('name')
-        }
-      })
+        };
+      });
     },
 
     /* return the name of a task by the given id */

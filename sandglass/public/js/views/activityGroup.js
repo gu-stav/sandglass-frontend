@@ -1,9 +1,12 @@
+/*global define*/
+
 define([ 'lodash',
          'backbone',
          'views/activity' ],
   function( _,
             Backbone,
             ActivityView ) {
+  'use strict';
 
   var ActivityGroup = Backbone.View.extend({
     tagName: 'ul',
@@ -30,12 +33,12 @@ define([ 'lodash',
       this.listenTo( model, 'destroy',
                      function() {
                       this.removeModel( model );
-                     }.bind( this ));
+                    }.bind( this ));
 
       this.listenTo( model, 'change:start change:end',
                      function() {
                       this.render();
-                     }.bind( this ) );
+                    }.bind( this ) );
 
       return this;
     },

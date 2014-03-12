@@ -1,9 +1,10 @@
+/*global define,setInterval,clearInterval,window,confirm*/
+
 define([ 'lodash',
-         'backbone',
-         'models/activity' ],
+         'backbone' ],
   function( _,
-            Backbone,
-            Activity ) {
+            Backbone ) {
+  'use strict';
 
   var Activity = Backbone.View.extend({
     tagName: 'li',
@@ -143,16 +144,17 @@ define([ 'lodash',
         $el
           .prop( 'contenteditable', true )
           .on( 'blur.activity_edit', function( e ) {
-            var _text = $(e.target).text(),
+            var _text = Backbone.$(e.target).text(),
                 _currentText = this.model.get( item );
 
             if( ['parsedStarted', 'parsedEnded'].indexOf( item ) !== -1 ) {
               item = ( item === 'parsedStarted' ? 'start' : 'end' );
 
-              var _parsed = /^(\d+):(\d+)$/.exec( _text ),
-                  _text = this.model.getDate( this.model.get( item ) )
-                              .hours( _parsed[1] )
-                              .minutes( _parsed[2] );
+              var _parsed = /^(\d+):(\d+)$/.exec( _text );
+
+              _text = this.model.getDate( this.model.get( item ) )
+                          .hours( _parsed[1] )
+                          .minutes( _parsed[2] );
             }
 
             /* do not update when nothing has changed */
@@ -169,9 +171,9 @@ define([ 'lodash',
 
       /* when clicking somewhere outside of the element, bring the edit
          mode to an edn */
-      $( window )
+      Backbone.$( window )
         .on('click.activity_edit', function( e ) {
-          if( !$(e.target).closest( this.$el ).length ) {
+          if( !Backbone.$(e.target).closest( this.$el ).length ) {
             this.endEdit( e );
           }
         }.bind( this ));
@@ -195,7 +197,7 @@ define([ 'lodash',
           Backbone.history.navigate( '/track' );
 
           /* remove clickhandler, for ending edit mode */
-          $( window ).off('.activity_edit');
+          Backbone.$( window ).off('.activity_edit');
 
           _.forEach( this.editable, function( item ) {
             this.$el.find('.timeline__' + item )

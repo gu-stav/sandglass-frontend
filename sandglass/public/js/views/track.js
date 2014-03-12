@@ -1,3 +1,5 @@
+/*global define*/
+
 define([ 'lodash',
          'backbone',
          'defaults',
@@ -8,6 +10,7 @@ define([ 'lodash',
             defaults,
             moment,
             Activity ) {
+  'use strict';
 
   var Track = Backbone.View.extend({
     template: _.template( '<form class="form form--inline form--track">' +
@@ -204,7 +207,7 @@ define([ 'lodash',
         end: end
       })
         .create()
-        .then(function( activity ) {
+        .then(function() {
           _.each(['task', 'project', 'description'], function( item ) {
             this.$( 'input[name="' + item + '"]' ).val( '' );
           }.bind( this ));
@@ -212,7 +215,7 @@ define([ 'lodash',
           this.$('input[name="project"]').focus();
         }.bind( this ));
 
-        return this;
+      return this;
     },
 
     toggleDateView: function( e ) {
@@ -251,7 +254,7 @@ define([ 'lodash',
     loadRecent: function( e ) {
       var from,
           to,
-          $target = $(e.target),
+          $target = Backbone.$(e.target),
           $other = $target.siblings('input');
 
       if( $target.attr('name') === 'filter_start' ) {

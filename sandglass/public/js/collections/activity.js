@@ -1,15 +1,16 @@
+/*global define*/
+
 define([ 'lodash',
          'backbone',
          'moment',
          'defaults',
-         'models/activity',
-         'views/timeline' ],
+         'models/activity' ],
   function( _,
             Backbone,
             moment,
             defaults,
-            Activity,
-            TimelineView ) {
+            Activity ) {
+  'use strict';
 
   var ActivityCollection = Backbone.Collection.extend({
     url: defaults.urlRoot + 'activities/',

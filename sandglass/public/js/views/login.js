@@ -1,9 +1,12 @@
+/*global define*/
+
 define([ 'lodash',
          'backbone',
          'models/user' ],
   function( _,
             Backbone,
             User ) {
+  'use strict';
 
   var LoginView = Backbone.View.extend({
     className: 'form form--login',
@@ -53,11 +56,11 @@ define([ 'lodash',
         password: password
       }).login()
         .then( function() {
-                 Backbone.history.navigate( 'track', { trigger : true } );
-               },
+                  Backbone.history.navigate( 'track', { trigger : true } );
+                },
                function() {
-                 this.$el.addClass('form--error');
-               }.bind( this ));
+                  this.$el.addClass('form--error');
+                }.bind( this ));
     },
 
     render: function() {
