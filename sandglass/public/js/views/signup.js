@@ -47,7 +47,7 @@ define([ 'lodash',
     signup: function( e ) {
       e.preventDefault();
 
-      return new Promise(function( res, rej ) {
+      return Backbone.promiseGenerator(function( res, rej ) {
         var email = this.$el.find('input[name="email"]').val(),
             name = this.$el.find('input[name="name"]').val(),
             password = this.$el.find('input[name="password"]').val(),

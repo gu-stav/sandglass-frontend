@@ -26,7 +26,7 @@ var ROUTES = {
         route: '',
         login: false,
         initialize: function() {
-          return new Promise(function( res, rej ) {
+          return Backbone.promiseGenerator(function( res, rej ) {
             Backbone.history.navigate( 'track', { trigger : true } );
             res();
           });
@@ -36,7 +36,11 @@ var ROUTES = {
       'login': {
         route: 'login',
         initialize: function( router ) {
-          return new Promise(function() {
+          return Backbone.promiseGenerator(function( res, rej ) {
+            if( !router._views.login ) {
+              router._views.login = new LoginView();
+            }
+
             if( !router._views.signup ) {
               router._views.signup = new SignupView();
             }
@@ -64,7 +68,7 @@ var ROUTES = {
         login: true,
         mapTo: 'track',
         initialize: function( router, args ) {
-          return new Promise(function( res, rej ) {
+          return Backbone.promiseGenerator(function( res, rej ) {
 
             Backbone.collections.activity
               .get( args[0] )
@@ -80,7 +84,7 @@ var ROUTES = {
         route: 'track',
         login: true,
         initialize: function( router ) {
-          return new Promise(function( res, rej ) {
+          return Backbone.promiseGenerator(function( res, rej ) {
             Backbone.collections = {
               activity: new ActivityCollection(),
               project: new ProjectCollection(),
@@ -112,7 +116,7 @@ var ROUTES = {
         route: 'user-settings',
         login: true,
         initialize: function( router ) {
-          return new Promise(function( res, rej ) {
+          return Backbone.promiseGenerator(function( res, rej ) {
             router._views.userSettings = new UserSettings({
               model: Backbone.user
             });

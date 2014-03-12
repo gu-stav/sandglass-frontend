@@ -213,7 +213,7 @@ define([ 'lodash',
         return this;
       }
 
-      return new Promise(function( res, rej ) {
+      return Backbone.promiseGenerator(function( res, rej ) {
         this.model.delete()
           .then(function() {
             this.remove();

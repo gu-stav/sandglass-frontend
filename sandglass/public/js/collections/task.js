@@ -12,7 +12,7 @@ define([ 'lodash',
     model: Task,
 
     loadAll: function() {
-      return new Promise(function( res, rej ) {
+      return Backbone.promiseGenerator(function( res, rej ) {
         this.fetch({
           url: defaults.urlRoot + 'users/' +
                Backbone.user.get('id') +

@@ -18,7 +18,7 @@ define([ 'lodash',
     },
 
     create: function() {
-      return new Promise(function( res, rej ) {
+      return Backbone.promiseGenerator(function( res, rej ) {
         if( !this.get('name') ) {
           throw new Error('No task_name given');
           rej();
@@ -34,7 +34,7 @@ define([ 'lodash',
     },
 
     getById: function( id ) {
-      return new Promise(function( res, rej ) {
+      return Backbone.promiseGenerator(function( res, rej ) {
         if( id === this.get.id('id') ) {
           return res( this );
         }
