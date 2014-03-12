@@ -40,4 +40,4 @@ gulp.task( 'watch', function() {
 });
 
 gulp.task( 'default', [ 'watch' ] );
-gulp.task( 'build', [ 'less' ] );
+gulp.task( 'init', [ 'less' ] );
