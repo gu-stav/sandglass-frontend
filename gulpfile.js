@@ -34,7 +34,7 @@ gulp.task( 'jshint', function() {
     .pipe( jshint.reporter( 'default' ) );
 });
 
-gulp.task('watch', function() {
+gulp.task( 'watch', function() {
   gulp.watch( paths.less, [ 'less' ] );
   gulp.watch( paths.js, [ 'jshint' ] );
 });
