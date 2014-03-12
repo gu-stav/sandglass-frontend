@@ -1,14 +1,15 @@
 {
-  "name": "sandglass",
-  "version": "0.0.1",
-  "private": true,
+  "name": "sandglass-frontend",
+  "version": "0.1",
+
   "scripts": {
     "start": "node app.js",
-    "test": "mocha"
   },
+
   "dependencies": {
     "express": "3.4.8"
   },
+
   "devDependencies": {
     "gulp": "^3.5.5",
     "gulp-less": "^1.2.2",
