@@ -13,7 +13,7 @@ define([ 'lodash',
     className: 'timeline',
 
     setup: function() {
-      return new Promise(function( res, rej ) {
+      return Backbone.promiseGenerator(function( res, rej ) {
         this._activityGroups = [];
 
         this.attributes = {

@@ -73,9 +73,14 @@
       }
 
       Backbone.collections = {};
+
       Backbone.user = $.cookie( 'user' ) ?
                         new User( JSON.parse( $.cookie( 'user' ) ) ) :
                         undefined;
+
+      Backbone.promiseGenerator = function( callback ) {
+        return new Promise( callback );
+      };
 
       var Workspace = Backbone.Router.extend({
         _currentRoute: undefined,

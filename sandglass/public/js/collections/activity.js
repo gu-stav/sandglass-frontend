@@ -17,7 +17,7 @@ define([ 'lodash',
 
     /* load activities for a given timerange (default this - 1month) */
     loadRecent: function( from, to ) {
-      return new Promise(function( res, rej ) {
+      return Backbone.promiseGenerator(function( res, rej ) {
         /* default today minus 1 month */
         if( !from ) {
           from = moment().utc().subtract( 'months', 1 ).format();

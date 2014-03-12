@@ -63,7 +63,7 @@ define([ 'lodash',
     },
 
     update: function() {
-      return new Promise(function( res, rej ) {
+      return Backbone.promiseGenerator(function( res, rej ) {
         this.create( { update: true } )
           .then( res, rej );
       }.bind( this ));
@@ -74,13 +74,13 @@ define([ 'lodash',
         data = {};
       }
 
-      return new Promise(function( res, rej ) {
+      return Backbone.promiseGenerator(function( res, rej ) {
         this.setProjectId()
           .then(function() {
             return this.setTaskId();
           }.bind(this))
           .then( function() {
-            return new Promise(function( res, rej ) {
+            return Backbone.promiseGenerator(function( res, rej ) {
               if( data.hasOwnProperty('update') && data.update === true ) {
                 this.save( undefined, {
                  url: this.url + this.get('id') + '/'
@@ -104,7 +104,7 @@ define([ 'lodash',
     },
 
     setProjectId: function() {
-      return new Promise(function( res, rej ) {
+      return Backbone.promiseGenerator(function( res, rej ) {
 
         /* TODO: change to rej() */
         if( !this.get('project') ) {
@@ -133,7 +133,7 @@ define([ 'lodash',
     },
 
     setTaskId: function() {
-      return new Promise(function( res, rej ) {
+      return Backbone.promiseGenerator(function( res, rej ) {
 
         /* TODO: change to rej() */
         if( !this.get('task') ) {
@@ -194,13 +194,13 @@ define([ 'lodash',
     },
 
     start: function() {
-      return new Promise(function( res, rej ) {
+      return Backbone.promiseGenerator(function( res, rej ) {
         this.set( 'start', this.getDate() );
       }.bind( this ));
     },
 
     end: function() {
-      return new Promise(function( res, rej ) {
+      return Backbone.promiseGenerator(function( res, rej ) {
         this.set( 'end', this.getDate() );
         this.update()
           .then( res, rej );
@@ -208,7 +208,7 @@ define([ 'lodash',
     },
 
     delete: function() {
-      return new Promise(function( res, rej ) {
+      return Backbone.promiseGenerator(function( res, rej ) {
         this.destroy({
           url: this.url + this.get('id') + '/'
         })

@@ -14,7 +14,7 @@ define([ 'lodash',
         return this.logout();
       }
 
-      return new Promise(function( res, rej ) {
+      return Backbone.promiseGenerator(function( res, rej ) {
         var rawName = this.get('name').split(' '),
           firstName = rawName[0],
           lastName = rawName[1],
@@ -36,7 +36,7 @@ define([ 'lodash',
     },
 
     load: function() {
-      return new Promise(function( res, rej ) {
+      return Backbone.promiseGenerator(function( res, rej ) {
         var basicAuth,
             _user = Backbone.user,
             token = _user.get('token'),
@@ -140,7 +140,7 @@ define([ 'lodash',
     },
 
     login: function() {
-      return new Promise(function( res, rej ) {
+      return Backbone.promiseGenerator(function( res, rej ) {
         $.ajax({
           type: "POST",
           url: this.url + '@signin',
@@ -173,7 +173,7 @@ define([ 'lodash',
     },
 
     logout: function() {
-      return new Promise(function( res, rej ) {
+      return Backbone.promiseGenerator(function( res, rej ) {
         if( Backbone.hasOwnProperty('user') ) {
           Backbone.user = undefined;
         }
