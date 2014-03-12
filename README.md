@@ -7,9 +7,9 @@ Install the express app:
 
 ``npm install``
 
-Get all required dependencies with:
+Build frontend resources & install dependencies:
 
-``cd sandglass/public && bower install``
+``gulp init``
 
 To start the application run:
 

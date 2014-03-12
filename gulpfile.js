@@ -1,6 +1,7 @@
 var gulp = require('gulp'),
     less = require('gulp-less'),
-    jshint = require('gulp-jshint');
+    jshint = require('gulp-jshint'),
+    bower = require('gulp-bower');
 
 var paths = {
   less: [ 'sandglass/public/css/less/**/*.less' ],
@@ -34,10 +35,15 @@ gulp.task( 'jshint', function() {
     .pipe( jshint.reporter( 'default' ) );
 });
 
+gulp.task( 'bower', function() {
+  bower()
+    .pipe( gulp.dest('sandglass/public/bower_components/') )
+});
+
 gulp.task( 'watch', function() {
   gulp.watch( paths.less, [ 'less' ] );
   gulp.watch( paths.js, [ 'jshint' ] );
 });
 
 gulp.task( 'default', [ 'watch' ] );
-gulp.task( 'init', [ 'less' ] );
+gulp.task( 'init', [ 'less', 'bower' ] );
