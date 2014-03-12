@@ -1,4 +1,4 @@
-/*jshint plusplus:false, strict:false*/
+/*jshint plusplus:false, strict:false, maxlen:false*/
 /*global define,jQuery,document*/
 
 /*!

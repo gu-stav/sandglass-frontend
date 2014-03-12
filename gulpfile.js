@@ -28,7 +28,8 @@ gulp.task( 'jshint', function() {
       plusplus: true,
       quotmark: 'single',
       undef: true,
-      unused: true
+      unused: true,
+      maxlen: 80
     }) )
     .pipe( jshint.reporter( 'default' ) );
 });

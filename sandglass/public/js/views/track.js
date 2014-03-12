@@ -45,13 +45,16 @@ define([ 'lodash',
                           '      <button type="submit"' +
                           '              class="button button--submit">' +
                                  '<i class="fa fa-clock-o"></i> ' +
-                                 '<span class="track__button-text">Start</span></button>' +
+                                 '<span class="track__button-text">Start' +
+                                 '</span></button>' +
                           '    </div>' +
                           '  </div>' +
 
                           '  <div class="form__group form__group--date">' +
-                          '    <div class="track__field track__field--inline">' +
-                          '    <label><input type="checkbox" name="track_now" checked />' +
+                          '    <div class="track__field ' +
+                          '                track__field--inline">' +
+                          '    <label><input type="checkbox" ' +
+                          '                  name="track_now" checked />' +
                           '    Now</label>' +
                           '    </div>' +
                           '  </div>' +
@@ -74,7 +77,8 @@ define([ 'lodash',
                           '             placeholder="" />' +
                           '    </div>' +
 
-                          '    <div class="form__group form__group--end form__group--hidden">' +
+                          '    <div class="form__group form__group--end ' +
+                          '                form__group--hidden">' +
                           '      <input type="text"' +
                           '             name="date_end"' +
                           '             class="form__control"' +
@@ -82,7 +86,8 @@ define([ 'lodash',
                           '             placeholder="<%= dateFormat %>" />' +
                           '    </div>' +
 
-                          '    <div class="form__group form__group--end form__group--hidden">' +
+                          '    <div class="form__group form__group--end ' +
+                          '                form__group--hidden">' +
                           '      <input type="text"' +
                           '             name="time_end"' +
                           '             class="form__control"' +
@@ -91,7 +96,9 @@ define([ 'lodash',
                           '    </div>' +
 
                           '    <div class="form__group">' +
-                          '      <label><input type="checkbox" name="track_progress" checked />' +
+                          '      <label><input type="checkbox" ' +
+                          '                    name="track_progress" ' +
+                          '                    checked />' +
                           '      In progress</label>' +
                           '    </div>' +
 
@@ -138,7 +145,8 @@ define([ 'lodash',
             _start_time_val = this.$( 'input[name="time_start"]' ).val(),
             _end_date_val = this.$('input[name="date_end"]').val(),
             _end_time_val = this.$( 'input[name="time_end"]' ).val(),
-            _in_progress = this.$( 'input[name="track_progress"]' ).prop( 'checked' ),
+            _in_progress = this.$( 'input[name="track_progress"]' )
+                            .prop( 'checked' ),
             _timeRegExp = /^(\d{2}):(\d{2})$/;
 
         if( _start_date_val || _start_time_val ) {
@@ -162,14 +170,16 @@ define([ 'lodash',
         }
 
         if( _start_date_val ) {
-          parsedStart = moment( _start_date_val, Backbone.user.get('data').dateFormat );
+          parsedStart = moment( _start_date_val,
+                                Backbone.user.get('data').dateFormat );
           start = start.day( parsedStart.days() )
                        .month( parsedStart.month() )
                        .years( parsedStart.year() );
         }
 
         if( _end_date_val ) {
-          parsedEnd = moment( _end_date_val, Backbone.user.get('data').dateFormat );
+          parsedEnd = moment( _end_date_val,
+                              Backbone.user.get('data').dateFormat );
           end = end.day( parsedEnd.days() )
                    .month( parsedEnd.month() )
                    .years( parsedEnd.year() );
@@ -222,7 +232,8 @@ define([ 'lodash',
       var $cb = Backbone.$(e.target),
           $target = $cb.closest('.form__group').next();
 
-      $target[ ( $cb.prop('checked') ? 'add' : 'remove' ) + 'Class' ]('form__group--hidden');
+      $target[ ( $cb.prop('checked') ?
+                   'add' : 'remove' ) + 'Class' ]('form__group--hidden');
 
       if( !$cb.prop('checked') ) {
         /* update date field always to the current date */
@@ -248,7 +259,8 @@ define([ 'lodash',
       var $cb = Backbone.$(e.target),
           $targets = $cb.closest('.form__group').prevAll( '.form__group--end' );
 
-      $targets[ ( $cb.prop( 'checked' ) ? 'add' : 'remove' ) + 'Class' ]( 'form__group--hidden' );
+      $targets[ ( $cb.prop( 'checked' ) ?
+                    'add' : 'remove' ) + 'Class' ]( 'form__group--hidden' );
     },
 
     loadRecent: function( e ) {

@@ -19,7 +19,8 @@ define([ 'lodash',
                          '<div class="user__userinfo">' +
                          '<strong class="user__name"><%= first_name %> ' +
                          '<%= last_name %></strong>' +
-                         '<a href="/user-settings" class="user__settings-link">' +
+                         '<a href="/user-settings" ' +
+                         '   class="user__settings-link">' +
                          '<i class="fa fa-cog"></i> Settings</a>' +
                          '<a href="/logout" class="user__logout">Logout</a>' +
                          '</div>'),

@@ -15,7 +15,8 @@ define([ 'lodash',
     className: 'sandglass__search',
 
     template: _.template( '  <div class="sandglass__sortby">' +
-                          '    <i class="fa fa-sort sandglass__sortby-icon"></i>' +
+                          '    <i class="fa fa-sort sandglass__sortby-icon">' +
+                          '    </i>' +
                           '    <button class="sandglass__sortby-button"' +
                           '            value="start">Date</button>' +
                           '    <button class="sandglass__sortby-button"' +
@@ -25,7 +26,8 @@ define([ 'lodash',
                           '  </div>' +
 
                           '  <div class="sandglass__search-startend">' +
-                          '    <i class="fa fa-search sandglass__search-icon"></i>' +
+                          '    <i class="fa fa-search ' +
+                          '              sandglass__search-icon"></i>' +
                           '    <input type="text"' +
                           '           class="sandglass__search-start"' +
                           '           name="filter_start"' +
@@ -68,7 +70,8 @@ define([ 'lodash',
 
                           /* filter elements */
                           filtered =
-                            _.map( Backbone.collections[ item ].getAutocompleteList(),
+                            _.map( Backbone.collections[ item ]
+                                     .getAutocompleteList(),
                                    function( el ) {
                                       if( el.label.indexOf( term ) !== -1 ) {
                                         return el;

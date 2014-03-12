@@ -11,10 +11,13 @@ define([ 'lodash',
     className: 'form form--user-settings',
 
     template: _.template( '<div>' +
-                          '<% _.forEach( attributes, function( value, key ) { %>' +
+                          '<% _.forEach( attributes, function( value, key ) ' +
+                          '   { %>' +
                             '<div class="form__group">' +
                              '<label><%= key %>' +
-                             '<input type="text" name="<%= key %>" value="<%= value %>" class="form__control" />' +
+                             '<input type="text" name="<%= key %>" ' +
+                             '       value="<%= value %>" ' +
+                             '       class="form__control" />' +
                             '</label>' +
                             '</div>' +
                           '<% }); %>' +

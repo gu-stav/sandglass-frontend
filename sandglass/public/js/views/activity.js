@@ -10,23 +10,28 @@ define([ 'lodash',
     tagName: 'li',
     className: 'timeline__item',
     template: _.template( '<% if (!tracking) { %>' +
-                          '<button class="timeline__button--delete timeline__button ' +
-                                         'button button--link">delete</button>' +
+                          '<button class="timeline__button--delete ' +
+                                         'timeline__button ' +
+                                         'button button--link">delete' +
+                                         '</button>' +
                           '<% } %>' +
 
                           '<% if( tracking ) { %>' +
-                          '<button class="timeline__button--end timeline__button ' +
-                                          'button button--link">end</button>' +
+                          '<button class="timeline__button--end ' +
+                                         'timeline__button ' +
+                                         'button button--link">end</button>' +
                           '<% } %>' +
 
                           '<% if (!tracking) { %>' +
-                          '<button class="timeline__button--edit timeline__button ' +
+                          '<button class="timeline__button--edit ' +
+                                         'timeline__button ' +
                                          'button button--link">edit</button>' +
                           '<% } %>' +
 
                           /* activity & project */
                           '<h3 class="timeline__headline">' +
-                             '<span class="timeline__project">${ project }</span>' +
+                             '<span class="timeline__project">' +
+                             '${ project }</span>' +
                              '<span class="timeline__task">${ task }</span>' +
                           '</h3>' +
 
@@ -36,10 +41,13 @@ define([ 'lodash',
                           '</p>' +
 
                           '<div class="timeline__time">'+
-                          '<strong class="timeline__duration">${ duration }</strong>' +
+                          '<strong class="timeline__duration">' +
+                          '${ duration }</strong>' +
                           '<small class="timeline__parsedStartEnd">' +
-                          '<span class="timeline__parsedStarted">${ parsedStarted }</span>' +
-                          ' - <span class="timeline__parsedEnded">${ parsedEnded }</span>' +
+                          '<span class="timeline__parsedStarted">' +
+                          '${ parsedStarted }</span>' +
+                          ' - <span class="timeline__parsedEnded">' +
+                          '${ parsedEnded }</span>' +
                           '</small>' +
                           '</div>'),
 
@@ -93,7 +101,8 @@ define([ 'lodash',
       }
 
       this
-        .$el[ ( _data.conflict ? 'add' : 'remove' ) + 'Class']( 'timeline__item--conflict' );
+        .$el[ ( _data.conflict ?
+                 'add' : 'remove' ) + 'Class']( 'timeline__item--conflict' );
 
       /* enable/disable automatical updates of the duration */
       this[ ( _data.tracking ? 'set' : 'clear' ) + 'Interval' ]();

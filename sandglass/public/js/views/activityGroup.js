@@ -16,7 +16,8 @@ define([ 'lodash',
     template: _.template( '<% if ( modelCount ) { %>' +
                           '<li class="timeline__groupHeader">' +
                           '<h2 id="group-<%= groupLabel%>"' +
-                          'class="timeline__groupheader-label"><%= groupLabel %></h2>' +
+                          'class="timeline__groupheader-label">' +
+                          '<%= groupLabel %></h2>' +
                           '<span class="timeline__group-duration">' +
                           '<%= duration %></span>' +
                           '</li>' +
@@ -126,7 +127,8 @@ define([ 'lodash',
         /* check if activities do overlap */
         if( index > 0 &&
             activity.get('start')
-              .isBefore( this.activityCollection.models[ index - 1 ].get('end') ) ) {
+              .isBefore( this.activityCollection
+                          .models[ index - 1 ].get('end') ) ) {
           _conflict = true;
         }
 
