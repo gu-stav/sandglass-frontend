@@ -46,4 +46,5 @@ gulp.task( 'watch', function() {
 });
 
 gulp.task( 'default', [ 'watch' ] );
-gulp.task( 'init', [ 'less', 'bower' ] );
+gulp.task( 'init', [ 'less',
+                     'bower' ] );
